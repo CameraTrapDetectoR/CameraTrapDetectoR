@@ -105,6 +105,8 @@ deploy_model <- function(
   
   #-- Load operators
   load_operators()
+  # load torchvisionlib 
+  library(torchvisionlib)
   
   #-- Check arguments provided 
   
