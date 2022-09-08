@@ -104,9 +104,6 @@ deploy_model <- function(
     col='red'
 ){
   
-  #-- Load operators
-  load_operators()
-  
   #-- Check arguments provided 
   
   # check model_type
@@ -172,11 +169,6 @@ deploy_model <- function(
   #-- Load model
   
   # load encoder. build these dataframes in the script to avoid attaching tables
-  if(model_type == "mammalBirdVehicle"){
-    #label_encoder = utils::read.csv("./label_encoders/mammalBirdVehicle.csv")
-    label_encoder = data.frame('label' = c('background', 'mammal', 'bird', 'vehicle'),
-                               'encoder' = 0:3)
-  }
   if(model_type == "pig_only"){
     # AB : fix to overwrite labels from fam model until pig model can be retrained
     categories <- c('empty', rep('not_pig', 31), 'pig')
@@ -203,12 +195,6 @@ deploy_model <- function(
     label_encoder = data.frame('label' = categories,
                                'encoder' = 0:(length(categories)-1))
   }
-  
-  
-  # install dependencies
-  #package_vector <- c('torchvision', 'torch', 'magick', 'shiny', 'shinyFiles', 'shinyBS', 'shinyjs')
-  #install_dependencies(package_vector)
-  #utils::install.packages(c("shiny", "shinyjs"))
   
   # load model 
   cat("\nLoading model architecture and weights. If this is your first time deploying a model on this computer, this step can take a few minutes. \n")
