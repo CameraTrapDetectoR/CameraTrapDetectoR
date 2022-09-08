@@ -16,7 +16,7 @@
 runShiny <- function(app="deploy"){
   
   # find and launch the app
-  appDir <- system.file("shiny-apps", app, package = "CameraTrapDetectoR")
+  appDir <- system.file("shiny", app, package = "CameraTrapDetectoR")
   
   shiny::runApp(appDir, display.mode = "normal")
 }
