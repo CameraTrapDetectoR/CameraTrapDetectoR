@@ -76,6 +76,7 @@
 #'  
 #' @import torch
 #' @import torchvision
+#' @import torchvisionlib
 #' @import magick
 #' 
 #' @export
@@ -105,8 +106,6 @@ deploy_model <- function(
   
   #-- Load operators
   load_operators()
-  # load torchvisionlib 
-  library(torchvisionlib)
   
   #-- Check arguments provided 
   
