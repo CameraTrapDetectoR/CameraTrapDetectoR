@@ -25,10 +25,9 @@ If running the above command yields an error that looks like `Error: Failed to i
 ## Step 3: Load this library
 ```
 library(CameraTrapDetectoR)
-library(torchvisionlib)
 ```
 
-If you are on a slow internet connection, you will need to modify your options. This is because we will be downloading the weights and architecture of the neural network. By default, R will timeout downloads at 60 seconds. Running this line will increase the timeout. Units are seconds. Feel free to use a larger number than 200 if you are on a very slow connection. 
+If you are on a slow internet connection, you will need to modify your options. This is because we will be downloading the weights and architecture of the large neural network. By default, R will timeout downloads at 60 seconds. Running this line will increase the timeout. Units are seconds. Feel free to use a larger number than 200 if you are on a very slow connection.  If you are connected to a VPN, you will probably need to disconnect in order to download model weights. Once model weights are downloaded, you can deploy the model while connected to VPN.  
 ```
 options(timeout=200)
 ```
