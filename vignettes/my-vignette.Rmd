@@ -1,0 +1,54 @@
+---
+title: "CameraTrapDetectoR-vignette"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{CameraTrapDetectoR-vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+coming soon!  
+
+## Get Started 
+
+Intro: 
+
+Package installation: copy installation instructions, or see README.md file at \url{https://github.com/CameraTrapDetectoR/CameraTrapDetectoR}
+
+Load the package:  
+```{r load}
+library(CameraTrapDetectoR)
+```
+
+Notes before first use  
+
+## Using CameraTrapDetectoR  
+
+### CameraTrapDetectoR in R or RStudio  
+
+
+
+### CameraTrapDetectoR in R Shiny  
+CameraTrapDetectoR provides a user-friendly interactive application where you can specify input arguments in drop-down format. This allows users with less familiarity in R coding to fluently use this package. To load the application, run the following line of code in your R or RStudio console:  
+  
+```{r loadShiny, eval=FALSE}
+runShiny("deploy")
+```
+
+### CameraTrapDetectoR Desktop Package    
+The CameraTrapDetectoR Shiny app can be deployed by users without ever accessing R or RStudio.
+
+This option is slower to load than other methods of using CameraTrapDetectoR, and is the preferred option only for users with no R experience.   
+
+
+## Evaluating Output  
+
+
