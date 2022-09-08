@@ -14,6 +14,9 @@ find_sets_with_threshold(x, y, overlap_threshold)
 \item{overlap_threshold}{The threshold (proportion) used in determining which
 bounding boxes are considered unique detections}
 }
+\value{
+overlapping bboxes helper
+}
 \description{
 Evaluates overlapping bounding boxes.  Applies a proportional threshold and
 only evaluates bounding boxes that have an overlap greater than that proportion.

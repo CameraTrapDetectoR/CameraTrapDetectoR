@@ -15,6 +15,9 @@ dataLoader(file_list, index, w = 408, h = 307)
 
 \item{h}{image height after resizing. Recommend not changing this}
 }
+\value{
+loads data from user input and transforms it into tensors to pass to the model
+}
 \description{
 This function loads a batch of data to be passed to the model
 }

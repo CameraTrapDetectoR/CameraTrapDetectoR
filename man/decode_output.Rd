@@ -16,6 +16,9 @@ decode_output(output, label_encoder, h, score_threshold = 0.7)
 
 \item{score_threshold}{threshold score for keeping bounding boxes}
 }
+\value{
+converted output from model that can be interpreted in R
+}
 \description{
 This function will convert the output from NN into a format that can be used
 to make plots and provide a csv with information

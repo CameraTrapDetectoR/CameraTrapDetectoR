@@ -7,7 +7,7 @@
 #' @param y sf object containing polygons to compare with x
 #' @param overlap_threshold The threshold (proportion) used in determining which
 #' bounding boxes are considered unique detections
-#' @return
+#' @return overlapping bboxes helper
 #' 
 #' @export
 #' 

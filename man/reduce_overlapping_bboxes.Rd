@@ -11,6 +11,9 @@ reduce_overlapping_bboxes(df, overlap_threshold = 0.8)
 
 \item{overlap_threshold}{The threshold (proportion) used in determining which bounding boxes are considered unique detections}
 }
+\value{
+unique bbxoes set by overlap threshold
+}
 \description{
 Evaluates overlapping bounding boxes using user specified threshold that determines overlap and returns
 bounding boxes and classification with maximum confidence

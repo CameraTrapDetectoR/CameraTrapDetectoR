@@ -4,7 +4,7 @@
 #' 
 #' @param a Bounding box that will be compared with b
 #' @param b Bounding box 
-#' @return
+#' @return overlap area of two bboxes
 #' 
 #' @export
 #' 

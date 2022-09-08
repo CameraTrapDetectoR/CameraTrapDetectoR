@@ -44,6 +44,9 @@ exact coordinates? Only `TRUE` if you are using a different image size}
 \item{h}{The image height (in pixels) for the annotated plot. Only used if
 \code{make_plots=TRUE}.}
 }
+\value{
+image copies with bboxes and labels plotted
+}
 \description{
 Plots original image with predicted bounding box and (optionally)
 the predicted category

@@ -2,7 +2,7 @@
 #' 
 #' @param model_type The type of model: general, family, species, or pig-only.  
 #' @param num_classes The number of classes in the model
-#' @return
+#' @return model weights
 #' 
 #' @export
 #' 

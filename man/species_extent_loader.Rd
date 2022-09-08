@@ -6,6 +6,9 @@
 \usage{
 species_extent_loader()
 }
+\value{
+species.extent.data.csv
+}
 \description{
-Load data describing geographic extent of species presence
+Loads csv file documenting species range for all classes in the trained species model
 }

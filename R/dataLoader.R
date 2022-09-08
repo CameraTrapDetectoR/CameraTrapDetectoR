@@ -4,7 +4,7 @@
 #' @param w image width after resizing. Recommend not changing this
 #' @param file_list passed from deploy fuction
 #' @param index i value from deploy function
-#' @return
+#' @return loads data from user input and transforms it into tensors to pass to the model
 #' 
 #' @export
 dataLoader <- function(file_list,

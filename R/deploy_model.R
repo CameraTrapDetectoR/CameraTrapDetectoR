@@ -104,6 +104,9 @@ deploy_model <- function(
     col='red'
 ){
   
+  #-- Load operators
+  load_operators()
+  
   #-- Check arguments provided 
   
   # check model_type
@@ -169,6 +172,11 @@ deploy_model <- function(
   #-- Load model
   
   # load encoder. build these dataframes in the script to avoid attaching tables
+  if(model_type == "mammalBirdVehicle"){
+    #label_encoder = utils::read.csv("./label_encoders/mammalBirdVehicle.csv")
+    label_encoder = data.frame('label' = c('background', 'mammal', 'bird', 'vehicle'),
+                               'encoder' = 0:3)
+  }
   if(model_type == "pig_only"){
     # AB : fix to overwrite labels from fam model until pig model can be retrained
     categories <- c('empty', rep('not_pig', 31), 'pig')
@@ -196,6 +204,12 @@ deploy_model <- function(
                                'encoder' = 0:(length(categories)-1))
   }
   
+  
+  # install dependencies
+  #package_vector <- c('torchvision', 'torch', 'magick', 'shiny', 'shinyFiles', 'shinyBS', 'shinyjs')
+  #install_dependencies(package_vector)
+  #utils::install.packages(c("shiny", "shinyjs"))
+  
   # load model 
   cat("\nLoading model architecture and weights. If this is your first time deploying a model on this computer, this step can take a few minutes. \n")
   model <- weightLoader(model_type, num_classes = nrow(label_encoder))
@@ -203,8 +217,7 @@ deploy_model <- function(
   
   # load data
   file_list <- dataset(data_dir, recursive,
-                       file_extensions,
-                       labeled)
+                       file_extensions)
   
   # subset data, if we want to
   if(sample50 & length(file_list) >50){
@@ -424,11 +437,11 @@ deploy_model <- function(
     
     full_df[full_df$prediction=="empty" & full_df$confidence_in_pred<1,"certainty"] <-"detections_below_score_threshold"
     
-    min.vals<-aggregate(confidence_in_pred~filename+prediction+certainty,
+    min.vals<-stats::aggregate(confidence_in_pred~filename+prediction+certainty,
                         data=full_df[full_df$certainty!="detections_below_score_threshold",],
                         FUN=min)
     
-    cnt.val<-aggregate(number_predictions~filename+prediction+certainty,
+    cnt.val<-stats::aggregate(number_predictions~filename+prediction+certainty,
                        data=full_df[full_df$certainty!="detections_below_score_threshold",],
                        FUN=length)  
     

@@ -4,7 +4,7 @@
 #' bounding boxes to evaluate
 #' 
 #' @param df The data frame containing bounding box values and predictions
-#' @return
+#' @return matrix of all possible combos
 #' 
 #' @export
 #' 

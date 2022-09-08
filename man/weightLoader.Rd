@@ -11,6 +11,9 @@ weightLoader(model_type = "general", num_classes = 5)
 
 \item{num_classes}{The number of classes in the model}
 }
+\value{
+model weights
+}
 \description{
 Load model weights
 }

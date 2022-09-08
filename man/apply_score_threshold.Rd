@@ -13,6 +13,9 @@ apply_score_threshold(df, file_list, score_threshold)
 
 \item{score_threshold}{Threshold score for keeping bounding boxes}
 }
+\value{
+df with score threshold applied
+}
 \description{
 This function removes detections that fall below the score_threshold.  When an image
 has all detections removed it is assigned a value of 'empty'. The confidence in the

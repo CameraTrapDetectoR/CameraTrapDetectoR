@@ -4,7 +4,7 @@
 #'  on camera trap images
 #' @param app The name of the app you want to run. The options are currently 
 #' `deploy`.
-#' @return
+#' @return interactive interface
 #' 
 #' @import shiny
 #' @import shinyFiles
