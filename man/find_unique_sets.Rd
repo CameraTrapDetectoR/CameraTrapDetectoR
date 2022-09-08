@@ -11,6 +11,9 @@ find_unique_sets(df, overlap_threshold = overlap_threshold)
 
 \item{overlap_threshold}{The threshold (proportion) used in determining which bounding boxes are considered unique detections}
 }
+\value{
+overlapping polygons
+}
 \description{
 Evaluates overlapping bounding boxes using user specified threshold that determines overlap and returns
 sets of polygons that overlap

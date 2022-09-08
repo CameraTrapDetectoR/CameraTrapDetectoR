@@ -13,6 +13,9 @@ smart_relabel(pred_df, possible.labels, label_encoder)
 
 \item{label_encoder}{label dictionary for model being run}
 }
+\value{
+relabeled predictions based on location
+}
 \description{
 This function compares the labels provided by the model with a list of possible
 species based on species ranges.  In some cases it relabels mis-classifications

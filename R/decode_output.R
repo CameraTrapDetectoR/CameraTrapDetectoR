@@ -5,7 +5,7 @@
 #' @param score_threshold threshold score for keeping bounding boxes
 #' @param label_encoder passed from deploy model function
 #' @param h image height after resizing. Recommend not changing this
-#' @return
+#' @return converted output from model that can be interpreted in R
 #' 
 #' @export
 decode_output <- function(

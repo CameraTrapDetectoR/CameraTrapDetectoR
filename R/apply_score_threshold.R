@@ -10,7 +10,7 @@
 #' @param df Dataframe of predictions from model
 #' @param file_list Vector of file names processed by model
 #' @param score_threshold Threshold score for keeping bounding boxes
-#' @return
+#' @return df with score threshold applied
 #' 
 #' @export
 

@@ -5,7 +5,7 @@
 #' 
 #' @param location dataframe containing a single longitude and latitude value
 #' @param extent.data auxiliary location database
-#' @return
+#' @return possible species list
 #' 
 #' @export
 

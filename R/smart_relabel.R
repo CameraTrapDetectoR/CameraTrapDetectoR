@@ -7,7 +7,7 @@
 #' @param pred_df dataframe containing predictions for image
 #' @param possible.labels dataframe containing possible labels based on species occurrence
 #' @param label_encoder label dictionary for model being run
-#' @return
+#' @return relabeled predictions based on location
 #' 
 #' @export
 

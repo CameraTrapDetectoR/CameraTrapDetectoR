@@ -17,7 +17,7 @@
 #'  for an explanation of `col`, `lwd`, and `lty`
 #' @param lwd line width of bbox
 #' @param lty line type of bbox
-#' @return
+#' @return image copies with bboxes and labels plotted
 #' 
 #' @export
 #' 

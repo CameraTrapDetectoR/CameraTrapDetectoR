@@ -11,6 +11,9 @@ determine_overlap(a, b)
 
 \item{b}{Bounding box}
 }
+\value{
+overlap area of two bboxes
+}
 \description{
 Helper function that returns the proportion of overlap among two bounding boxes
 }

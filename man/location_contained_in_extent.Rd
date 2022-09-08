@@ -11,6 +11,9 @@ location_contained_in_extent(location, extent.values)
 
 \item{extent.values}{dataframe containing xmin, xmax, ymin, ymax representing an extent (bounding box)}
 }
+\value{
+location extent helper function
+}
 \description{
 This function will evaluate if a location (latitude / longitude) is within
 a bounding box representing a geographic extent. values with range.

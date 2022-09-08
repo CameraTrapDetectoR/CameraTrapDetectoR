@@ -9,6 +9,9 @@ find_all_combinations(df)
 \arguments{
 \item{df}{The data frame containing bounding box values and predictions}
 }
+\value{
+matrix of all possible combos
+}
 \description{
 Helper function that generates table of all possible combinations of
 bounding boxes to evaluate

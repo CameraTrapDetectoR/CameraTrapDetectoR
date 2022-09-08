@@ -20,6 +20,9 @@ dataset(
 
 \item{labeled}{boolean. not functional yet}
 }
+\value{
+dataset for reading into model
+}
 \description{
 This function sets up the image dataset
 }

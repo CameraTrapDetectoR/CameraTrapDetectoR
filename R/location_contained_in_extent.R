@@ -5,7 +5,7 @@
 #' 
 #' @param location dataframe containing a single longitude and latitude value
 #' @param extent.values dataframe containing xmin, xmax, ymin, ymax representing an extent (bounding box)
-#' @return
+#' @return location extent helper function
 #' 
 #' @export
 

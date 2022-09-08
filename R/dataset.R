@@ -4,7 +4,7 @@
 #' @param recursive boolean
 #' @param file_extensions file extensions
 #' @param labeled boolean. not functional yet
-#' @return
+#' @return dataset for reading into model
 #' 
 #' @export
 dataset <- function(data_dir,

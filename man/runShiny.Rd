@@ -10,6 +10,9 @@ runShiny(app = "deploy")
 \item{app}{The name of the app you want to run. The options are currently 
 `deploy`.}
 }
+\value{
+interactive interface
+}
 \description{
 Running this function will launch a shiny application to deploy object detection models
  on camera trap images
