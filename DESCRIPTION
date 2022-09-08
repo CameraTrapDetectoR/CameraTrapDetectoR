@@ -20,3 +20,7 @@ Imports:
     torch,
     torchvision,
     torchvisionlib
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
