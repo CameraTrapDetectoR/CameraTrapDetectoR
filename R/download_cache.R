@@ -10,6 +10,8 @@
 #' 
 download_cache <- function(url = "https://www.dropbox.com/s/m4ojnotd2pev46u/weights_family_cpu.pth?raw=1",
                            redownload = FALSE){
+  # AB : set redownload = TRUE so newest weights are always loaded?
+  
   # set destination
   #destination <- system.file(path2store, package="CameraTrapDetectoR")
   cache_path <- rappdirs::user_cache_dir("CameraTrapDetector")
