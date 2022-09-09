@@ -9,7 +9,7 @@
 species_extent_loader <- function(){
   
   #--Download Species Extent Data
-  data.path <- download_cache(url="https://raw.githubusercontent.com/CameraTrapDetectoR/CameraTrapDetectoR/main/Data/species.extent.data.csv")
+  data.path <- download_cache(url="https://raw.githubusercontent.com/CameraTrapDetectoR/CameraTrapDetectoR/main/inst/extdata/species.extent.data.csv")
   
   #--Read Species Extent Data
   extent.data<-utils::read.csv(data.path, stringsAsFactors=TRUE)
