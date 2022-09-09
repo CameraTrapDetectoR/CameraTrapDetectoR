@@ -34,8 +34,9 @@ Once you have [installed](https://github.com/CameraTrapDetectoR/CameraTrapDetect
 ```{r setup, eval = FALSE}
 library(CameraTrapDetectoR)
 runShiny("deploy")
-```
+```  
   
+Once you   
 ## Arguments   
 
 ## Troubleshooting  
