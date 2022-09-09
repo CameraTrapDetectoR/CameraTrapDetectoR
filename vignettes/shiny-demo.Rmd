@@ -15,29 +15,77 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+
 ```
-## Before you start  
+##Before you start  
   
 ### Who is this for?   
-Users who have R or RStudio installed but may be less comfortable with coding.  
-Anyone using the CameraTrapDetectoR desktop application. The interface is exactly the same as the Shiny application.  
-Anyone who prefers a drop-down menu for setting function arguments.  
-Anyone new to using CameraTrapDetectoR can benefit from this detailed example, even those who will be running the function directly in an R Console or script.  
-
-### Organize your image directory  
+Anyone new to using CameraTrapDetectoR can benefit from this detailed example, even experienced R users. Users who are less comfortable with coding in R or RStudio may find the Shiny app interface more efficient than running the model directly in the R console. We provide the printout of your coded arguments inside the Shiny app to give you that option if desired.  
   
+This document will be extremely helpful using the CameraTrapDetectoR desktop application. The interface is exactly the same as the Shiny application, without any R coding to open the application. Please see the section on running the Desktop app in our user manual for install instructions.
   
-## Open the CameraTrapDetectoR Shiny application  
 
-Once you have [installed](https://github.com/CameraTrapDetectoR/CameraTrapDetectoR) CameraTrapDetectoR, copy + paste the following lines of code in your Console:  
+###Organize your image directory  
+  
+An organized image directory is essential to making sure your CameraTrapDetectoR session runs smoothly. Place all images to be run through the model in the same directory. You may set up a recursive directory with images in different folders, but make sure to remove any images you do not wish to run through the model. CameraTrapDetectoR only searches for file types specified in the [file_extensions](###file_extensions) argument; it will ignore all other file types.
+
+You have the option to enter location data for your images (latitude / longitude) to help narrow down potential species. However, this option can only be set once for all images in a given model run. If you would like to use this option, all your images must originate from the same location. Alternatively, you can split your image directory by location, and run the model separately on images from each location.  
+
+CameraTrapDetectoR desktop app users may proceed directly to the [Arguments](##Arguments) section.    
+  
+##Open the CameraTrapDetectoR Shiny application  
+  
+Once you have [installed](https://github.com/CameraTrapDetectoR/CameraTrapDetectoR) CameraTrapDetectoR, copy + paste the following lines of code in your console:  
 
 ```{r setup, eval = FALSE}
 library(CameraTrapDetectoR)
 runShiny("deploy")
 ```  
   
-Once you   
-## Arguments   
+You should see a pop-up window with the drop-down arguments on the left, and brief explanations of each argument on the right.  
 
-## Troubleshooting  
+
+![](images/startup.PNG)  
+
+
+The next section will go over each argument in detail.  
+  
+##Arguments   
+  
+###data_dir  
+  
+###model_type  
+
+###recursive  
+
+###file_extensions  
+
+###make_plots  
+   
+###plot_label  
+
+###output_dir  
+   
+###sample50  
+ 
+###write_bbox_csv  
+  
+###score_threshold  
+
+###overlap_correction  
+  
+###overlap_threshold  
+
+###return_data_frame  
+
+###prediction_format  
+  
+###latitude  
+
+###longitude  
+
+ 
+   
+
+##Troubleshooting  
 
