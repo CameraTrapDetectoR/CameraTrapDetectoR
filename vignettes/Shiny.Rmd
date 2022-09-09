@@ -3,6 +3,7 @@ title: "Shiny Demo"
 output: 
   rmarkdown::html_vignette:
     toc: true
+    self_contained: true
 vignette: >
   %\VignetteIndexEntry{Shiny Demo}
   %\VignetteEngine{knitr::rmarkdown}
@@ -15,7 +16,26 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 ```
+## Before you start  
+  
+### Who is this for?   
+Users who have R or RStudio installed but may be less comfortable with coding.  
+Anyone who prefers a drop-down menu for setting function arguments.  
+Anyone new to using CameraTrapDetectoR can benefit from this detailed example, even those who will be running the function directly in an R Console or script.  
 
-```{r setup}
+### Organize your image directory  
+  
+  
+## Open the CameraTrapDetectoR Shiny application  
+
+Once you have [installed](https://github.com/CameraTrapDetectoR/CameraTrapDetectoR) CameraTrapDetectoR, copy + paste the following lines of code in your Console:  
+
+```{r setup, eval = FALSE}
 library(CameraTrapDetectoR)
+runShiny("deploy")
 ```
+  
+## Arguments   
+
+## Troubleshooting  
+
