@@ -244,7 +244,7 @@ deploy_model <- function(
     cat(paste0("\nDetermining possible taxa based on location using latitude ",latitude," longitude ",longitude))
     
     #Load species extent data
-    extent.data <- species_extent_loader()
+    extent.data <- species.extent.data
     
     #Get possible species
     possible.labels <- get_possible_species(location, extent.data)
