@@ -5,7 +5,7 @@
 #' 
 #' @param df The data frame containing bounding box values and predictions
 #' @param overlap_threshold The threshold (proportion) used in determining which bounding boxes are considered unique detections
-#' @return unique bbxoes set by overlap threshold
+#' @return unique bboxes set by overlap threshold
 #' 
 #' @export
 #' 
