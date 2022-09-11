@@ -215,11 +215,11 @@ deploy_model <- function(
   model <- weightLoader(model_type, num_classes = nrow(label_encoder))
   model$eval()
   
-  # load data
+  # load inputs
   file_list <- dataset(data_dir, recursive,
                        file_extensions)
   
-  # subset data, if we want to
+  # take random sample if sample50=TRUE  
   if(sample50 & length(file_list) >50){
     file_list <- sample(file_list, 50)
   }
