@@ -176,6 +176,8 @@ shinyUI(fluidPage(
       shiny::p(strong("overlap_correction : "),"  TRUE/FALSE. Should overlapping detections be evaluated for proportion overlap (determined by overlap_threshold)
                and the highest confidence detection returned?"),
       shiny::p(strong("overlap_threshold : "),"  Proportion of overlap for two detections to be considered a single detection. Accepts values from 0-0.99."),
+      shiny::p(strong("return_data_frame"),"  TRUE/FALSE. Do you want your output to be returned as an R dataframe as well as a .csv file? 
+               This option is recommended if you will be evaluating the predictions in R."),
       shiny::p(strong("prediction_format : "),"  Format to be used for model_predictions.csv file; accepts values of 'wide' or 'long'."),
       shiny::p(strong("latitude and longitude : "),"  Optional image location to filter model predictions to species within range. Input takes one location per model run;
                      if images originate from multiple locations, separate them into different model runs based on location. Currently only applies to species model."),
