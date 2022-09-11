@@ -95,8 +95,8 @@ deploy_model <- function(
     score_threshold = 0.6,
     return_data_frame = TRUE,
     prediction_format = "wide",
-    latitude = NULL,
-    longitude = NULL,
+    latitude = NA,
+    longitude = NA,
     h=307,
     w=408,
     lty=1,
@@ -143,13 +143,17 @@ deploy_model <- function(
   }
   
   # check location arguments
-  if (latitude < -90 | latitude > 90){
-    stop("latitude must be between -90 and 90")
+  if (is.na(latitude) == FALSE) {
+    if (latitude < -90 | latitude > 90){
+      stop("latitude must be between -90 and 90")
+    } 
   }
-  if (longitude < -180 | latitude > 180){
-    stop("longitude must be between -180 and 180")
+  if (is.na(longitude) == FALSE) {
+    if (longitude < -180 | latitude > 180) {
+      stop("longitude must be between -180 and 180")
+    }
   }
-  if ((is.null(longitude) == TRUE & is.null(latitude) == FALSE) | (is.null(longitude) == FALSE & is.null(latitude) == TRUE)){
+  if ((is.na(longitude) == TRUE & is.na(latitude) == FALSE) | (is.na(longitude) == FALSE & is.na(latitude) == TRUE)){
     stop("invalid location; please include both latitude and longitude or leave both as NULL")
   }
   
@@ -239,7 +243,13 @@ deploy_model <- function(
   
   
   #-- Make dataframe of possible labels using species range data
-  location <- data.frame(longitude=longitude, latitude=latitude)
+  if (is.na(latitude) == TRUE & is.na(longitude) == TRUE) {
+    location <- NULL
+  }
+  else {
+    location <- data.frame(longitude=longitude, latitude=latitude)
+  }
+  
   if(is.null(location) == FALSE){
     cat(paste0("\nDetermining possible taxa based on location using latitude ",latitude," longitude ",longitude))
     

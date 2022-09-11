@@ -70,6 +70,8 @@ If you have [organized](#organize) your images in multiple folders, select the f
 ![Run all images in Folders 1, 2, 3](images/datadir_images.png){width='45%'}
 ![Run images just in Folder 1](images/datadir_imfold.png){width='45%'}   
   
+*Once you have set your data directory, you are able to run the model with all other arguments set at default values. However, we encourage you to consider your research questions and thoughtfully set the remaining arguments before running the model.*     
+  
 ### model_type {#model}  
   
 This drop-down menu allows you to select which model you would like to run. CameraTrapDetectoR currently supports four different models. The **general** model predicts to the level of mammal, bird, human, and vehicle. The **family** model recognizes 33 unique taxonomic families listed in [Table 3](https://www.biorxiv.org/content/10.1101/2022.02.07.479461v1.full). The **species** model recognizes 75 unique taxonomic species listed in [Table 2] (https://www.biorxiv.org/content/10.1101/2022.02.07.479461v1.full). The **pig_only** model outputs only two labels: *pig*, *not pig*; this model was developed for applications to feral swine research.  
@@ -116,9 +118,11 @@ It is possible that predicted bounding boxes on the same image may overlap. Over
   
 ### overlap_threshold {#overlap_thresh}  
   
-If you use an overlap correction, this argument sets the proportion of overlapping area of two boxes for them to be returned as a single detection.   
-
+If you use an overlap correction, this argument sets the proportion of overlapping area of two boxes for them to be returned as a single detection. An optimal overlap threshold will depend on your research questions and your images. You may want to run a small sample through the model using different overlap thresholds to determine what threshold is best for your data. You can either type in your selection between 0 and 0.99, or click the arrows to toggle by increments of 0.01.      
+  
 ### return_data_frame  
+  
+The model returns a [prediction file](#output) as a .csv file in your [output folder](#outdir) named *model_predictions.csv* Even though you're running the model in R Shiny, you may want to review this output directly in R. If so, set this argument to **TRUE** and CameraTrapDetectoR will return a copy of your output directly in R as a data frame.     
 
 ### prediction_format  
   
@@ -134,7 +138,11 @@ If you use an overlap correction, this argument sets the proportion of overlappi
   
 ### lwd  
   
-### col  
+### col 
+
+## Output {#output}  
+  
+  
  
   
 

@@ -11,34 +11,34 @@ shinyServer(function(input, output) {
   
   # observe data_dir changes
   shiny::observe({
-    
-    if(identical(dirname_data_dir(), character(0))){
+
+    if(identical(dirname_data_dir(), character(0))==TRUE){
       textToRender <- "data_dir is the location of your images. Not yet selected"
     } else {
       textToRender <- dirname_data_dir()
     }
-    
+
     output$data_dir_Display <- shiny::renderText(textToRender)
-    
+
   })# end observe
-  
+
   # observe output_dir changes
   shiny::observe({
-    if(identical(dirname_output_dir(), character(0))){
+    if(identical(dirname_output_dir(), character(0)) == TRUE){
       textToRender <- "NULL"
     } else {
       textToRender <- dirname_output_dir()
     }
-    
+
     output$output_dir_Display <- shiny::renderText(textToRender)
-    
+
   })# end observe
   
   # render warnings and disable / enable Run model button
   shiny::observe({
     
     # data_dir warning / disable
-    if(identical(dirname_data_dir(), character(0))){
+    if(identical(dirname_data_dir(), character(0)) == TRUE){
       output$dataDirWarning <- shiny::renderText("You must select a path for data_dir.")
       shinyjs::disable("deploy_modelRun")
     } else {
@@ -46,7 +46,7 @@ shinyServer(function(input, output) {
     }
     
     # file extension warning / disable
-    if(is.null(input$file_extensions)){
+    if(is.null(input$file_extensions)==TRUE){
       output$fileExtensionWarning <- shiny::renderText("You must select at least one file extension.")
       shinyjs::disable("deploy_modelRun")
     } else {
@@ -54,8 +54,8 @@ shinyServer(function(input, output) {
     }
     
     # only enable run model button if required fields are provided
-    if(!identical(dirname_data_dir(), character(0)) && 
-       !is.null(input$file_extensions)){
+    if((identical(dirname_data_dir(), character(0)) == FALSE) && 
+       (is.null(input$file_extensions)==FALSE)) {
       output$allowedToDeployModel <- shiny::renderText("You have the necessary arguments to run the model.")
       shinyjs::enable("deploy_modelRun")
     } else {
@@ -68,14 +68,14 @@ shinyServer(function(input, output) {
   shiny::observe({
     
     # set data_dir to "NULL" if none selected
-    if(identical(dirname_data_dir(), character(0))){
+    if(identical(dirname_data_dir(), character(0)) == TRUE){
       data_dir <- "NULL"
     } else {
       data_dir <- paste0("'", dirname_data_dir(), "'")
     }
     
     # set output_dir to "NULL if none has been selected
-    if(identical(dirname_output_dir(), character(0))){
+    if(identical(dirname_output_dir(), character(0)) == TRUE){
       output_dir <- "NULL"
     } else {
       output_dir <- paste0("'", dirname_output_dir(), "'")
@@ -96,7 +96,7 @@ shinyServer(function(input, output) {
              "overlap_correction = ", input$overlap_correction, ", ",
              "overlap_threshold = ", input$overlap_threshold, ", ",
              "return_data_frame = ", input$return_data_frame, ", ",
-             "prediction_format = ", input$prediction_format, ", ",
+             "prediction_format = ", paste0("'", input$prediction_format, "'"),  ", ",
              "latitude = ", input$latitude, ", ",
              "longitude = ", input$longitude, ", ",
              "h = ", input$h, ", ",
@@ -112,10 +112,10 @@ shinyServer(function(input, output) {
   shiny::observeEvent(input$deploy_modelRun, { 
     
     # only run model if data_dir has been selected
-    if(!identical(dirname_data_dir(), character(0))){
+    if(identical(dirname_data_dir(), character(0)) == FALSE){
       
       # set output_dir to data_dir if none has been selected
-      if(identical(dirname_output_dir(), character(0))){
+      if(identical(dirname_output_dir(), character(0)) == TRUE){
         output_dir <- NULL
         output_dirText <- paste0("the most recent model_predictions folder in: ", 
                                  dirname_data_dir(), ". When this window closes model deployment is done and you can close the Shiny App window.
@@ -128,7 +128,7 @@ shinyServer(function(input, output) {
       }
       
       # let user know about predicted bounding boxes during deployment
-      if(as.logical(input$make_plots)){
+      if(input$make_plots == TRUE){
         additionalText <- paste0("During deployment, you can optionally view predicted bounding boxes as they are produced in ", output_dirText)
       } else {
         additionalText <- paste0("")
