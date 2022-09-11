@@ -126,20 +126,39 @@ The model returns a [prediction file](#output) as a .csv file in your [output fo
 
 ### prediction_format  
   
-### latitude  
-
-### longitude  
-
-### h  
-
-### w  
-
+Your model output file can be delivered in two different formats: **long** or **wide**. The long format file contains one row for each predicted class per image, with five columns:  
+ + **filename**: full pathway to to image  
+ + **prediction**: predicted model class  
+ + **confidence_in_pred**: confidence score for the prediction  
+ + **count**: number of individuals detected for the predicted class in an image  
+ + **certainty**: additional confidence measure with four possible values:  
+    - *no detection*: the model did not detect any objects in the image  
+    - *detection below score threshold*: the model made a prediction, but the confidence score was below your chosen [score threshold](#score). You may want to review this image manually, or lower your score threshold if many such predictions appear in your output.  
+    - *multiple predictions*: the model made multiple predictions above your set [score threshold](#score) for the object detected; the output only lists the prediction with the highest confidence score. You may want to review this image manually.  
+    - *single prediction*: this is the only prediction for the detected object above your score threshold.  
+  
+The wide format file contains one row for each image. The first column contains the full pathway to the image. The subsequent columns list all possible prediction classes from your chosen [model type](#model), including an **empty** column for no predictions. The value in each cell contains the number of individuals predicted for that class for that image. This format does not contain additional confidence information.     
+  
+### latitude & longitude  
+  
+You can filter predictions from the species model by location. If all your images originate from the same location, you can enter the latitude and longitude (in degrees) here to filter out species whose ranges do not include this location. If the model predicts a species non-existent at your location, CameraTrapDetectoR will review similar possible species to the prediction and make an adjusted prediction. If no similar species exist in the prediction classes, CameraTrapDetectoR will label this detection as "Animal". All images with this prediction should be manually reviewed.    
+  
+### h & w  
+  
+If you decide to [plot](#plots) your bounding boxes, CameraTrapDetectoR will automatically create image copies with the same dimensions as your original image. If you want to change those dimensions, enter pixel values for height and width in these arguments. Setting image dimensions to the model defaults, $h=307$ and $w=408$, may slightly improve model run time.  
+  
 ### lty  
+  
+If you decide to [plot](#plots) your bounding boxes, you can adjust the line type of the bounding boxes using this argument. It accepts intergers 1-6 corresponding to the following values: *1 = solid (default); 2 = dashed, 3 = dotted, 4 = dotdash, 5 = longdash, 6 = twodash*.  
   
 ### lwd  
   
-### col 
-
+If you decide to [plot](#plots) your bounding boxes, you can adjust the line thickness of the bounding boxes using this argument. It accepts numbers greater than 0; the default is 2.  
+  
+### col  
+  
+If you decide to [plot](#plots) your bounding boxes, you can adjust the line color of the bounding boxes using this argument. The drop-down argument provides various color options.  
+  
 ## Output {#output}  
   
   
