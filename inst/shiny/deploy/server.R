@@ -10,30 +10,30 @@ shinyServer(function(input, output) {
   dirname_output_dir <- shiny::reactive({shinyFiles::parseDirPath(volumes, input$output_dir)})
   
   # observe data_dir changes
-  # shiny::observe({
-  #   
-  #   if(identical(dirname_data_dir(), character(0))==TRUE){
-  #     textToRender <- "data_dir is the location of your images. Not yet selected"
-  #   } else {
-  #     textToRender <- dirname_data_dir()
-  #   }
-  #   
-  #   output$data_dir_Display <- shiny::renderText(textToRender)
-  #   
-  # })# end observe
-  # 
-  # # observe output_dir changes
-  # shiny::observe({
-  #   if(identical(dirname_output_dir(), character(0)) == TRUE){
-  #     textToRender <- "NULL"
-  #   } else {
-  #     textToRender <- dirname_output_dir()
-  #   }
-  #   
-  #   output$output_dir_Display <- shiny::renderText(textToRender)
-  #   
-  # })# end observe
-  
+  shiny::observe({
+
+    if(identical(dirname_data_dir(), character(0)) == TRUE){
+      textToRender <- "data_dir is the location of your images. Not yet selected"
+    } else {
+      textToRender <- dirname_data_dir()
+    }
+
+    output$data_dir_Display <- shiny::renderText(textToRender)
+
+  })# end observe
+
+  # observe output_dir changes
+  shiny::observe({
+    if(identical(dirname_output_dir(), character(0)) == TRUE){
+      textToRender <- "NULL"
+    } else {
+      textToRender <- dirname_output_dir()
+    }
+
+    output$output_dir_Display <- shiny::renderText(textToRender)
+
+  })# end observe
+
   # render warnings and disable / enable Run model button
   shiny::observe({
     
@@ -46,7 +46,7 @@ shinyServer(function(input, output) {
     }
     
     # file extension warning / disable
-    if(is.null(input$file_extensions)==TRUE){
+    if(is.null(input$file_extensions) == TRUE){
       output$fileExtensionWarning <- shiny::renderText("You must select at least one file extension.")
       shinyjs::disable("deploy_modelRun")
     } else {
