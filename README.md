@@ -47,7 +47,7 @@ predictions <- deploy_model(data_dir,
                             make_plots=TRUE, # this will plot the image and predicted bounding boxes
                             sample50 = TRUE) # this will cause the model to only work on 50 random images in your dataset. To do the whole dataset, set this to FALSE
 ```
-There are many more options for this function. Type `?deploy_model` or see the user manual for details. 
+There are many more options for this function. Type `?deploy_model`, or consult the [wiki](https://github.com/CameraTrapDetectoR/CameraTrapDetectoR/wiki/Function-Arguments) for details. 
 
 ## Deploy the Model in Shiny
 Copy + paste this code to the R console to launch the interactive app:
