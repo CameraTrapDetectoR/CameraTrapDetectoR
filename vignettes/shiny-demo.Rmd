@@ -161,7 +161,9 @@ If you decide to [plot](#plots) your bounding boxes, you can adjust the line col
   
 ## Output {#output}  
   
+We ran the [test images](https://github.com/CameraTrapDetectoR/CameraTrapDetectoR/blob/main/inst/extdata/test_images.zip) through the model with score threshold = 0.6 and no overlap correction. The left-hand image shows *model_predictions.csv* in wide format, showing only classes with non-zero predictions. The right-hand image shows *model_predictions.csv* in long format.  
   
- 
+![wide output](images/output_wide.png){width='45%'}
+![long output](images/output_long.png){width='45%'}  
   
 
