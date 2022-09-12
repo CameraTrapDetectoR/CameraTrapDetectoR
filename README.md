@@ -55,21 +55,13 @@ runShiny("deploy")
 This will launch a Shiny App on your computer. See the **Shiny Demo** vignette for a complete example on using the Shiny app. 
 
 
-
-\
-\
-
 ## Install from source
-#### If you could not install package from github, follow these instructions to install from source
-There is currently a problem in the Windows version of `install_github` that is creating this error when certain permissions are set on your machine. Hopefully it will be fixed soon. In the mantime, you can install from source by following the instructions below.
+If you could not install package from github, follow these instructions to install from source
 
-## Before attempting to install from source, you may want to try running these to lines to install instead
-
-
-## Download CameraTrapDetectoR
+### Download CameraTrapDetectoR
 This [link](https://github.com/CameraTrapDetectoR/CameraTrapDetectoR/blob/main/CameraTrapDetectoR_0.2.0.zip) holds the latest version of the package. DO NOT unzip this folder. 
 
-## Install dependencies
+### Install dependencies
 Copy this code and paste it into your console. It will install all necessary R packages
 ```
 install_dependencies <-function(packages=c('torchvision', 'torch', 'magick', 
@@ -92,14 +84,14 @@ install_dependencies <-function(packages=c('torchvision', 'torch', 'magick',
 install_dependencies()
 ```
 
-## Install CameraTrapDetectoR from source
+### Install CameraTrapDetectoR from source
 - In RStudio, Click on `Packages`, then click `Install` (just below and to the left of `Packages`)
 - In the install menu, click on the arrow by `Install From`
 - Click on `Package Achive File`
 - Click `Browse` and navigate to the zip file that you just downloaded. 
 - click `install`
 
-## Return to [Step 3](#step-3-load-this-library) above to use the package. 
+### Return to [Step 3](#step-3-load-this-library) above to use the package. 
 
 
 ## Citation
