@@ -31,7 +31,8 @@ The package downloads weights and model architecture of the large neural network
 ```
 options(timeout=200)
 ```  
-If you are connected to a VPN, you will probably need to disconnect in order to download model weights. Once model weights are downloaded, you can deploy the model while connected to VPN.    
+If you are connected to VPN, you may also try disconnecting from VPN while downloading model weights.  
+
 
 ## Step 4: Deploy the model (if you want to use the Shiny App, skip to Alternative Step 4)
 Deploy the model from the console with `deploy_model`
