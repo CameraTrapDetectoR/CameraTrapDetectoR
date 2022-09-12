@@ -1,41 +1,43 @@
-# CameraTrapDetectoR: Detect, classify, and count animals in camera trap images
+# CameraTrapDetectoR: Detect, classify, and count animals in camera trap images  
+
+Use deep learning computer vision models to automatically detect, count, and classify common North American domestic and wild species in camera trap images. CameraTrapDetectoR can be deployed as an R function or in an interactive Shiny application.  
+  
+Four types of models are available: a taxonomic class model that classifies objects as mammal or avian; a taxonomic family model that recognizes 31 mammal, avian, and reptile families; a pig-only model that recognizes wild pigs and classifies all other detections as not-pig; a species model that recognizes 75 unique domestic and wild species including all North American wild cat species, bear species, and Canid species. Each model also includes a category for vehicles and empty images.  
 
 \
 *Note: this package takes over development of previous github repository 'TabakM/CameraTrapDetectoR'. If you have downloaded the previous version of CameraTrapDetectoR, please uninstall and reinstall from this repository to stay connected with ongoing package developments.*  
   
-## Step 1: Install Microsoft Visual C++ and update R, if applicable
-Note: Microsoft Visual C++ step may no longer be necessary, <b>and it is only necessary on Windows Computers</b>. If you are willing to risk it, try skipping this step and reporting to us if you get unexpected errors when running `deploy_model` in step 4. \
-\
-You can [install Microsoft Visual C++ from here](https://docs.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170#visual-studio-2015-2017-2019-and-2022). It is free and allows the deep learning packages to work on Windows computers. It is installed like normal software, just follow the guidance in the prompts. \
-\
-You need to be running R version 4.1 or higher for this package to work. If you are unsure of your R version, type `R.Version()` into the console. Update if necessary.
 
-## Step 2: Install CameraTrapDetectoR
+
+## Install CameraTrapDetectoR
 
 Install devtools if you don't have it, then install CameraTrapDetectoR:  
 
 ```
-if (!require('devtools')) install.packages('devtools')  
-devtools::install_github("https://github.com/CameraTrapDetectoR/CameraTrapDetectoR.git")
+devtools::install_github("CameraTrapDetectoR/CameraTrapDetectoR")
 ```
 Agree to update all necessary packages. 
-If running the above command yields an error that looks like `Error: Failed to install 'CameraTrapDetectoR' from GitHub:
-  System command 'Rcmd.exe' failed, exit status: 1, stdout + stderr:`, there is a permissions issue on your machine that prevents installation directly from github. [See the instructions below for installing from source](#install-from-source).
 
-## Step 3: Load this library
+See the [Installation Guide](https://github.com/CameraTrapDetectoR/CameraTrapDetectoR/wiki/Installation) for more details.  
+  
+
+## Load the Package
 ```
 library(CameraTrapDetectoR)
 ```
   
-The package downloads weights and model architecture of the large neural network; if you are on a slow internet connection, you may need to modify your options. By default, R will timeout downloads at 60 seconds. Running the line below will increase the operation timeout (units are in seconds). Feel free to use a larger number than 200 if you are on a very slow connection.  
+The package downloads weights and model architecture of the large neural network; if you are on a slow internet connection, you may need to modify your options. By default, R will timeout downloads at 60 seconds. Running the line below will increase the operation timeout (units are in seconds). Feel free to use a larger number than 200 if you are on a very slow connection.
+
 ```
 options(timeout=200)
 ```  
 If you are connected to VPN, you may also try disconnecting from VPN while downloading model weights.  
 
 
-## Step 4: Deploy the model (if you want to use the Shiny App, skip to Alternative Step 4)
-Deploy the model from the console with `deploy_model`
+## Deploy the Model in Console  
+
+Deploy the model from the console with `deploy_model`. Here is a brief example:  
+  
 ```
 # specify the path to your images
 data_dir = "C:/Users/..." # if you don't know how to specify paths, use the shiny app below. 
@@ -45,14 +47,14 @@ predictions <- deploy_model(data_dir,
                             make_plots=TRUE, # this will plot the image and predicted bounding boxes
                             sample50 = TRUE) # this will cause the model to only work on 50 random images in your dataset. To do the whole dataset, set this to FALSE
 ```
-There are many more options for this function. Type `?deploy_model` or see the user manual for details. 
+There are many more options for this function. Type `?deploy_model`, see the user manual, or consult the [wiki](https://github.com/CameraTrapDetectoR/CameraTrapDetectoR/wiki/Function-Arguments) for details. 
 
-## Alternative Step 4: Deploy using the Shiny App  
-Copy + paste this code to the console.
+## Deploy the Model in Shiny
+Copy + paste this code to the R console to launch the interactive app:
 ```
 runShiny("deploy")
 ```
-This will launch a Shiny App on your computer. See the **Shiny Demo** vignette for a complete example on using the Shiny app. 
+This will launch a Shiny App on your computer. See the **Shiny Demo** vignette or the [wiki](https://github.com/CameraTrapDetectoR/CameraTrapDetectoR/wiki/Shiny-Tutorial) for a complete example on using the Shiny app. 
 
 
 ## Install from source
@@ -90,8 +92,6 @@ install_dependencies()
 - Click on `Package Achive File`
 - Click `Browse` and navigate to the zip file that you just downloaded. 
 - click `install`
-
-### Return to [Step 3](#step-3-load-this-library) above to use the package. 
 
 
 ## Citation
