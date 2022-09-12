@@ -1,28 +1,25 @@
 #' This function will download files necessary to run the model and store them in the package space
 #' 
 #' @param url location of file to download
-#' @param redownload boolean. Re-download the file?
 #' 
 #' @import rappdirs
 #' @import fs
 #' 
 #' @export
 #' 
-download_cache <- function(url = "https://www.dropbox.com/s/m4ojnotd2pev46u/weights_family_cpu.pth?raw=1",
-                           redownload = FALSE){
-  # AB : set redownload = TRUE so newest weights are always loaded?
-  
+download_cache <- function(url = "https://github.com/CameraTrapDetectoR/CameraTrapDetectoR/raw/main/inst/weights/fasterrcnnArch_33classes.pt")
+  {
+
   # set destination
-  #destination <- system.file(path2store, package="CameraTrapDetectoR")
   cache_path <- rappdirs::user_cache_dir("CameraTrapDetector")
-  
   fs::dir_create(cache_path)
-  # create a file path to save. Need to remove the raw part
-  path <- file.path(cache_path, gsub("\\?raw=1", "", fs::path_file(url)))
   
-  if (!file.exists(path) || redownload){
-    cat(paste0("downloading ", gsub("\\?raw=1", "", fs::path_file(url)), " file\n"))
-    utils::download.file(url, path, mode = "wb")
-  }
+  # create a file path
+  path <- file.path(cache_path, fs::path_file(url))
+  
+  # download file
+  cat(paste0("downloading ", fs::path_file(url)), " file\n")
+  utils::download.file(url, path, mode = "wb")
+
   return(path)
 }
