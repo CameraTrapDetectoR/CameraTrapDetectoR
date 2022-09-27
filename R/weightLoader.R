@@ -18,7 +18,7 @@ weightLoader <- function(
   if(model_type == 'pig_only'){
     # load weights
     # AB : use relabeled family weights until we can retrain pig-only model
-    path2weights <- download_cache(url="https://github.com/CameraTrapDetectoR/CameraTrapDetectoR/raw/main/inst/weights/weights_family_20220308_cpu.pth")
+    path2weights <- download_cache(url="https://github.com/CameraTrapDetectoR/CameraTrapDetectoR/raw/main/inst/weights/weights_family_cpu.pth")
     state_dict <- torch::load_state_dict(path2weights)
     
     # load model architecture
@@ -31,7 +31,7 @@ weightLoader <- function(
   }
   if(model_type == "general"){
     # load weights
-    path2weights <- download_cache(url="https://github.com/CameraTrapDetectoR/CameraTrapDetectoR/raw/main/inst/weights/weights_general_20220124_cpu.pth")
+    path2weights <- download_cache(url="https://github.com/CameraTrapDetectoR/CameraTrapDetectoR/raw/main/inst/weights/weights_general_cpu.pth")
     state_dict <- torch::load_state_dict(path2weights)
 
     # load model architecture
@@ -42,7 +42,7 @@ weightLoader <- function(
   }
   if(model_type == "species"){
     # load weights
-    path2weights <- download_cache(url="https://github.com/CameraTrapDetectoR/CameraTrapDetectoR/raw/main/inst/weights/weights_species_20220126_cpu.pth")
+    path2weights <- download_cache(url="https://github.com/CameraTrapDetectoR/CameraTrapDetectoR/raw/main/inst/weights/weights_species_cpu.pth")
     state_dict <- torch::load_state_dict(path2weights)
     
     # load model architecture
