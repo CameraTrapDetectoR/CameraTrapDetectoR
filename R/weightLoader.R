@@ -21,12 +21,12 @@ weightLoader <- function(
   if(model_type == 'pig_only'){
     # load weights
     # AB : use relabeled family weights until we can retrain pig-only model
-    path2weights <- download_cache(url="https://github.com/CameraTrapDetectoR/CameraTrapDetectoR/raw/main/inst/weights/weights_family_cpu.pth")
+    path2weights <- download_cache(url="https://www.dropbox.com/s/ap2pbut2eycibw0/weights_family_cpu.pth?dl=0")
     state_dict <- torch::load_state_dict(path2weights)
     
     # load model architecture
     # AB : use family classifications until pig model can be retrained
-    arch_path <- download_cache(url="https://github.com/CameraTrapDetectoR/CameraTrapDetectoR/raw/main/inst/weights/fasterrcnnArch_33classes.pt")
+    arch_path <- download_cache(url="https://www.dropbox.com/s/2ny0372ug7o7c1z/fasterrcnnArch_33classes.pt?dl=0")
     
     # initiate the model
     model <- torch::jit_load(arch_path)
@@ -34,22 +34,22 @@ weightLoader <- function(
   }
   if(model_type == "general"){
     # load weights
-    path2weights <- download_cache(url="https://github.com/CameraTrapDetectoR/CameraTrapDetectoR/raw/main/inst/weights/weights_general_cpu.pth")
+    path2weights <- download_cache(url="https://www.dropbox.com/s/nrlj0at6qq9p92b/weights_general_cpu.pth?dl=0")
     state_dict <- torch::load_state_dict(path2weights)
 
     # load model architecture
-    arch_path <- download_cache(url="https://github.com/CameraTrapDetectoR/CameraTrapDetectoR/raw/main/inst/weights/fasterrcnnArch_5classes.pt")
+    arch_path <- download_cache(url="https://www.dropbox.com/s/ch7g81go4r1gr6p/fasterrcnnArch_5classes.pt?dl=0")
     model <- torch::jit_load(arch_path)
     
     model$load_state_dict(state_dict)
   }
   if(model_type == "species"){
     # load weights
-    path2weights <- download_cache(url="https://github.com/CameraTrapDetectoR/CameraTrapDetectoR/raw/main/inst/weights/weights_species_cpu.pth")
+    path2weights <- download_cache(url="https://www.dropbox.com/s/hh72h5zzujsqzdz/weights_species_cpu.pth?dl=0")
     state_dict <- torch::load_state_dict(path2weights)
     
     # load model architecture
-    arch_path <- download_cache(url="https://github.com/CameraTrapDetectoR/CameraTrapDetectoR/raw/main/inst/weights/fasterrcnnArch_77classes.pt")
+    arch_path <- download_cache(url="https://www.dropbox.com/s/n0wbrx37w9bzddm/fasterrcnnArch_77classes.pt?dl=0")
     
     # initiate the model
     model <- torch::jit_load(arch_path)
@@ -57,11 +57,11 @@ weightLoader <- function(
   }
   if(model_type == "family"){
     # load weights
-    path2weights <- download_cache(url="https://github.com/CameraTrapDetectoR/CameraTrapDetectoR/raw/main/inst/weights/weights_family_cpu.pth")
+    path2weights <- download_cache(url="https://www.dropbox.com/s/ap2pbut2eycibw0/weights_family_cpu.pth?dl=0")
     state_dict <- torch::load_state_dict(path2weights)
     
     # load model architecture
-    arch_path <- download_cache(url="https://github.com/CameraTrapDetectoR/CameraTrapDetectoR/raw/main/inst/weights/fasterrcnnArch_33classes.pt")
+    arch_path <- download_cache(url="https://www.dropbox.com/s/2ny0372ug7o7c1z/fasterrcnnArch_33classes.pt?dl=0")
     model <- torch::jit_load(arch_path)
     
     # initiate the model
