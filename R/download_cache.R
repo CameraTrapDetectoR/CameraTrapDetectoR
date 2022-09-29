@@ -7,7 +7,7 @@
 #' 
 #' @export
 #' 
-download_cache <- function(url = "https://github.com/CameraTrapDetectoR/CameraTrapDetectoR/raw/main/inst/weights/fasterrcnnArch_33classes.pt")
+download_cache <- function(url = "https://www.dropbox.com/s/ap2pbut2eycibw0/weights_family_cpu.pth?dl=0")
   {
 
   # set destination
@@ -15,11 +15,14 @@ download_cache <- function(url = "https://github.com/CameraTrapDetectoR/CameraTr
   fs::dir_create(cache_path)
   
   # create a file path
-  path <- file.path(cache_path, fs::path_file(url))
+  path <- file.path(cache_path, gsub("\\?dl=0", "", fs::path_file(url)))
   
-  # download file
-  cat(paste0("downloading ", fs::path_file(url)), " file\n")
-  utils::download.file(url, path, mode = "wb")
+  # download file if it doesn't already exist:
+  if (!file.exists(path)) {
+    cat(paste0("downloading ", fs::path_file(url)), " file\n")
+    utils::download.file(url, path, mode = "wb")
+  }
+
 
   return(path)
 }
