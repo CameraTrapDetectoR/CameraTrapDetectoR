@@ -1,6 +1,6 @@
 # CameraTrapDetectoR: Detect, classify, and count animals in camera trap images  
 
-Use deep learning computer vision models to automatically detect, count, and classify common North American domestic and wild species in camera trap images. CameraTrapDetectoR can be deployed as an R function or in an interactive Shiny application.  
+Use deep learning computer vision models to automatically detect, count, and classify common North American domestic and wild species in camera trap images. CameraTrapDetectoR can be deployed as a R function or in an interactive Shiny application.  
   
 Four types of models are available: a taxonomic class model that classifies objects as mammal or avian; a taxonomic family model that recognizes 31 mammal, avian, and reptile families; a pig-only model that recognizes wild pigs and classifies all other detections as not-pig; a species model that recognizes 75 unique domestic and wild species including all North American wild cat species, bear species, and Canid species. Each model also includes a category for vehicles and empty images.  
 
