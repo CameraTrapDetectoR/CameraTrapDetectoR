@@ -57,7 +57,7 @@ weightLoader <- function(
   }
   if(model_type == "family"){
     # load weights
-    path2weights <- download_cache(url="https://github.com/CameraTrapDetectoR/CameraTrapDetectoR/raw/main/inst/weights/weights_family_20220308_cpu.pth")
+    path2weights <- download_cache(url="https://github.com/CameraTrapDetectoR/CameraTrapDetectoR/raw/main/inst/weights/weights_family_cpu.pth")
     state_dict <- torch::load_state_dict(path2weights)
     
     # load model architecture
