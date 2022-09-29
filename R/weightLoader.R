@@ -2,6 +2,9 @@
 #' 
 #' @param model_type The type of model: general, family, species, or pig-only.  
 #' @param num_classes The number of classes in the model
+#' 
+#' @details Keep model weight names generic by model type so latest weights will automatically be downloaded
+#' 
 #' @return model weights
 #' 
 #' @export
