@@ -4,7 +4,6 @@
 #' 
 #' @import rappdirs
 #' @import fs
-#' @import dotenv
 #' @import googledrive
 #' 
 #' @export
@@ -19,11 +18,11 @@ download_cache <- function(name = "weights_family_cpu.pth")
   # create a file path
   path <- file.path(cache_path, fs::path_file(name))
   
-  # access the model weights/architecture on Google drive
-  dotenv::load_dot_env()
-  googledrive::drive_auth_configure(api_key = Sys.getenv("API_KEY"))
+  # access the model weights/architecture files
+  k <- "AIzaSyDa8EhMBeMQnY1SUN6ZFXA383ekzROMu-E"
+  googledrive::drive_auth_configure(api_key = k)
   
-  # download file; overwrite any existing version in case weights have been updated:
+  # download selected file; overwrite any existing version in case weights have been updated
   cat(paste0("downloading ", fs::path_file(name)), " file\n")
   googledrive::drive_download(name, path=path, overwrite = TRUE)
 
