@@ -20,7 +20,7 @@ download_cache <- function(name = "weights_family_cpu.pth")
   path <- file.path(cache_path, fs::path_file(name))
   
   # access the model weights/architecture files
-  s_path <- file.path(.libPaths(), "CameraTrapDetectoR/extdata/model-wts-svc-acct.json")   # access service acct credentials
+  s_path <- file.path(.libPaths()[1], "CameraTrapDetectoR/wts/model-wts-svc-acct.json")   # access service acct credentials
   googledrive::drive_auth(path = s_path)
   
   # download selected file; overwrite any existing version in case weights have been updated
