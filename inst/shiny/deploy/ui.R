@@ -21,6 +21,11 @@ shinyUI(fluidPage(
                          choices = c("general", "species", "family", "pig_only")),
       shinyBS::bsTooltip("model_type", "This defines how you want to ID animals, generally (to class), to species, to family, or to pig_only",
                          placement = "top"),
+      ## redownload
+      shiny::selectInput("redownload", "redownload", 
+                         choices = c(TRUE, FALSE)),
+      shinyBS::bsTooltip("redownload", "Do you want to download the latest model weights and architecture?", 
+                         placement = "top"),
       
       ## recursive
       shiny::selectInput("recursive", "recursive", 
@@ -160,6 +165,7 @@ shinyUI(fluidPage(
                The `species` model recognizes 77 species. 
                The `family` model recognizes 33 families. 
                The `pig_only` model recognizes only pigs."),
+      shiny::p(strong("redownload : "),"	 TRUE/FALSE. Do you want to download the latest model weights?"),
       shiny::p(strong("recursive : "),"	 TRUE/FALSE. Do you have images in subfolders within your data_dir that you want to analyze?"),
       shiny::p(strong("file_extensions : " ),"	Types of images accepted by the model. Select all options represented in your data_dir."),
       shiny::p(strong("make_plots : "),"	TRUE/FALSE. Do you want to make copies of your images with bounding boxes plotted on them?"),
