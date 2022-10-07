@@ -31,7 +31,7 @@ The package downloads weights and model architecture of the large neural network
 ```
 options(timeout=200)
 ```  
-If you are connected to VPN, you may also try disconnecting from VPN while downloading model weights.  
+You may also need to disconnect from VPN while downloading model weights.  
 
 
 ## Deploy the Model in Console  
