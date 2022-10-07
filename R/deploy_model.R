@@ -33,6 +33,8 @@
 #'  The `species` model recognizes 77 species. 
 #'  The `family` model recognizes 33 families.
 #'  The `pig_only` model recognizes only pigs.
+#' @param redownload boolean. Set to TRUE if you want to download the latest model weights; 
+#' this may only be possible while disconnected from VPN.
 #' @param file_extensions The types of extensions on your image files. Default 
 #'  is c(".jpg", ".JPG")
 #' @param make_plots boolean. Do you want to make plots of the images with
@@ -84,6 +86,7 @@ deploy_model <- function(
     data_dir = NULL,
     model_type = 'general',
     recursive = TRUE,
+    redownload = TRUE,
     file_extensions = c(".jpg", ".JPG"),
     make_plots = TRUE,
     plot_label = TRUE,
@@ -216,7 +219,7 @@ deploy_model <- function(
   
   # load model 
   cat("\nLoading model architecture and weights. If this is your first time deploying a model on this computer, this step can take a few minutes. \n")
-  model <- weightLoader(model_type, num_classes = nrow(label_encoder))
+  model <- weightLoader(model_type, num_classes = nrow(label_encoder), redownload=redownload)
   model$eval()
   
   # load inputs

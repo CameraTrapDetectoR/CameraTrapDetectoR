@@ -9,7 +9,7 @@
 #' 
 #' @export
 #' 
-download_cache <- function(name = "weights_family_cpu.pth")
+download_cache <- function(name = "weights_family_cpu.pth", redownload = TRUE)
   {
 
   # set cache destination
@@ -19,13 +19,18 @@ download_cache <- function(name = "weights_family_cpu.pth")
   # create a file path
   path <- file.path(cache_path, fs::path_file(name))
   
-  # access the model weights/architecture files
-  s_path <- file.path(.libPaths()[1], "CameraTrapDetectoR/wts/model-wts-svc-acct.json")   # access service acct credentials
-  googledrive::drive_auth(path = s_path)
-  
-  # download selected file; overwrite any existing version in case weights have been updated
-  cat(paste0("downloading ", fs::path_file(name)), " file\n")
-  googledrive::drive_download(name, path=path, overwrite = TRUE)
+  if (!file.exists(path) | redownload==TRUE){
+    
+    # access the model weights/architecture files
+    s_path <- file.path(.libPaths()[1], "CameraTrapDetectoR/wts/model-wts-svc-acct.json")   # access service acct credentials
+    googledrive::drive_auth(path = s_path)
+    
+    # download selected file; overwrite any existing version in case weights have been updated
+    cat(paste0("downloading ", fs::path_file(name)), " file\n")
+    googledrive::drive_download(name, path=path, overwrite = TRUE)
+    
+  }
+
 
   return(path)
 }
