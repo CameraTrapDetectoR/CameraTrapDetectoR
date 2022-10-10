@@ -31,6 +31,7 @@ The package downloads weights and model architecture of the large neural network
 ```
 options(timeout=200)
 ```  
+
 You may also need to disconnect from VPN while downloading model weights.  
 
 
