@@ -107,7 +107,7 @@ Or\
 	year = {2022},
 	doi = {10.1101/2022.02.07.479461},
 	publisher = {Cold Spring Harbor Laboratory},,
-	URL = {https://www.biorxiv.org/content/early/2022/02/09/2022.02.07.479461},
-	eprint = {https://www.biorxiv.org/content/early/2022/02/09/2022.02.07.479461.full.pdf},
+	URL = {https://www.biorxiv.org/content/10.1101/2022.02.07.479461v1},
+	eprint = {https://www.biorxiv.org/content/10.1101/2022.02.07.479461v1.full.pdf},
 	journal = {bioRxiv}
 }
