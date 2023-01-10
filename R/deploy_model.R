@@ -381,7 +381,7 @@ deploy_model <- function(
   
   
   #-- Make output df
-  df_out <- write_output(full_df, predictions_list, prediction_format)
+  df_out <- write_output(full_df, file_list, prediction_format, label_encoder)
   
   #---- Write Files ----
   

@@ -2,14 +2,16 @@
 #' 
 #' @details Finalize model predictions in df and csv output
 #' 
-#' @import exifr
-#' 
 #' @param full_df
 #' @param prediction_format
 #' @param file_list
-
-
-write_output <- function(full_df, file_list, prediction_format) {
+#' @param label_encoder
+#' 
+#' @import exifr
+#' @import lubridate
+#' 
+#' @export
+write_output <- function(full_df, file_list, prediction_format, label_encoder) {
 
   #-- Make Predictions Dataframe
   
@@ -103,8 +105,40 @@ write_output <- function(full_df, file_list, prediction_format) {
     
     df_long <-full_df_cnt[order(full_df_cnt$filename,full_df_cnt$prediction),]
     
+    # Add timestamp data if available
+    
+    # create holder df
+    dat_names <- c("filename", "timestamp")
+    df_dat <- data.frame(matrix(nrow = length(file_list), ncol = length(dat_names)))
+    colnames(df_dat) <- dat_names
+    
+    # loop through image exif files and extract timestamps
+    for(i in 1:length(file_list)){
+      
+      # set filepath
+      path <- file_list[i]
+      df_dat$filename[i] <- path
+      
+      # read in exif data
+      exif_dat <- exifr::read_exif(path)
+      
+      # Search columns for original datetime
+      if("DateTimeOriginal" %in% colnames(exif_dat)){
+        df_dat$timestamp[i] <- lubridate::as_datetime(exif_dat$DateTimeOriginal)
+      }
+      else if("CreateDate" %in% colnames(exif_dat)){
+        df_dat$timestamp[i] <- lubridate::as_datetime(exif_dat$CreateDate)
+      }
+      else {
+        df_dat$timestamp[i] <- NA
+      }
+    }
+    
+    # join timestamp data to df
+    df_long <- dplyr::left_join(df_long, df_dat, by = "filename")
+    
     # save df as output
-    df_out <- df_wide
+    df_out <- df_long
   }
   
   # return data frame
