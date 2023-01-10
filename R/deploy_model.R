@@ -381,12 +381,12 @@ deploy_model <- function(
   
   
   #-- Make output df
-  df_out <- write_output(full_df, file_list, prediction_format, label_encoder)
+  df_out <- write_output(full_df, prediction_format, label_encoder)
   
   #---- Write Files ----
   
   # Write Model Predictions
-  utils::write.csv(df_long, file.path(output_dir, 'model_predictions.csv'), row.names=FALSE)
+  utils::write.csv(df_out, file.path(output_dir, 'model_predictions.csv'), row.names=FALSE)
   
   cat(paste0("\nOutput can be found at: \n", normalizePath(output_dir), "\n",
              "The number of animals predicted in each category in each image is in the file model_predictions.csv\n"))
