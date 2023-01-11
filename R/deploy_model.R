@@ -197,7 +197,7 @@ deploy_model <- function(
   }
   if(model_type == "species"){
     # run target2label.values() in python to get this list, but empty will be at the end
-    categories <- c('empty','American_Badger', 'American_Black_Bear', 'American_Crow', 'American_Marten', 'American_Mink', 'squirrel_spp', 'American_Robin', 'Arctic_Fox', 'Wolf', 'Owl', 'Bighorn_Sheep', 'Jackrabbit', 'Prairie_Dog', 'Vulture', 'Grackle', 'Bobcat', 'Quail', 'Canada_Lynx', 'Caribou', 'Red_Fox', 'Egret', 'Chipmunk', "Clark's_Nutcracker", 'Collared_Peccary', 'Common_Raccoon', 'Common_Raven', 'Cottontail_Rabbit', 'Coyote', 'Domestic_Cat', 'Domestic_Chicken', 'Domestic_Cow', 'Domestic_Dog', 'Domestic_Donkey', 'Domestic_Goat', 'Domestic_Sheep', 'Dove', 'Dusky_Grouse', 'Spotted_Skunk', 'Golden_Eagle', 'Gray_Fox', 'Gray_Jay', 'Heron', 'Grizzly_Bear', 'Horse', 'Human', 'Iguana', 'Jaguar', 'Jaguarundi', 'Margay', 'Moose', 'Mountain_Lion', 'Mouse_Rat', 'Mule_Deer', 'Nilgai', 'Nine-Banded_Armadillo', 'North American Beaver', 'North_American_Porcupine', 'Ocelot', 'Polar_Bear', 'Prairie_Chicken', 'Pronghorn', 'River_Otter', 'Rocky_Mountain_Elk', 'Ruffed_Grouse', 'Snowshoe_Hare', "Steller's_Jay", 'Striped_Skunk', 'Vehicle', 'Virginia_Opossum', 'White-nosed_Coati', 'White-Tailed_Deer', 'Wild_Pig', 'Wild_Turkey', 'Wolverine', 'Woodchuck', 'Yellow-Bellied_Marmot')
+    categories <- c('empty', 'squirrel_spp', 'American_Badger', 'American_Black_Bear', 'American_Crow', 'American_Marten', 'American_Mink', 'American_Robin', 'Arctic_Fox', 'Wolf', 'Owl', 'Bighorn_Sheep', 'Vulture', 'Jackrabbit', 'Prairie_Dog', 'Grackle', 'Bobcat', 'Quail', 'Canada_Lynx', 'Red_Fox', 'Chipmunk', 'Collared_Peccary', 'Common_Raccoon', 'Common_Raven', 'Cottontail_Rabbit', 'Coyote', 'Domestic_Cat', 'Domestic_Chicken', 'Domestic_Cow', 'Domestic_Dog', 'Domestic_Donkey', 'Domestic_Goat', 'Domestic_Sheep', 'Dove', 'Dusky_Grouse', 'Fisher', 'Golden_Eagle', 'Gray_Fox', 'Gray_Jay', 'Grizzly_Bear', 'Horse', 'Human', 'Iguana', 'Jaguar', 'Jaguarundi', 'Margay', 'Moose', 'Mountain_Lion', 'Mouse_Rat', 'Mule_Deer', 'Nilgai', 'Nine-Banded_Armadillo', 'North American Beaver', 'North_American_Porcupine', 'Ocelot', 'Polar_Bear', 'Prairie_Chicken', 'Pronghorn', 'River_Otter', 'Rocky_Mountain_Elk', 'Ruffed_Grouse', 'Snowshoe_Hare', "Steller's_Jay", 'Striped_Skunk', 'Vehicle', 'Virginia_Opossum', 'White-nosed_Coati', 'White-Tailed_Deer', 'Wild_Pig', 'Wild_Turkey', 'Wolverine', 'Woodchuck', 'Yellow-Bellied_Marmot')
     # remove special characters
     categories <- gsub("'", "", categories)
     categories <- gsub(" ", "_", categories)
@@ -380,106 +380,13 @@ deploy_model <- function(
   full_df <- apply_score_threshold(full_df, file_list, score_threshold)
   
   
-  #-- Make Predictions Dataframe
-  
-  # make wide format prediction file
-  if(prediction_format=="wide"){
-    
-    # get just the cross table
-    tbl1 <- as.data.frame.matrix(table(full_df[,c("filename", "prediction")]))
-    df_out <- data.frame('filename' = rownames((tbl1)),
-                         tbl1)
-    
-    # rownames are filenames; replace with numbers (only if there are actually some images)
-    if(nrow(df_out) > 0){
-      rownames(df_out) <- 1:nrow(df_out)
-    }
-    
-    # add column names for species not found in any images in the dataset
-    cols_df <- colnames(df_out)
-    all_categories <- c(label_encoder$label, 'image_error')
-    not_pred_in_any <- setdiff(all_categories, cols_df) # categories not predicted to be in any image
-    # remove background, I don't need a column for this because I have "empty"
-    not_pred_in_any <- not_pred_in_any[!(not_pred_in_any %in% "background")]
-    # make these into a dataframe that I can add to df_out
-    not_pred_df <- data.frame(matrix(0, ncol=length(not_pred_in_any), nrow=nrow(df_out)))
-    colnames(not_pred_df) <- not_pred_in_any
-    # add these columns to df_out
-    df_out <- data.frame(df_out, not_pred_df)
-    
-    # re-arrange columns of df_out
-    cols_wanted0 <- label_encoder$label[!(label_encoder$label %in% "background")]
-    # if there are images with errors, include a column for this
-    if("image_error" %in% colnames(tbl1)){
-      cols_wanted <- c("filename", cols_wanted0, 'image_error')
-    }else{
-      cols_wanted <- c("filename", cols_wanted0)
-    }
-    
-    df_out <- df_out[cols_wanted]
-    
-    # find values of file_list that are not in df_out. These are empty files, add them to df_out
-    file_names_to_add <- setdiff(normalizePath(file_list), df_out$filename)
-    if(length(file_names_to_add) > 0){
-      df_add <- data.frame('filename' = file_names_to_add, 
-                           # matrrix of 0s to match df_out
-                           matrix(0, length(file_names_to_add), (ncol(df_out) -1))
-      )
-      colnames(df_add) <- colnames(df_out)
-      # assign these rows as empty
-      df_add$empty <- rep(1, length(file_names_to_add))
-      # add this df to df_out
-      df_out <- rbind(df_out, df_add)
-      
-      # sort the dataframe, so that it matches the order of images (and of plots made by this package)
-      df_out <- df_out[order(df_out$filename), ]
-    }
-  }
-  
-  # make long format prediction file
-  if(prediction_format=="long"){
-    
-    # add certainty measures
-    full_df$certainty <- "single_prediction"
-    
-    # if number of predictions is > 1 indicate that there are multiple predictions
-    full_df[full_df$number_predictions>1,"certainty"] <-"multiple_predictions"
-    
-    # if model did not detect object
-    full_df[full_df$prediction=="empty","certainty"] <-"no_detection"
-    
-    full_df[full_df$prediction=="empty" & full_df$confidence_in_pred<1,"certainty"] <-"detections_below_score_threshold"
-    
-    min.vals<-stats::aggregate(confidence_in_pred~filename+prediction+certainty,
-                        data=full_df[full_df$certainty!="detections_below_score_threshold",],
-                        FUN=min)
-    
-    cnt.val<-stats::aggregate(number_predictions~filename+prediction+certainty,
-                       data=full_df[full_df$certainty!="detections_below_score_threshold",],
-                       FUN=length)  
-    
-    det_df<-cbind.data.frame(min.vals,number_predictions=cnt.val[,"number_predictions"])
-    det_df<-det_df[,colnames(full_df)]
-    
-    full_df_cnt<-rbind.data.frame(det_df, full_df[full_df$certainty=="detections_below_score_threshold",])
-    colnames(full_df_cnt) <- c("filename","prediction","confidence_in_pred","count","certainty")
-    
-    # assign zero to counts if empty
-    full_df_cnt[full_df_cnt$prediction=="empty","count"]<-0
-    
-    full_df_cnt<-full_df_cnt[order(full_df_cnt$filename,full_df_cnt$prediction),]
-  }
-  
+  #-- Make output df
+  df_out <- write_output(full_df, prediction_format, label_encoder)
   
   #---- Write Files ----
   
   # Write Model Predictions
-  if(prediction_format=="wide"){
-    utils::write.csv(df_out, file.path(output_dir, 'model_predictions.csv'), row.names=FALSE)
-  }
-  if(prediction_format=="long"){
-    utils::write.csv(full_df_cnt, file.path(output_dir, 'model_predictions.csv'), row.names=FALSE)
-  }
+  utils::write.csv(df_out, file.path(output_dir, 'model_predictions.csv'), row.names=FALSE)
   
   cat(paste0("\nOutput can be found at: \n", normalizePath(output_dir), "\n",
              "The number of animals predicted in each category in each image is in the file model_predictions.csv\n"))
@@ -528,9 +435,8 @@ deploy_model <- function(
   print(arguments)
   sink()
   
-  # return data frame
   if(return_data_frame){
-    if(prediction_format=="long"){return(full_df_cnt)}
-    if(prediction_format=="wide"){return(df_out)}
+    return(df_out)
   }
+
 }

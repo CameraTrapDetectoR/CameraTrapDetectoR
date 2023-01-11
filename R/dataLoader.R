@@ -2,7 +2,7 @@
 #'
 #' @param h image height after resizing. Recommend not changing this
 #' @param w image width after resizing. Recommend not changing this
-#' @param file_list passed from deploy fuction
+#' @param file_list passed from deploy function
 #' @param index i value from deploy function
 #' @return loads data from user input and transforms it into tensors to pass to the model
 #' 
