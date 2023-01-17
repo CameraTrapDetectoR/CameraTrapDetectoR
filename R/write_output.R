@@ -4,11 +4,9 @@
 #' 
 #' @param full_df
 #' @param prediction_format
-#' @param file_list
 #' @param label_encoder
 #' 
 #' @import exifr
-#' @import lubridate
 #' 
 #' @export
 write_output <- function(full_df, prediction_format, label_encoder) {
