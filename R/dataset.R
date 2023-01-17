@@ -3,14 +3,14 @@
 #' @param data_dir data directory
 #' @param recursive boolean
 #' @param file_extensions file extensions
-#' @param labeled boolean. not functional yet
+#' 
 #' @return dataset for reading into model
 #' 
 #' @export
 dataset <- function(data_dir,
                     recursive = TRUE,
-                    file_extensions = c(".jpg", ".JPG"),
-                    labeled = FALSE){
+                    file_extensions = c(".jpg", ".JPG"))
+  {
   
   # check that datadir exists
   if(!dir.exists(data_dir)){
