@@ -69,7 +69,6 @@
 #' @param lty line type for bbox plot. See \code{?plot} for details
 #' @param lwd line width for bbox plot. See \code{?plot} for details
 #' @param col line color for bbox plot. See \code{?plot} for details
-#' @param return_data_frame boolean. Do you want a dataframe returned
 #' @return Returns a dataframe of predictions for each file. The rows in this 
 #'  dataframe are the file names in your `data_dir`; the columns are the categories
 #'  in the model. If any of your images were not loaded properly, there will be a 
@@ -96,8 +95,7 @@ deploy_model <- function(
     overlap_correction = TRUE,
     overlap_threshold = 0.9,
     score_threshold = 0.6,
-    return_data_frame = TRUE,
-    prediction_format = "wide",
+    prediction_format = "long",
     latitude = NA,
     longitude = NA,
     h=307,
@@ -435,8 +433,7 @@ deploy_model <- function(
   print(arguments)
   sink()
   
-  if(return_data_frame){
-    return(df_out)
-  }
+  # return output dataframe
+  return(df_out)
 
 }
