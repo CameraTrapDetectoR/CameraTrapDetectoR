@@ -5,7 +5,7 @@
 #' @param full_df
 #' @param prediction_format
 #' @param label_encoder
-#' 
+#'
 #' @import exifr
 #' 
 #' @export
