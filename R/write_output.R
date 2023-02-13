@@ -2,9 +2,9 @@
 #' 
 #' @details Finalize model predictions in df and csv output
 #' 
-#' @param full_df
-#' @param prediction_format
-#' @param label_encoder
+#' @param full_df prediction output
+#' @param prediction_format wide or long
+#' @param label_encoder class label dict
 #'
 #' @import exifr
 #' 
