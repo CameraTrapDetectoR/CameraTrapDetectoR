@@ -209,6 +209,34 @@ deploy_model <- function(
                                'encoder' = 0:(length(categories)-1))
   }
   
+  # Write Arguments to File
+  arguments <- list (
+    data_dir = normalizePath(data_dir),
+    model_type = model_type,
+    recursive = recursive,
+    file_extensions = file_extensions,
+    make_plots = make_plots,
+    plot_label = plot_label,
+    output_dir = normalizePath(output_dir),
+    sample50 = sample50, 
+    write_bbox_csv = write_bbox_csv, 
+    overlap_correction = overlap_correction,
+    overlap_threshold = overlap_threshold,
+    score_threshold = score_threshold,
+    prediction_format = prediction_format,
+    latitude = latitude,
+    longitude = longitude,
+    h=h,
+    w=w,
+    lty=lty,
+    lwd=lwd, 
+    col=col
+  )
+  # write file
+  #lapply(arguments, cat, "\n", file=file.path(output_dir, "arguments.txt"), append=TRUE)
+  sink(file.path(output_dir, "arguments.txt"))
+  print(arguments)
+  sink()
   
   # install dependencies
   #package_vector <- c('torchvision', 'torch', 'magick', 'shiny', 'shinyFiles', 'shinyBS', 'shinyjs')
