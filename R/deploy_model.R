@@ -382,6 +382,16 @@ deploy_model <- function(
       
       # update progress bar
       utils::setTxtProgressBar(pb,i) 
+      
+      # save results every 10th image
+      if (i %% 10) {
+        # save checkpoint
+        save_checkpoint(predictions_list, score_threshold, prediction_format, label_encoder, output_dir)
+        
+        # print update
+        cat(paste0("\nResults checkpoint for images 1 - ", i, "saved in: \n", normalizePath(output_dir), "\n"))
+      }
+      
     }# end for loop
     
   })
@@ -393,23 +403,8 @@ deploy_model <- function(
   
   #-- Make Output Files
   
-  # convert list into dataframe
-  predictions_df <- do.call(rbind, predictions_list)
-  
-  # output dataframe with all predictions for each file
-  full_df <- data.frame("filename" = predictions_df$filename
-                        , "prediction" = predictions_df$label.y
-                        , "confidence_in_pred" = predictions_df$scores
-                        , "number_predictions" = predictions_df$number_bboxes)
-  
-  # subset by confidence score threshold
-  full_df <- apply_score_threshold(full_df, file_list, score_threshold)
-  
-  
-  #-- Make output df
-  df_out <- write_output(full_df, prediction_format, label_encoder)
-  
-  #---- Write Files ----
+  # predictions df
+  df_out <- write_output(predictions_list, score_threshold, prediction_format, label_encoder)
   
   # Write Model Predictions
   utils::write.csv(df_out, file.path(output_dir, 'model_predictions.csv'), row.names=FALSE)
@@ -419,47 +414,11 @@ deploy_model <- function(
   
   # Write Bounding Box File
   if(write_bbox_csv){
-    # rearrange predictions_df, convert coordinates to 0-1 scale
-    bbox_df <- data.frame("filename" = predictions_df$filename,
-                          "prediction" = predictions_df$label.y,
-                          "confidence" = predictions_df$scores,
-                          "number_predictions" = predictions_df$number_bboxes,
-                          "XMin" = as.numeric(predictions_df$XMin)/w,
-                          "XMax" = as.numeric(predictions_df$XMax)/w,
-                          "YMin" = as.numeric(predictions_df$YMin)/h,
-                          "YMax" = as.numeric(predictions_df$YMax)/h)
+    bbox_df <- write_bbox_df(predictions_list)
     utils::write.csv(bbox_df, file.path(output_dir, "predicted_bboxes.csv"), row.names=FALSE)
     cat(paste0("The coordinates of predicted bounding boxes are in the file predicted_bboxes.csv"))
   }
   
-  # Write Arguments to File
-  arguments <- list (
-    data_dir = normalizePath(data_dir),
-    model_type = model_type,
-    recursive = recursive,
-    file_extensions = file_extensions,
-    make_plots = make_plots,
-    plot_label = plot_label,
-    output_dir = normalizePath(output_dir),
-    sample50 = sample50, 
-    write_bbox_csv = write_bbox_csv, 
-    overlap_correction = overlap_correction,
-    overlap_threshold = overlap_threshold,
-    score_threshold = score_threshold,
-    prediction_format = prediction_format,
-    latitude = latitude,
-    longitude = longitude,
-    h=h,
-    w=w,
-    lty=lty,
-    lwd=lwd, 
-    col=col
-  )
-  # write file
-  #lapply(arguments, cat, "\n", file=file.path(output_dir, "arguments.txt"), append=TRUE)
-  sink(file.path(output_dir, "arguments.txt"))
-  print(arguments)
-  sink()
   
   # return output dataframe
   return(df_out)
