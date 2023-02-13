@@ -2,14 +2,29 @@
 #' 
 #' @details Finalize model predictions in df and csv output
 #' 
-#' @param full_df prediction output
+#' @param predictions_list prediction output
+#' @param score_threshold score threshold to subset predictions
 #' @param prediction_format wide or long
 #' @param label_encoder class label dict
 #'
 #' @import exifr
 #' 
 #' @export
-write_output <- function(full_df, prediction_format, label_encoder) {
+write_output <- function(predictions_list, score_threshold, prediction_format, label_encoder) {
+  
+  # convert list into dataframe
+  predictions_df <- do.call(rbind, predictions_list)
+  
+  # output dataframe with all predictions for each file
+  full_df <- data.frame("filename" = predictions_df$filename
+                        , "prediction" = predictions_df$label.y
+                        , "confidence_in_pred" = predictions_df$scores
+                        , "number_predictions" = predictions_df$number_bboxes)
+  
+  filenames <- unique(full_df$filename)
+  
+  # subset by confidence score threshold
+  full_df <- apply_score_threshold(full_df, filenames, score_threshold)
 
   #-- Make Predictions Dataframe
   
