@@ -173,7 +173,6 @@ deploy_model <- function(
     stop("lwd value must be greater than 0")
   }
   
-  
   #-- Load model
   
   # load encoder. build these dataframes in the script to avoid attaching tables
@@ -208,7 +207,7 @@ deploy_model <- function(
     label_encoder = data.frame('label' = categories,
                                'encoder' = 0:(length(categories)-1))
   }
-  
+
   
   # install dependencies
   #package_vector <- c('torchvision', 'torch', 'magick', 'shiny', 'shinyFiles', 'shinyBS', 'shinyjs')
@@ -242,6 +241,35 @@ deploy_model <- function(
     dir.create(output_dir)
   }
   
+  # Write Arguments to File
+  arguments <- list (
+    data_dir = normalizePath(data_dir),
+    model_type = model_type,
+    recursive = recursive,
+    file_extensions = file_extensions,
+    make_plots = make_plots,
+    plot_label = plot_label,
+    output_dir = normalizePath(output_dir),
+    sample50 = sample50, 
+    write_bbox_csv = write_bbox_csv, 
+    overlap_correction = overlap_correction,
+    overlap_threshold = overlap_threshold,
+    score_threshold = score_threshold,
+    prediction_format = prediction_format,
+    latitude = latitude,
+    longitude = longitude,
+    h=h,
+    w=w,
+    lty=lty,
+    lwd=lwd, 
+    col=col
+  )
+  # write file
+  #lapply(arguments, cat, "\n", file=file.path(output_dir, "arguments.txt"), append=TRUE)
+  sink(file.path(output_dir, "arguments.txt"))
+  print(arguments)
+  sink()
+  
   
   #-- Make dataframe of possible labels using species range data
   if (is.na(latitude) == TRUE & is.na(longitude) == TRUE) {
@@ -272,10 +300,9 @@ deploy_model <- function(
   predictions_list <- list()
   
   # add progress bar
-  cat(paste0("\nDeploying model on ", length(file_list), " images. Two warnings will appear; ignore these. \n"))
+  cat(paste0("\nDeploying model on ", length(file_list), " images. Two warnings will appear; ignore these. \nResults files are saved every 10 images in: ", normalizePath(output_dir), "\n"))
   if(make_plots){
-    cat(paste0("During deployment, you can optionally view predicted bounding boxes as they are produced in: ",
-               normalizePath(output_dir), "\n"))
+    cat(paste0("During deployment, you can optionally view predicted bounding boxes as they are produced."))
   }
   pb = utils::txtProgressBar(min = 0, max = length(file_list), initial = 0,
                              style=3, char="*")  
@@ -350,10 +377,28 @@ deploy_model <- function(
         # add prediction df to list
         pred_df$filename <- rep(normalizePath(filename), nrow(pred_df))
         predictions_list[[i]] <- pred_df
+        
+        # save results every 10th image
+        if (i %% 10 == 0) {
+          # filter df by score_threshold
+          full_df <- apply_score_threshold(predictions_list, score_threshold)
+          
+          # convert to output format
+          df_out <- write_output(full_df, prediction_format, label_encoder)
+          
+          # save checkpoint files to csv
+          save_checkpoint(df_out, output_dir, write_bbox_csv)
+          
+          # print update
+          cat(paste0("\nResults saved for images 1 - ", i, "\n"))
+        }
       }
       
       # update progress bar
       utils::setTxtProgressBar(pb,i) 
+      
+     
+      
     }# end for loop
     
   })
@@ -365,23 +410,11 @@ deploy_model <- function(
   
   #-- Make Output Files
   
-  # convert list into dataframe
-  predictions_df <- do.call(rbind, predictions_list)
+  # filter df by score_threshold
+  full_df <- apply_score_threshold(predictions_list, score_threshold)
   
-  # output dataframe with all predictions for each file
-  full_df <- data.frame("filename" = predictions_df$filename
-                        , "prediction" = predictions_df$label.y
-                        , "confidence_in_pred" = predictions_df$scores
-                        , "number_predictions" = predictions_df$number_bboxes)
-  
-  # subset by confidence score threshold
-  full_df <- apply_score_threshold(full_df, file_list, score_threshold)
-  
-  
-  #-- Make output df
+  # convert to output format
   df_out <- write_output(full_df, prediction_format, label_encoder)
-  
-  #---- Write Files ----
   
   # Write Model Predictions
   utils::write.csv(df_out, file.path(output_dir, 'model_predictions.csv'), row.names=FALSE)
@@ -391,47 +424,11 @@ deploy_model <- function(
   
   # Write Bounding Box File
   if(write_bbox_csv){
-    # rearrange predictions_df, convert coordinates to 0-1 scale
-    bbox_df <- data.frame("filename" = predictions_df$filename,
-                          "prediction" = predictions_df$label.y,
-                          "confidence" = predictions_df$scores,
-                          "number_predictions" = predictions_df$number_bboxes,
-                          "XMin" = as.numeric(predictions_df$XMin)/w,
-                          "XMax" = as.numeric(predictions_df$XMax)/w,
-                          "YMin" = as.numeric(predictions_df$YMin)/h,
-                          "YMax" = as.numeric(predictions_df$YMax)/h)
+    bbox_df <- write_bbox_df(predictions_list)
     utils::write.csv(bbox_df, file.path(output_dir, "predicted_bboxes.csv"), row.names=FALSE)
     cat(paste0("The coordinates of predicted bounding boxes are in the file predicted_bboxes.csv"))
   }
   
-  # Write Arguments to File
-  arguments <- list (
-    data_dir = normalizePath(data_dir),
-    model_type = model_type,
-    recursive = recursive,
-    file_extensions = file_extensions,
-    make_plots = make_plots,
-    plot_label = plot_label,
-    output_dir = normalizePath(output_dir),
-    sample50 = sample50, 
-    write_bbox_csv = write_bbox_csv, 
-    overlap_correction = overlap_correction,
-    overlap_threshold = overlap_threshold,
-    score_threshold = score_threshold,
-    prediction_format = prediction_format,
-    latitude = latitude,
-    longitude = longitude,
-    h=h,
-    w=w,
-    lty=lty,
-    lwd=lwd, 
-    col=col
-  )
-  # write file
-  #lapply(arguments, cat, "\n", file=file.path(output_dir, "arguments.txt"), append=TRUE)
-  sink(file.path(output_dir, "arguments.txt"))
-  print(arguments)
-  sink()
   
   # return output dataframe
   return(df_out)

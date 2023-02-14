@@ -2,14 +2,17 @@
 #' 
 #' @details Finalize model predictions in df and csv output
 #' 
-#' @param full_df
-#' @param prediction_format
-#' @param label_encoder
+#' @param full_df df filtered by score_threshold
+#' @param prediction_format wide or long
+#' @param label_encoder class label dict
 #'
 #' @import exifr
 #' 
 #' @export
 write_output <- function(full_df, prediction_format, label_encoder) {
+  
+  # define all possible class labels
+  all_categories <- c(label_encoder$label, 'image_error')
 
   #-- Make Predictions Dataframe
   
@@ -28,8 +31,8 @@ write_output <- function(full_df, prediction_format, label_encoder) {
     
     # add column names for classes not found in any images in the dataset
     cols_df <- colnames(df_wide)
-    all_categories <- c(label_encoder$label, 'image_error')
     not_pred_in_any <- setdiff(all_categories, cols_df) # categories not predicted to be in any image
+    
     # remove background, "empty" in use
     not_pred_in_any <- not_pred_in_any[!(not_pred_in_any %in% "background")]
     # merge unpredicted categories df back to predictions
@@ -50,6 +53,7 @@ write_output <- function(full_df, prediction_format, label_encoder) {
     df_wide <- df_wide[cols_wanted]
     
     # Add empty predictions to df
+    file_list <- unique(full_df$filename)
     file_names_to_add <- setdiff(normalizePath(file_list), df_wide$filename)
     if(length(file_names_to_add) > 0){
       df_add <- data.frame('filename' = file_names_to_add, 
@@ -64,10 +68,11 @@ write_output <- function(full_df, prediction_format, label_encoder) {
       
       # sort the dataframe, so that it matches the order of images (and of plots made by this package)
       df_wide <- df_wide[order(df_wide$filename), ]
-      
-      # save df as output
-      df_out <- df_wide
+
     }
+    
+    # save df as output
+    df_out <- df_wide
   }
   
   # make long format prediction file
@@ -103,35 +108,36 @@ write_output <- function(full_df, prediction_format, label_encoder) {
     
     df_long <-full_df_cnt[order(full_df_cnt$filename,full_df_cnt$prediction),]
     
-    # Add timestamp data if available
-    
-    # create holder df
-    df_long$timestamp <- NA
-    
-    # loop through image exif files and extract timestamps
-    for(i in 1:nrow(df_long)){
-      
-      # set filepath
-      path <- df_long$filename[i]
-      
-      # read in exif data
-      exif_dat <- exifr::read_exif(path)
-      
-      # Search columns for original datetime
-      if("DateTimeOriginal" %in% colnames(exif_dat)){
-        df_long$timestamp[i] <- exif_dat$DateTimeOriginal
-      }
-      else if("CreateDate" %in% colnames(exif_dat)){
-        df_long$timestamp[i] <- exif_dat$CreateDate
-      }
-      else {
-        df_long$timestamp[i] <- NA
-      }
-    }
-    
     # save df as output
     df_out <- df_long
   }
+  
+  # -- Add timestamp data if available
+  
+  # create holder df
+  df_out$timestamp <- NA
+  
+  # loop through image exif files and extract timestamps
+  for(i in 1:nrow(df_out)){
+    
+    # set filepath
+    path <- df_out$filename[i]
+    
+    # read in exif data
+    exif_dat <- exifr::read_exif(path)
+    
+    # Search columns for original datetime
+    if("DateTimeOriginal" %in% colnames(exif_dat)){
+      df_out$timestamp[i] <- exif_dat$DateTimeOriginal
+    }
+    else if("CreateDate" %in% colnames(exif_dat)){
+      df_out$timestamp[i] <- exif_dat$CreateDate
+    }
+    else {
+      df_out$timestamp[i] <- NA
+    }
+  }
+  
   
   # return data frame
   return(df_out)

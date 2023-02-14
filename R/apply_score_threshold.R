@@ -7,15 +7,26 @@
 #' that the image is empty is assumed to be directly related to the largest confidence in
 #' the detections that will be removed.
 #' 
-#' @param df Dataframe of predictions from model
-#' @param file_list Vector of file names processed by model
+#' @param predictions_list list of predictions from model
 #' @param score_threshold Threshold score for keeping bounding boxes
 #' @return df with score threshold applied
 #' 
 #' @export
 
 
-apply_score_threshold <- function(df, file_list, score_threshold){
+apply_score_threshold <- function(predictions_list, score_threshold){
+  
+  
+  # convert list into dataframe
+  predictions_df <- do.call(rbind, predictions_list)
+  
+  # output dataframe with all predictions for each file
+  df <- data.frame("filename" = predictions_df$filename
+                        , "prediction" = predictions_df$label.y
+                        , "confidence_in_pred" = predictions_df$scores
+                        , "number_predictions" = predictions_df$number_bboxes)
+  
+  file_list <- unique(df$filename)
   
   #--Save those that are >= score_threshold
   limted_df <- df[df$confidence_in_pred >= score_threshold,]
