@@ -4,15 +4,12 @@
 \alias{download_cache}
 \title{This function will download files necessary to run the model and store them in the package space}
 \usage{
-download_cache(
-  url = "https://www.dropbox.com/s/m4ojnotd2pev46u/weights_family_cpu.pth?raw=1",
-  redownload = FALSE
-)
+download_cache(name = "weights_family_cpu.pth", redownload = TRUE)
 }
 \arguments{
-\item{url}{location of file to download}
+\item{name}{location of file to download}
 
-\item{redownload}{boolean. Re-download the file?}
+\item{redownload}{bool - whether or not to redownload model weights from online storage}
 }
 \description{
 This function will download files necessary to run the model and store them in the package space

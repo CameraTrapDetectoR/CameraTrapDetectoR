@@ -7,7 +7,11 @@
 write_output(full_df, prediction_format, label_encoder)
 }
 \arguments{
-\item{label_encoder}{}
+\item{full_df}{df filtered by score_threshold}
+
+\item{prediction_format}{wide or long}
+
+\item{label_encoder}{class label dict}
 }
 \description{
 Write model output

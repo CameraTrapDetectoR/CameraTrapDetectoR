@@ -7,7 +7,7 @@
 dataLoader(file_list, index, w = 408, h = 307)
 }
 \arguments{
-\item{file_list}{passed from deploy fuction}
+\item{file_list}{passed from deploy function}
 
 \item{index}{i value from deploy function}
 
