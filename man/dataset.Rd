@@ -4,12 +4,7 @@
 \alias{dataset}
 \title{This function sets up the image dataset}
 \usage{
-dataset(
-  data_dir,
-  recursive = TRUE,
-  file_extensions = c(".jpg", ".JPG"),
-  labeled = FALSE
-)
+dataset(data_dir, recursive = TRUE, file_extensions = c(".jpg", ".JPG"))
 }
 \arguments{
 \item{data_dir}{data directory}
@@ -17,8 +12,6 @@ dataset(
 \item{recursive}{boolean}
 
 \item{file_extensions}{file extensions}
-
-\item{labeled}{boolean. not functional yet}
 }
 \value{
 dataset for reading into model

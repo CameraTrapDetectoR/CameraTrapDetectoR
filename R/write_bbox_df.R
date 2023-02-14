@@ -3,10 +3,12 @@
 #' @details create bbox df for saving in checkpoint, csv
 #' 
 #' @param predictions_list prediction output
+#' @param w image width
+#' @param h image height
 #'
 #' 
 #' @export
-write_output <- function(predictions_list) {
+write_bbox_df <- function(predictions_list, w, h) {
   
   # convert list into dataframe
   predictions_df <- do.call(rbind, predictions_list)

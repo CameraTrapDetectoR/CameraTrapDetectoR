@@ -1,10 +1,10 @@
 #' This function will download files necessary to run the model and store them in the package space
 #' 
 #' @param name location of file to download
+#' @param redownload bool - whether or not to redownload model weights from online storage
 #' 
 #' @import rappdirs
 #' @import fs
-#' @import gargle
 #' @import googledrive
 #' 
 #' @export

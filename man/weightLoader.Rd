@@ -4,16 +4,21 @@
 \alias{weightLoader}
 \title{Load model weights}
 \usage{
-weightLoader(model_type = "general", num_classes = 5)
+weightLoader(model_type = "general", num_classes = 5, redownload = TRUE)
 }
 \arguments{
 \item{model_type}{The type of model: general, family, species, or pig-only.}
 
 \item{num_classes}{The number of classes in the model}
+
+\item{redownload}{Should model weights be redownloaded?}
 }
 \value{
 model weights
 }
 \description{
 Load model weights
+}
+\details{
+Keep model weight names generic by model type so latest weights will automatically be downloaded
 }

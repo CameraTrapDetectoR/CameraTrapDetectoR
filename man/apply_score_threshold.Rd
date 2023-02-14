@@ -4,12 +4,10 @@
 \alias{apply_score_threshold}
 \title{Applies Score Threshold to Predictions and Calculates confidence that the image is empty}
 \usage{
-apply_score_threshold(df, file_list, score_threshold)
+apply_score_threshold(predictions_list, score_threshold)
 }
 \arguments{
-\item{df}{Dataframe of predictions from model}
-
-\item{file_list}{Vector of file names processed by model}
+\item{predictions_list}{list of predictions from model}
 
 \item{score_threshold}{Threshold score for keeping bounding boxes}
 }

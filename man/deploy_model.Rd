@@ -8,6 +8,7 @@ deploy_model(
   data_dir = NULL,
   model_type = "general",
   recursive = TRUE,
+  redownload = TRUE,
   file_extensions = c(".jpg", ".JPG"),
   make_plots = TRUE,
   plot_label = TRUE,
@@ -17,10 +18,9 @@ deploy_model(
   overlap_correction = TRUE,
   overlap_threshold = 0.9,
   score_threshold = 0.6,
-  return_data_frame = TRUE,
-  prediction_format = "wide",
-  latitude = NULL,
-  longitude = NULL,
+  prediction_format = "long",
+  latitude = NA,
+  longitude = NA,
   h = 307,
   w = 408,
   lty = 1,
@@ -40,6 +40,9 @@ The `pig_only` model recognizes only pigs.}
 \item{recursive}{boolean. Do you have images in subfolders within your
 data_dir that you want to analyze, if so, set to TRUE. If you only want to 
 analyze images within your data_dir and not within sub-folders, set to FALSE.}
+
+\item{redownload}{boolean. Set to TRUE if you want to download the latest model weights; 
+this may only be possible while disconnected from VPN.}
 
 \item{file_extensions}{The types of extensions on your image files. Default 
 is c(".jpg", ".JPG")}
@@ -73,8 +76,6 @@ representing the proportion of bounding box overlap.}
 values from 0-1. A lower number will produce more bboxes (it will be less
 stringent in deciding to make a bbox). A higher number will produce fewer
 bboxes (it will be more stringent).}
-
-\item{return_data_frame}{boolean. Do you want a dataframe returned}
 
 \item{prediction_format}{The format to be used for the prediction file.  Accepts
 values of 'wide' or 'long'.}
