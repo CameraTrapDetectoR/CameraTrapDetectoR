@@ -384,10 +384,10 @@ deploy_model <- function(
           full_df <- apply_score_threshold(predictions_list, score_threshold)
           
           # convert to output format
-          df_out <- write_output(full_df, prediction_format, label_encoder)
+          out_df <- write_output(full_df, prediction_format, label_encoder)
           
           # save predictions to csv
-          utils::write.csv(df_out, file.path(output_dir, 'model_predictions.csv'), row.names=FALSE)
+          utils::write.csv(out_df, file.path(output_dir, 'model_predictions.csv'), row.names=FALSE)
           
           # if saving all bboxes, make df and save to csv
           if(write_bbox_csv){
