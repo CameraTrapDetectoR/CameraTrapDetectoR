@@ -383,11 +383,13 @@ deploy_model <- function(
           # filter df by score_threshold
           full_df <- apply_score_threshold(predictions_list, score_threshold)
           
-          # convert to output format
-          df_out <- write_output(full_df, prediction_format, label_encoder)
+          # save predictions to csv
+          utils::write.csv(out_df, file.path(output_dir, 'model_predictions.csv'), row.names=FALSE)
           
-          # save checkpoint files to csv
-          save_checkpoint(df_out, output_dir, write_bbox_csv)
+          # if saving all bboxes, make df and save to csv
+          if(write_bbox_csv){
+            bbox_df <- write_bbox_df(predictions_list, w, h)
+            utils::write.csv(bbox_df, file.path(output_dir, "predicted_bboxes.csv"), row.names=FALSE)
           
           # print update
           cat(paste0("\nResults saved for images 1 - ", i, "\n"))
