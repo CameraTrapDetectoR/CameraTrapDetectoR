@@ -387,7 +387,7 @@ deploy_model <- function(
           df_out <- write_output(full_df, prediction_format, label_encoder)
           
           # save checkpoint files to csv
-          save_checkpoint(df_out, output_dir, write_bbox_csv)
+          save_checkpoint(df_out, output_dir, model_type, write_bbox_csv)
           
           # print update
           cat(paste0("\nResults saved for images 1 - ", i, "\n"))
@@ -417,16 +417,16 @@ deploy_model <- function(
   df_out <- write_output(full_df, prediction_format, label_encoder)
   
   # Write Model Predictions
-  utils::write.csv(df_out, file.path(output_dir, 'model_predictions.csv'), row.names=FALSE)
+  utils::write.csv(df_out, file.path(output_dir, paste(model_type, 'model_predictions.csv', sep="_")), row.names=FALSE)
   
   cat(paste0("\nOutput can be found at: \n", normalizePath(output_dir), "\n",
-             "The number of animals predicted in each category in each image is in the file model_predictions.csv\n"))
+             "The number of animals predicted in each category in each image is in the file: ", model_type, "_model_predictions.csv\n"))
   
   # Write Bounding Box File
   if(write_bbox_csv){
     bbox_df <- write_bbox_df(predictions_list, w, h)
-    utils::write.csv(bbox_df, file.path(output_dir, "predicted_bboxes.csv"), row.names=FALSE)
-    cat(paste0("The coordinates of predicted bounding boxes are in the file predicted_bboxes.csv"))
+    utils::write.csv(bbox_df, file.path(output_dir, paste(model_type, "predicted_bboxes.csv", sep="_")), row.names=FALSE)
+    cat(paste0("The coordinates of predicted bounding boxes are in the file: ", model_type,  "_predicted_bboxes.csv"))
   }
   
   
