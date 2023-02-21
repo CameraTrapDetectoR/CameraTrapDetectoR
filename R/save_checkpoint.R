@@ -1,17 +1,17 @@
 #' Save model output every ten images to retain results if something happens to R session mid-run
 #' 
 #' 
-#' @param out_df formatted df to write to csv
+#' @param df_out formatted df to write to csv
 #' @param output_dir directory to save output
 #' @param model_type model type
 #' @param write_bbox_csv bool indicator to create df of all bbox predictions
 
 #' 
 #' @export
-save_checkpoint <- function(out_df, output_dir, model_type, write_bbox_csv) {
+save_checkpoint <- function(df_out, output_dir, model_type, write_bbox_csv) {
 
   # save predictions to csv
-  utils::write.csv(out_df, file.path(output_dir, paste(model_type, 'model_predictions.csv', sep="_")), row.names=FALSE)
+  utils::write.csv(df_out, file.path(output_dir, paste(model_type, 'model_predictions.csv', sep="_")), row.names=FALSE)
   
   # if saving all bboxes, make df and save to csv
   # Write Bounding Box File
