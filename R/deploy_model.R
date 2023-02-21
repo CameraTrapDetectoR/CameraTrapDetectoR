@@ -20,7 +20,7 @@
 #'  to see all of the information for each bounding box (including coordinates, 
 #'  labels, and confidence), specify \code{write_bbox_csv=TRUE} and it will be
 #'  produced in your `output_dir`. Additionally,
-#'  A file called "arguments" will be produced in your `output_dir` this is a list
+#'  A file called "arguments" will be produced in your `output_dir`; this is a list
 #'  of all of the arguments you passed to this function for reference. 
 #'  
 #' 
@@ -228,6 +228,22 @@ deploy_model <- function(
     file_list <- sample(file_list, 50)
   }
   
+  # if output_dir was specified, search for existing results
+  if(dir.exists(output_dir)){
+    results_path <- list.files(output_dir, 
+                          pattern = paste(model_type, "model_predictions", sep = "_"),
+                          full.names = TRUE, ignore.case = TRUE)
+    if(length(results_path)>0){
+      results <- do.call(rbind, lapply(results_path, read.csv))
+      results <- unique(results)
+      results_files <- unique(normalizePath(results$filename, winslash = "/"))
+      # filter file_list to images NOT in results_files
+      file_list <- file_list[!file_list %in% results_files]
+      cat(paste0("\nLoading saved model results from ", output_dir, 
+                 "\nModel will run only on images in ", data_dir, " not already in saved results."))
+    }
+  }
+  
   # make output directory
   if(is.null(output_dir)){
     datenow <- format(Sys.Date(), "%Y%m%d")
@@ -383,6 +399,11 @@ deploy_model <- function(
           # filter df by score_threshold
           full_df <- apply_score_threshold(predictions_list, score_threshold)
           
+          # cat previous results if they exists
+          if(exists("results")){
+            full_df <- rbind(results, full_df)
+          }
+          
           # convert to output format
           df_out <- write_output(full_df, prediction_format, label_encoder)
           
@@ -412,6 +433,11 @@ deploy_model <- function(
   
   # filter df by score_threshold
   full_df <- apply_score_threshold(predictions_list, score_threshold)
+  
+  # cat previous results if they exists
+  if(exists("results")){
+    full_df <- rbind(results, full_df)
+  }
   
   # convert to output format
   df_out <- write_output(full_df, prediction_format, label_encoder)
