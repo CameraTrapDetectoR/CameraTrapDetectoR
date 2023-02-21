@@ -418,8 +418,15 @@ deploy_model <- function(
           # convert to output format
           df_out <- write_output(full_df, prediction_format, label_encoder)
           
-          # save checkpoint files to csv
-          save_checkpoint(df_out, output_dir, model_type, write_bbox_csv)
+          # save predictions to csv
+          utils::write.csv(out_df, file.path(output_dir, paste(model_type, 'model_predictions.csv', sep="_")), row.names=FALSE)
+          
+          # if saving all bboxes, make df and save to csv
+          # Write Bounding Box File
+          if(write_bbox_csv){
+            bbox_df <- write_bbox_df(predictions_list, w, h, bboxes)
+            utils::write.csv(bbox_df, file.path(output_dir, paste(model_type, "predicted_bboxes.csv", sep="_")), row.names=FALSE)
+          }
           
           # print update
           cat(paste0("\nResults saved for images 1 - ", i, "\n"))
@@ -434,6 +441,7 @@ deploy_model <- function(
     }# end for loop
     
   })
+  
   tic <- Sys.time()
   runtime <- difftime(tic, toc, units="secs")
   timeper <- runtime/length(file_list)
