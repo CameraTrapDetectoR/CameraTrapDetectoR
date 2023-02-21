@@ -229,7 +229,7 @@ deploy_model <- function(
   }
   
   # if output_dir was specified, search for existing results
-  if(dir.exists(output_dir)){
+  if(!is.null(output_dir)){
     results_path <- list.files(output_dir, 
                           pattern = paste(model_type, "model_predictions", sep = "_"),
                           full.names = TRUE, ignore.case = TRUE)
