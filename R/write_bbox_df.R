@@ -5,6 +5,7 @@
 #' @param predictions_list prediction output
 #' @param w image width
 #' @param h image height
+#' @param bboxes existing predicted boxes df
 #'
 #' 
 #' @export

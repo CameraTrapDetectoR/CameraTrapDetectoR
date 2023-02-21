@@ -228,6 +228,11 @@ deploy_model <- function(
     file_list <- sample(file_list, 50)
   }
   
+  # set placeholder for predicted bboxes
+  if(write_bbox_csv==TRUE){
+    bboxes <- NULL
+  }
+  
   # if output_dir was specified, search for existing results
   if(!is.null(output_dir)){
     results_path <- list.files(output_dir, 
@@ -235,23 +240,22 @@ deploy_model <- function(
                           full.names = TRUE, ignore.case = TRUE)
     if(length(results_path)>0){
       results <- do.call(rbind, lapply(results_path, read.csv))
-      results <- unique(results)
       results_files <- unique(normalizePath(results$filename, winslash = "/"))
       # filter file_list to images NOT in results_files
       file_list <- file_list[!file_list %in% results_files]
       cat(paste0("\nLoading saved model results from ", output_dir, 
-                 "\nModel will run only on images in ", data_dir, " not already in saved results."))
+                 "\nModel will run only on images in ", data_dir, " not already in saved results. \n"))
     }
     if(write_bbox_csv==TRUE){
       bbox_path <- list.files(output_dir,
                               pattern = paste(model_type, "predicted_bboxes", sep = "_"),
                               full.names = TRUE, ignore.case = TRUE)
+      # load saved predicted bboxes
       if(length(bbox_path)>0){
         bboxes <- do.call(rbind, lapply(bbox_path, read.csv))
         bboxes <- unique(bboxes)
-        cat(paste0("\nLoading saved bbox results from ", output_dir))
+        cat(paste0("\nLoading saved bbox results from ", output_dir, "\n"))
       }
-      else {bboxes <- NULL}
     }
   }
   
@@ -316,7 +320,7 @@ deploy_model <- function(
     possible.labels <- get_possible_species(location, extent.data)
     possible.labels <- possible.labels[possible.labels$model_type == model_type,]
     
-    cat(paste0("\nIdentified ", nrow(possible.labels), " taxa out of ", nrow(label_encoder), " possible taxa."))
+    cat(paste0("\nIdentified ", nrow(possible.labels), " taxa out of ", nrow(label_encoder), " possible taxa.\n"))
   }#END
   
   
@@ -409,13 +413,13 @@ deploy_model <- function(
           # filter df by score_threshold
           full_df <- apply_score_threshold(predictions_list, score_threshold)
           
-          # cat previous results if they exists
-          if(exists("results")){
-            full_df <- rbind(results, full_df)
-          }
-          
           # convert to output format
           df_out <- write_output(full_df, prediction_format, label_encoder)
+          
+          # cat previous results if they exists
+          if(exists("results")){
+            df_out <- unique(rbind(results, df_out))
+          }
           
           # save predictions to csv
           utils::write.csv(df_out, file.path(output_dir, paste(model_type, 'model_predictions.csv', sep="_")), row.names=FALSE)
@@ -450,23 +454,26 @@ deploy_model <- function(
   # filter df by score_threshold
   full_df <- apply_score_threshold(predictions_list, score_threshold)
   
-  # cat previous results if they exists
-  if(exists("results")){
-    full_df <- rbind(results, full_df)
-  }
-  
   # convert to output format
   df_out <- write_output(full_df, prediction_format, label_encoder)
   
-  # Write Model Predictions
+  # cat previous results if they exists
+  if(exists("results")){
+    df_out <- unique(rbind(results, df_out))
+  }
+  
+  # save predictions to csv
   utils::write.csv(df_out, file.path(output_dir, paste(model_type, 'model_predictions.csv', sep="_")), row.names=FALSE)
+
   
   cat(paste0("\nOutput can be found at: \n", normalizePath(output_dir), "\n",
              "The number of animals predicted in each category in each image is in the file: ", model_type, "_model_predictions.csv\n"))
   
+  
+  # if saving all bboxes, make df and save to csv
   # Write Bounding Box File
   if(write_bbox_csv){
-    bbox_df <- write_bbox_df(predictions_list, w, h)
+    bbox_df <- write_bbox_df(predictions_list, w, h, bboxes)
     utils::write.csv(bbox_df, file.path(output_dir, paste(model_type, "predicted_bboxes.csv", sep="_")), row.names=FALSE)
     cat(paste0("The coordinates of predicted bounding boxes are in the file: ", model_type,  "_predicted_bboxes.csv"))
   }
