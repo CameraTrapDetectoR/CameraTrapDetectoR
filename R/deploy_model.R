@@ -229,7 +229,7 @@ deploy_model <- function(
   }
   
   # if output_dir was specified, search for existing results
-  if(dir.exists(output_dir)){
+  if(!is.null(output_dir)){
     results_path <- list.files(output_dir, 
                           pattern = paste(model_type, "model_predictions", sep = "_"),
                           full.names = TRUE, ignore.case = TRUE)
@@ -418,7 +418,7 @@ deploy_model <- function(
           df_out <- write_output(full_df, prediction_format, label_encoder)
           
           # save predictions to csv
-          utils::write.csv(out_df, file.path(output_dir, paste(model_type, 'model_predictions.csv', sep="_")), row.names=FALSE)
+          utils::write.csv(df_out, file.path(output_dir, paste(model_type, 'model_predictions.csv', sep="_")), row.names=FALSE)
           
           # if saving all bboxes, make df and save to csv
           # Write Bounding Box File
