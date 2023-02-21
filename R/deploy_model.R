@@ -320,7 +320,6 @@ deploy_model <- function(
   }#END
   
   
-  
   #-- Make predictions for each image
   
   # empty list to hold predictions from loop
@@ -435,8 +434,6 @@ deploy_model <- function(
       
       # update progress bar
       utils::setTxtProgressBar(pb,i) 
-      
-     
       
     }# end for loop
     
