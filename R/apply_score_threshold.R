@@ -55,13 +55,13 @@ apply_score_threshold <- function(predictions_list, score_threshold){
     )
     
     #--Merge
-    out_df <- rbind.data.frame(limted_df, empty_df)
+    df_out <- rbind.data.frame(limted_df, empty_df)
   }
   
   #--If applying threshold does not results in empty images
   if(length(empty.images)==0){
-    out_df <- limted_df
+    df_out <- limted_df
   }
   
-  return(out_df)
+  return(df_out)
 }

@@ -47,11 +47,11 @@ weightLoader <- function(
   }
   if(model_type == "species"){
     # load weights
-    path2weights <- download_cache(name="weights_species_cpu_test.pth", redownload=redownload)
+    path2weights <- download_cache(name="weights_species_cpu.pth", redownload=redownload)
     state_dict <- torch::load_state_dict(path2weights)
     
     # load model architecture
-    arch_path <- download_cache(name="fasterrcnnArch_species_test.pt", redownload=redownload)
+    arch_path <- download_cache(name="fasterrcnnArch_species.pt", redownload=redownload)
     
     # initiate the model
     model <- torch::jit_load(arch_path)
