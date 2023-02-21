@@ -242,6 +242,17 @@ deploy_model <- function(
       cat(paste0("\nLoading saved model results from ", output_dir, 
                  "\nModel will run only on images in ", data_dir, " not already in saved results."))
     }
+    if(write_bbox_csv==TRUE){
+      bbox_path <- list.files(output_dir,
+                              pattern = paste(model_type, "predicted_bboxes", sep = "_"),
+                              full.names = TRUE, ignore.case = TRUE)
+      if(length(bbox_path)>0){
+        bboxes <- do.call(rbind, lapply(bbox_path, read.csv))
+        bboxes <- unique(bboxes)
+        cat(paste0("\nLoading saved bbox results from ", output_dir))
+      }
+      else {bboxes <- NULL}
+    }
   }
   
   # make output directory

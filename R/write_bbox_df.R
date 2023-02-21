@@ -8,7 +8,7 @@
 #'
 #' 
 #' @export
-write_bbox_df <- function(predictions_list, w, h) {
+write_bbox_df <- function(predictions_list, w, h, bboxes) {
   
   # convert list into dataframe
   predictions_df <- do.call(rbind, predictions_list)
@@ -21,6 +21,9 @@ write_bbox_df <- function(predictions_list, w, h) {
                         "XMax" = as.numeric(predictions_df$XMax)/w,
                         "YMin" = as.numeric(predictions_df$YMin)/h,
                         "YMax" = as.numeric(predictions_df$YMax)/h)
+  
+  # combine new bboxes with any existing results
+  bbox_df <- unique(rbind(bbox_df, bboxes))
   
   #return bbox df
   return(bbox_df)

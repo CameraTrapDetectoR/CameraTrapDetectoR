@@ -16,7 +16,7 @@ save_checkpoint <- function(out_df, output_dir, model_type, write_bbox_csv) {
   # if saving all bboxes, make df and save to csv
   # Write Bounding Box File
   if(write_bbox_csv){
-    bbox_df <- write_bbox_df(predictions_list, w, h)
+    bbox_df <- write_bbox_df(predictions_list, w, h, bboxes)
     utils::write.csv(bbox_df, file.path(output_dir, paste(model_type, "predicted_bboxes.csv", sep="_")), row.names=FALSE)
   }
   
