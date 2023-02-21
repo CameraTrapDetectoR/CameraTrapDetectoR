@@ -123,6 +123,6 @@ This function deploys a model to detect and classify objects in camera
  to see all of the information for each bounding box (including coordinates, 
  labels, and confidence), specify \code{write_bbox_csv=TRUE} and it will be
  produced in your `output_dir`. Additionally,
- A file called "arguments" will be produced in your `output_dir` this is a list
+ A file called "arguments" will be produced in your `output_dir`; this is a list
  of all of the arguments you passed to this function for reference.
 }

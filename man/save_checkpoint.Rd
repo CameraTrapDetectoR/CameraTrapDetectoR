@@ -4,12 +4,14 @@
 \alias{save_checkpoint}
 \title{Save model output every ten images to retain results if something happens to R session mid-run}
 \usage{
-save_checkpoint(out_df, output_dir, write_bbox_csv)
+save_checkpoint(df_out, output_dir, model_type, write_bbox_csv)
 }
 \arguments{
-\item{out_df}{formatted df to write to csv}
+\item{df_out}{formatted df to write to csv}
 
 \item{output_dir}{directory to save output}
+
+\item{model_type}{model type}
 
 \item{write_bbox_csv}{bool indicator to create df of all bbox predictions}
 }
