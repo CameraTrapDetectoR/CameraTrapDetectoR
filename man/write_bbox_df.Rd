@@ -4,7 +4,7 @@
 \alias{write_bbox_df}
 \title{separate function to write bboxes to df}
 \usage{
-write_bbox_df(predictions_list, w, h)
+write_bbox_df(predictions_list, w, h, bboxes)
 }
 \arguments{
 \item{predictions_list}{prediction output}
@@ -12,6 +12,8 @@ write_bbox_df(predictions_list, w, h)
 \item{w}{image width}
 
 \item{h}{image height}
+
+\item{bboxes}{existing predicted boxes df}
 }
 \description{
 separate function to write bboxes to df

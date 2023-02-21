@@ -239,7 +239,7 @@ deploy_model <- function(
                           pattern = paste(model_type, "model_predictions", sep = "_"),
                           full.names = TRUE, ignore.case = TRUE)
     if(length(results_path)>0){
-      results <- do.call(rbind, lapply(results_path, read.csv))
+      results <- do.call(rbind, lapply(results_path, utils::read.csv))
       results_files <- unique(normalizePath(results$filename, winslash = "/"))
       # filter file_list to images NOT in results_files
       file_list <- file_list[!file_list %in% results_files]
@@ -252,7 +252,7 @@ deploy_model <- function(
                               full.names = TRUE, ignore.case = TRUE)
       # load saved predicted bboxes
       if(length(bbox_path)>0){
-        bboxes <- do.call(rbind, lapply(bbox_path, read.csv))
+        bboxes <- do.call(rbind, lapply(bbox_path, utils::read.csv))
         bboxes <- unique(bboxes)
         cat(paste0("\nLoading saved bbox results from ", output_dir, "\n"))
       }
