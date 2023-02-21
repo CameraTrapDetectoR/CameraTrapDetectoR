@@ -414,7 +414,7 @@ deploy_model <- function(
           full_df <- apply_score_threshold(predictions_list, score_threshold)
           
           # convert to output format
-          df_out <- write_output(full_df, prediction_format, label_encoder)
+          out_df <- write_output(full_df, prediction_format, label_encoder)
           
           # cat previous results if they exists
           if(exists("results")){
@@ -429,7 +429,6 @@ deploy_model <- function(
           if(write_bbox_csv){
             bbox_df <- write_bbox_df(predictions_list, w, h, bboxes)
             utils::write.csv(bbox_df, file.path(output_dir, paste(model_type, "predicted_bboxes.csv", sep="_")), row.names=FALSE)
-          }
           
           # print update
           cat(paste0("\nResults saved for images 1 - ", i, "\n"))
