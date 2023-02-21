@@ -18,7 +18,7 @@ devtools::install_github("CameraTrapDetectoR/CameraTrapDetectoR")
 ```
 Agree to update all necessary packages. 
 
-See the [Installation Guide](https://github.com/CameraTrapDetectoR/CameraTrapDetectoR/wiki/Installation) for more details.  
+See the [Installation Guide](https://github.com/CameraTrapDetectoR/CameraTrapDetectoR/wiki/Installation) for more details, including instructions to install from source.  
   
 
 ## Load the Package
@@ -56,43 +56,6 @@ Copy + paste this code to the R console to launch the interactive app:
 runShiny("deploy")
 ```
 This will launch a Shiny App on your computer. See the **Shiny Demo** vignette or the [wiki](https://github.com/CameraTrapDetectoR/CameraTrapDetectoR/wiki/Shiny-Tutorial) for a complete example on using the Shiny app. 
-
-
-## Install from source
-If you could not install package from github, follow these instructions to install from source
-
-### Download CameraTrapDetectoR
-This [link](https://github.com/CameraTrapDetectoR/CameraTrapDetectoR/blob/main/CameraTrapDetectoR_0.2.0.zip) holds the latest version of the package. DO NOT unzip this folder. 
-
-### Install dependencies
-Copy this code and paste it into your console. It will install all necessary R packages
-```
-install_dependencies <-function(packages=c('torchvision', 'torch', 'magick', 
-                                           'shiny', 'shinyFiles', 'shinyBS', 
-                                           'shinyjs', 'rappdirs', 'fs', 'sf', 
-					   'operators', 'torchvisionlib')) {
-  cat(paste0("checking package installation on this computer"))
-  libs<-unlist(list(packages))
-  req<-unlist(lapply(libs,require,character.only=TRUE))
-  need<-libs[req==FALSE]
-  
-  if(length(need)>0){ 
-    cat(paste0("The packages: ", need, "\n Need to be installed. Installing them now.\n"))
-    utils::install.packages(need)
-    lapply(need,require,character.only=TRUE)
-  } else{
-    cat("All necessary packages are installed on this computer. Proceed.\n")
-  }
-}
-install_dependencies()
-```
-
-### Install CameraTrapDetectoR from source
-- In RStudio, Click on `Packages`, then click `Install` (just below and to the left of `Packages`)
-- In the install menu, click on the arrow by `Install From`
-- Click on `Package Achive File`
-- Click `Browse` and navigate to the zip file that you just downloaded. 
-- click `install`
 
 
 ## Citation
