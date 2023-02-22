@@ -96,8 +96,8 @@ deploy_model <- function(
     overlap_threshold = 0.9,
     score_threshold = 0.6,
     prediction_format = "long",
-    latitude = NA,
-    longitude = NA,
+    latitude = NULL,
+    longitude = NULL,
     h=307,
     w=408,
     lty=1,
@@ -144,12 +144,12 @@ deploy_model <- function(
   }
   
   # check location arguments
-  if (!is.na(latitude)) {
+  if (!is.null(latitude)) {
     if (latitude < -90 | latitude > 90){
       stop("latitude must be between -90 and 90")
     } 
   }
-  if (!is.na(longitude)) {
+  if (!is.null(longitude)) {
     if (longitude < -180 | latitude > 180) {
       stop("longitude must be between -180 and 180")
     }
