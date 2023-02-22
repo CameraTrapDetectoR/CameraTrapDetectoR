@@ -144,12 +144,12 @@ deploy_model <- function(
   }
   
   # check location arguments
-  if (is.na(latitude) == FALSE) {
+  if (!is.na(latitude)) {
     if (latitude < -90 | latitude > 90){
       stop("latitude must be between -90 and 90")
     } 
   }
-  if (is.na(longitude) == FALSE) {
+  if (!is.na(longitude)) {
     if (longitude < -180 | latitude > 180) {
       stop("longitude must be between -180 and 180")
     }
@@ -414,7 +414,7 @@ deploy_model <- function(
           full_df <- apply_score_threshold(predictions_list, score_threshold)
           
           # convert to output format
-          out_df <- write_output(full_df, prediction_format, label_encoder)
+          df_out <- write_output(full_df, prediction_format, label_encoder)
           
           # cat previous results if they exists
           if(exists("results")){
