@@ -15,7 +15,6 @@
 #' titled "Manual_Review". Accepts values 0.01 - 1; default = NA.
 #' @param remove_originals boolean. Delete original image files. Default = FALSE
 #' 
-#' @import 
 #' 
 #' @export
 sort_images <- function(results = NULL, output_dir = NULL,
