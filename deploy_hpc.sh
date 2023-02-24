@@ -1,21 +1,14 @@
-#!/bin/bash Rscript
+#!/bin/bash
 
-# Template bash script to run CameraTrapDetectoR in HPC environment
-
-
-#SBATCH --partition=partition
-#SBATCH --qos=qos
-#SBATCH --job-name="runCTD"
-#SBATCH --mail-user=my.name@myemail.com
+#SBATCH --job-name='deployCTD'
+#SBATCH --partition='debug'
+#SBATCH --mail-user=Amira.Burns@usda.gov
 #SBATCH --mail-type=BEGIN,END,FAIL
 
 module purge
 
-module load miniconda
-source activate CTDtrain
+module load r/4.2.0
 
-module unload miniconda
-module load python      # check for latest python release
-export PYTHONPATH="/project/cameratrapdetector/train"
-python /project/cameratrapdetector/train/trainCTD.py
-# END
+cd /project/cameratrapdetector
+
+Rscript deploy_model_hpc.R -d /90daydata/cameratrapdetector/minitrain -o /project/camertrapdetector/minitrain/ctd_deploy_out/ --sample50 TRUE
