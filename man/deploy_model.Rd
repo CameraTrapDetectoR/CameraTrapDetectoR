@@ -19,8 +19,8 @@ deploy_model(
   overlap_threshold = 0.9,
   score_threshold = 0.6,
   prediction_format = "long",
-  latitude = NA,
-  longitude = NA,
+  latitude = NULL,
+  longitude = NULL,
   h = 307,
   w = 408,
   lty = 1,
@@ -44,8 +44,8 @@ analyze images within your data_dir and not within sub-folders, set to FALSE.}
 \item{redownload}{boolean. Set to TRUE if you want to download the latest model weights; 
 this may only be possible while disconnected from VPN.}
 
-\item{file_extensions}{The types of extensions on your image files. Default 
-is c(".jpg", ".JPG")}
+\item{file_extensions}{The types of extensions on your image files. Case insensitive; enter as a string.
+Accepts the following file types: ".jpg", ".png", ".tif", ".pdf". Default is ".jpg"}
 
 \item{make_plots}{boolean. Do you want to make plots of the images with
 their predicted bounding boxes?}
