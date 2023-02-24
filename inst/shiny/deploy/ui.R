@@ -35,9 +35,8 @@ shinyUI(fluidPage(
       
       ## file_extensions
       shiny::checkboxGroupInput("file_extensions", "file_extensions",  
-                                choices = c(".jpg", ".JPG", ".png", ".PNG", 
-                                            ".tif", ".TIF", ".pdf", ".PDF"), 
-                                selected = c(".jpg", ".JPG"), 
+                                choices = c(".jpg", ".png", ".tif", ".pdf"), 
+                                selected = ".jpg", 
                                 inline = TRUE),
       shinyBS::bsTooltip("file_extensions", "The types of extensions on your image files", 
                          placement = "top"),

@@ -35,8 +35,8 @@
 #'  The `pig_only` model recognizes only pigs.
 #' @param redownload boolean. Set to TRUE if you want to download the latest model weights; 
 #' this may only be possible while disconnected from VPN.
-#' @param file_extensions The types of extensions on your image files. Default 
-#'  is c(".jpg", ".JPG")
+#' @param file_extensions The types of extensions on your image files. Case insensitive; enter as a string.
+#' Accepts the following file types: ".jpg", ".png", ".tif", ".pdf". Default is ".jpg"
 #' @param make_plots boolean. Do you want to make plots of the images with
 #'  their predicted bounding boxes?
 #' @param plot_label boolean. Do you want the plots to contain the predicted
@@ -96,8 +96,8 @@ deploy_model <- function(
     overlap_threshold = 0.9,
     score_threshold = 0.6,
     prediction_format = "long",
-    latitude = NA,
-    longitude = NA,
+    latitude = NULL,
+    longitude = NULL,
     h=307,
     w=408,
     lty=1,
@@ -144,12 +144,12 @@ deploy_model <- function(
   }
   
   # check location arguments
-  if (!is.na(latitude)) {
+  if (!is.null(latitude)) {
     if (latitude < -90 | latitude > 90){
       stop("latitude must be between -90 and 90")
     } 
   }
-  if (!is.na(longitude)) {
+  if (!is.null(longitude)) {
     if (longitude < -180 | latitude > 180) {
       stop("longitude must be between -180 and 180")
     }

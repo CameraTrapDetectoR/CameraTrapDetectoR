@@ -20,7 +20,7 @@ dataset <- function(data_dir,
   
   # list all files in data_dir
   file_list <- list.files(data_dir,full.names = TRUE,recursive = recursive,
-                          pattern = paste0(file_extensions, collapse="|"))
+                          pattern = paste0(file_extensions, collapse="|"), ignore.case = TRUE)
   
   if(length(file_list) < 1){
     stop(paste0("There are no files in your data_dir with the specified file extensions."))
