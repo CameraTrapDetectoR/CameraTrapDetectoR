@@ -28,12 +28,12 @@ sort_images <- function(results = NULL, output_dir = NULL,
   # create folders within output dir based on results classes
   classes <- unique(results$prediction)
   for(i in 1:length(classes)){
-    dir.create(output_dir, classes[i], sep="/")
+    dir.create(paste(output_dir, classes[i], sep="/"))
   }
   
   # make a folder for manual review if requested
   if(!is.na(review_threshold)){
-    dir.create(output_dir, "manual_review", sep="/")
+    dir.create(paste(output_dir, "manual_review", sep="/"))
   }
   
   # create placeholder vector for new filepaths
@@ -49,7 +49,7 @@ sort_images <- function(results = NULL, output_dir = NULL,
     conf <- pred$confidence_score
     
     # create new image name 
-    img_id <- tail(strsplit(old_loc, "\\\\")[[1]], n = 2)
+    img_id <- utils::tail(strsplit(old_loc, "\\\\")[[1]], n = 2)
     img_name <- paste(img_id[1], img_id[2], sep="_")
     
     # create full path for new image loc/name
