@@ -42,6 +42,7 @@ sort_images <- function(results = NULL, output_dir = NULL,
   
   # loop through results and transfer files 
   for(i in 1:nrow(results)){
+    
     # define prediction info
     pred <- results[i, ]
     old_loc <- pred$filename
