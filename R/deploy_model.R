@@ -35,8 +35,8 @@
 #'  The `pig_only` model recognizes only pigs.
 #' @param redownload boolean. Set to TRUE if you want to download the latest model weights; 
 #' this may only be possible while disconnected from VPN.
-#' @param file_extensions The types of extensions on your image files. Default 
-#'  is c(".jpg", ".JPG")
+#' @param file_extensions The types of extensions on your image files. Case insensitive; enter as a string.
+#' Accepts the following file types: ".jpg", ".png", ".tif", ".pdf". Default is ".jpg"
 #' @param make_plots boolean. Do you want to make plots of the images with
 #'  their predicted bounding boxes?
 #' @param plot_label boolean. Do you want the plots to contain the predicted
