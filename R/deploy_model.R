@@ -307,7 +307,7 @@ deploy_model <- function(
   
   
   #-- Make dataframe of possible labels using species range data
-  if (is.null(latitude) == TRUE & is.null(longitude) == TRUE) {
+  if (is.null(latitude) & is.null(longitude)) {
     location <- NULL
   }
   else {
