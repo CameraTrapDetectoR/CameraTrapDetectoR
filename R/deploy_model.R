@@ -435,7 +435,7 @@ deploy_model <- function(
             utils::write.csv(bbox_df, file.path(output_dir, paste(model_type, "predicted_bboxes.csv", sep="_")), row.names=FALSE)
           }
           # print update
-          cat(paste0("\nResults saved for images 1 - ", i, "\n"))
+          cat(paste0("\nResults saved for ", i, " images.\n"))
         }
       }
       
