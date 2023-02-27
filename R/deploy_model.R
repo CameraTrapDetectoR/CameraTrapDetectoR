@@ -154,7 +154,11 @@ deploy_model <- function(
       stop("longitude must be between -180 and 180")
     }
   }
-  if ((is.na(longitude) == TRUE & is.na(latitude) == FALSE) | (is.na(longitude) == FALSE & is.na(latitude) == TRUE)){
+  if (is.null(latitude) & !is.null(longitude)){
+    stop("invalid location; please include both latitude and longitude or leave both as NULL")
+  }
+  
+  if (!is.null(latitude) & is.null(longitude)){
     stop("invalid location; please include both latitude and longitude or leave both as NULL")
   }
   
@@ -303,7 +307,7 @@ deploy_model <- function(
   
   
   #-- Make dataframe of possible labels using species range data
-  if (is.na(latitude) == TRUE & is.na(longitude) == TRUE) {
+  if (is.null(latitude) == TRUE & is.null(longitude) == TRUE) {
     location <- NULL
   }
   else {
