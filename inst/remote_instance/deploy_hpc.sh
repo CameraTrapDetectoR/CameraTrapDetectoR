@@ -13,4 +13,4 @@ module load r/4.2.0
 cd /project/cameratrapdetector
 
 # run R script with user arguments specified
-Rscript deploy_model_hpc.R -d /90daydata/cameratrapdetector/minitrain -o /project/camertrapdetector/minitrain/ctd_deploy_out/ --sample50 TRUE
+Rscript deploy_model_hpc.R --data_dir '/path/to/images/for/processing' --model_type 'species' --output_dir '/path/to/store/output/' --sample50 TRUE
