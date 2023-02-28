@@ -2,8 +2,10 @@
 
 #SBATCH --job-name='deployCTD'
 #SBATCH --partition='partition'
+#SBATCH --qos='qos'
 #SBATCH --mail-user=First.Last@myemail.com
 #SBATCH --mail-type=BEGIN,END,FAIL
+#SBATCH --nodes
 
 module purge
 
