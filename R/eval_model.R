@@ -17,12 +17,20 @@
 #' @param assess_counts boolean. Evaluate how well the model predicts counts in addition to classes. Default = FALSE.
 #' @param true_count name of the column in `data` that contains ground truth counts for the class listed in 
 #' `true_class` for a given row.  
+#' @param event_level evaluate results at the individual level or at the sequence level? 
+#' Accepts values `c("image", "sequence")`. If including evaluation by sequence, @param seq_id must be specified
+#' @param seq_id name of the column in `data` that contains sequence ids for each image. If you need to generate this
+#' information, see *assign_seq_metadata* function.
+#' 
+#' @import dplyr
 #' 
 #' @export
 eval_model <- function(preds = NULL, data = NULL,
                        filepath = NULL, true_class = NULL, 
                        assess_counts = FALSE, true_count = NULL,
-                       assess_seq = FALSE, seq_id = NULL){
+                       event_level = "image", seq_id = NULL){
+  
+  # -- Warnings
   
   # warnings if receiving the wrong type of input:
   if(!is.data.frame(preds)){
@@ -42,17 +50,105 @@ eval_model <- function(preds = NULL, data = NULL,
   }
   
   # warning if incorrect format for counts 
-  if(assess_seq & is.null(seq_id)){
+  if(event_level == "sequence" & is.null(seq_id)){
     stop(paste0("Please provide the column name for sequence id in ", data, 
                 " in the argument `seq_id`\nTo define sequence info for your dataset,
                 see the function *assign_seq_metadata*\n"))
   }
   
-  # write function to :
-  # 1. join results to ground truths 
+  # -- Join
+  # join results to ground truths 
+  results <- dplyr::left_join(preds, data, dplyr::join_by(filename == filepath))
   
-  # 2. calculate eval metrics  
-  # 3. output object containing joined df and evals
+  # flag any predictions that do not have associated annotations
+  results$true_class <- ifelse(is.na(results$true_class), 
+                               "Annotation_not_found",
+                               results$true_class)
+  
+  print("Removing predictions without associated annotations from evaluation calculations.\n")
+  
+  # filter out predictions without labels
+  evals <- dplyr::filter(results, true_class != "Annotation_not_found")
+  
+  # update var types for class truths and predictions
+  evals$prediction <- as.factor(evals$prediction)
+  evals$true_class <- as.factor(evals$true_class)
+  
+  
+  # -- calculate image-level id eval metrics  
+  
+  if(event_level == "image") {
+    # create contingency table of class levels
+    class_tab <- table(evals$prediction, evals$true_class)
+    
+    # pull out true positives
+    class_df <- as.data.frame.matrix(class_tab)
+    class_name <- sort(as.character(unique(evals$true_class)))
+    
+    # sum class counts for preds and truths
+    TP_FP <- data.frame(ct = rowSums(class_df)) # true positives + false positives
+    TP_FP$class <- rownames(TP_FP)
+    
+    TP_FN <- data.frame(ct = colSums(class_df)) # true positives + false negatives
+    TP_FN$class <- rownames(TP_FN)
+    
+    # create empty vectors to hold performance metrics
+    precision <- rep(NA, length(class_name))
+    recall <- rep(NA, length(class_name))
+    f1_score <- rep(NA, length(class_name))
+    
+    # loop through ground truth categories
+    for(i in 1:length(class_name)){
+      
+      # define class name and denominators
+      classi <- class_name[i]
+      
+      # get TP+FP for class[i]
+      if(classi %in% TP_FP$class){
+        TPFP <- TP_FP$ct[TP_FP$class == classi]
+      } else {TPFP <- 0}
+      
+      # get TP+FN for class[i]
+      if(classi %in% TP_FN$class){
+        TPFN <- TP_FN$ct[TP_FN$class == classi]
+      } else {TPFN <- 0}
+      
+      # calculate true positives
+      TP <- class_df[classi, classi]
+      if(is.na(TP)){TP <- 0}
+      
+      # calculate metrics
+      precision[i] <- TP / TPFP
+      if(is.na(precision[i])) {precision[i] <- -1}
+      
+      recall[i] <- TP / TPFN
+      if(is.na(recall[i])) {recall[i] <- -1}
+      
+      f1_score[i] <- 2 * ((precision[i]*recall[i])/(precision[i]+recall[i]))
+      if(is.na(f1_score[i])) {f1_score[i] <- -1}
+      
+    }
+    
+    # combine evals into a dataframe
+    image_df <- data.frame("class" = class_name,
+                           "precision" = precision,
+                           "recall" = recall,
+                           "f1_score" = f1_score)
+  }
+  
+  
+  
+  # -- calculate sequence-level id eval metrics
+  
+  # -- calculate image-level id+count eval metrics
+  
+  # -- calculate sequence-level id+count eval metrics
+  
+  # -- calculate overall eval metrics
+  
+  # -- wrap all outputs in a list
+  
+  
   
 }
   
