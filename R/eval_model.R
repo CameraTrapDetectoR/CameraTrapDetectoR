@@ -4,8 +4,9 @@
 #' truth identifications and assess overall and/or classwise performance
 #' 
 #' @details this function takes your output results from deploy_model and joins them
-#' to a dataframe with ground truth identifications. The object returned is a list. Item 
-#' 1 is the joined df with predictions and ground truths; item 2 
+#' to a dataframe with ground truth identifications. The final object returned is a list containing 
+#' overall and class-wise evaluation metrics for class identification at the image and/or
+#' sequence level, and optionally for counts at the image and/or sequence level.
 #' 
 #' 
 #' @param preds df of output from deploy_model. Currently only supports 'long' prediction format
@@ -57,6 +58,7 @@ eval_model <- function(preds = NULL, data = NULL,
   }
   
   # -- Join
+  
   # join results to ground truths 
   results <- dplyr::left_join(preds, data, dplyr::join_by(filename == filepath))
   
@@ -75,9 +77,9 @@ eval_model <- function(preds = NULL, data = NULL,
   evals$true_class <- as.factor(evals$true_class)
   
   
-  # -- calculate image-level id eval metrics  
+  # -- Calculate image-level id eval metrics  
   
-  if(event_level == "image") {
+  if("image" %in% event_level) {
     # create contingency table of class levels
     class_tab <- table(evals$prediction, evals$true_class)
     
@@ -93,6 +95,7 @@ eval_model <- function(preds = NULL, data = NULL,
     TP_FN$class <- rownames(TP_FN)
     
     # create empty vectors to hold performance metrics
+    TP <- rep(NA, length(class_name))
     precision <- rep(NA, length(class_name))
     recall <- rep(NA, length(class_name))
     f1_score <- rep(NA, length(class_name))
@@ -114,14 +117,14 @@ eval_model <- function(preds = NULL, data = NULL,
       } else {TPFN <- 0}
       
       # calculate true positives
-      TP <- class_df[classi, classi]
-      if(is.na(TP)){TP <- 0}
+      TP[i] <- class_df[classi, classi]
+      if(is.na(TP[i])){TP[i] <- 0}
       
       # calculate metrics
-      precision[i] <- TP / TPFP
+      precision[i] <- TP[i] / TPFP
       if(is.na(precision[i])) {precision[i] <- -1}
       
-      recall[i] <- TP / TPFN
+      recall[i] <- TP[i] / TPFN
       if(is.na(recall[i])) {recall[i] <- -1}
       
       f1_score[i] <- 2 * ((precision[i]*recall[i])/(precision[i]+recall[i]))
@@ -129,26 +132,44 @@ eval_model <- function(preds = NULL, data = NULL,
       
     }
     
-    # combine evals into a dataframe
+    # combine classwise evals into a dataframe
     image_df <- data.frame("class" = class_name,
                            "precision" = precision,
                            "recall" = recall,
                            "f1_score" = f1_score)
+    
+    # calculate overall eval metrics 
+    mAP <- sum(TP) / sum(TP_FP$ct)
+    mAR <- sum(TP) / sum(TP_FN$ct)
+    F1 <- 2 * ((mAP * mAR) / (mAP + mAR))
+    
+    image_metrics <- list("mAP" = mAP, "mAR" = mAR, "F1_score" = F1)
+    
   }
   
+  # -- Calculate image-level id+count eval metrics
+  if("image" %in% event_level & assess.counts) {
+    
+    # add counts to eval data
+    ct_evals <- cbind(evals, count, true_count)
+    
+    
+    
+  }
+  
+  # -- Calculate sequence-level id eval metrics
+  
+  # -- Calculate sequence-level id+count eval metrics
+  
+
   
   
-  # -- calculate sequence-level id eval metrics
+  # -- Wrap all outputs in a list
   
-  # -- calculate image-level id+count eval metrics
+  eval_obj <- list("class_evals" = image_df, "overall_metrics" = image_metrics)
   
-  # -- calculate sequence-level id+count eval metrics
+  # -- Return final object
   
-  # -- calculate overall eval metrics
-  
-  # -- wrap all outputs in a list
-  
-  
-  
+  return(eval_obj)
 }
   
