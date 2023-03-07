@@ -143,7 +143,7 @@ eval_model <- function(preds = NULL, data = NULL,
     mAR <- sum(TP) / sum(TP_FN$ct)
     F1 <- 2 * ((mAP * mAR) / (mAP + mAR))
     
-    image_metrics <- list("mAP" = mAP, "mAR" = mAR, "F1_score" = F1)
+    image_metrics <- data.frame("mAP" = mAP, "mAR" = mAR, "F1_score" = F1)
     
   }
   
