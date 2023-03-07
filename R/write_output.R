@@ -133,6 +133,9 @@ write_output <- function(full_df, prediction_format, label_encoder) {
     else if("CreateDate" %in% colnames(exif_dat)){
       df_out$timestamp[i] <- exif_dat$CreateDate
     }
+    else if("ProfileDateTime" %in% colnames(exif_dat)){
+      df_out$timestamp[i] <- exif_dat$ProfileDateTime
+    }
     else {
       df_out$timestamp[i] <- NA
     }
