@@ -2,7 +2,12 @@
 #' 
 #' @description create df of metadata and sequence information for all images in user image directory
 #' 
-#' @details 
+#' @details This function extracts and stores image-level metadata for your dataset. Depending on your
+#' camera metadata, this will include image dimensions, timestamp, temperature, comments, camera and sequence ids.
+#' If you provide a string vector of camera ids represented in your directory, sequence length and 
+#' wait time between triggers, this function will also create camera and sequence identifiers based on directory
+#' and timestamp information. This function utility depends on either the sufficient metadata fields in each image
+#' or reasonable directory organization in order to generate accurate sequence information.   
 #' 
 #' @param data_dir absolute path to image directory
 #' @param file_extensions The types of extensions on your image files. Case insensitive; enter as a string.
@@ -11,11 +16,16 @@
 #' data_dir that you want to analyze, if so, set to TRUE. If you only want to 
 #' analyze images within your data_dir and not within sub-folders, set to FALSE. Default is TRUE.
 #' @param burst_length number of images per sequence burst.
-#' @param wait_time time between bursts. 
-#' @param cam_prefix chr. String pattern in absolute directory or file path denoting camera id. 
+#' @param wait_time time between bursts in seconds. If your cameras have a 10-minute wait time 
+#' between triggers, your wait time is 600. 
+#' @param cam_prefix character vector, where each value corresponds to a unique name 
+#' for each camera in your dataset as it appears in the absolute path. The function will use
+#' this identifier if your camera metadata do not contain serial numbers. 
+#' 
 #'  
 #' @import exifr
-#' @import dplyr
+#' @import lubridate
+#' @import stringr
 #'  
 #' @export
 extract_metadata <- function(data_dir = NULL, file_extensions = ".jpg",
@@ -31,10 +41,10 @@ extract_metadata <- function(data_dir = NULL, file_extensions = ".jpg",
   # -- Load metadata into df
   
   # initialize df to hold metadata
-  meta_df <- data.frame(matrix(nrow = length(file_list), ncol = dim(dat)[2]))
+  meta_df <- data.frame(matrix(nrow = length(file_list), ncol = 13))
   colnames(meta_df) <- c("FilePath", "ImageName", "ImageWidth", "ImageHeight", 
-                         "TimeStamp", "MakeModel", "SerialNo", "EventNumber",
-                         "TempF", "TempC",  "Tigger", "Notes")
+                         "TimeStamp", "MakeModel", "SerialNumber", "EventNumber",
+                         "SeqNumber", "TempF", "TempC",  "Tigger", "Notes")
   print(paste0("Collecting image metadata from ", data_dir))
   
   # loop through data_dir
@@ -71,9 +81,9 @@ extract_metadata <- function(data_dir = NULL, file_extensions = ".jpg",
     
     # add serial number
     if("SerialNumber" %in% colnames(dat)){
-      meta_df$SerialNo[i] <- dat$SerialNumber
+      meta_df$SerialNumber[i] <- dat$SerialNumber
     } else {
-      meta_df$SerialNo[i] <- NA 
+      meta_df$SerialNumber[i] <- NA 
     }
     
     # add camera make/model
@@ -84,10 +94,18 @@ extract_metadata <- function(data_dir = NULL, file_extensions = ".jpg",
     }
     
     # Pull available sequence info
-    if("EventNumber" %in% colnames(dat)){
-      meta_df$EventNumber <- dat$EventNumber
+    if("EventNumber" %in% colnames(dat)) {
+      meta_df$EventNumber[i] <- dat$EventNumber
     } else {
-      meta_df$EventNumber <- NA
+      meta_df$EventNumber[i] <- NA
+    }
+    
+    # create sequence id if SerialNumber and EventNumber are not NA
+    if(!is.na(meta_df$SerialNumber[i]) & !is.na(meta_df$EventNumber[i])) {
+      meta_df$SeqNumber[i] <- paste0(meta_df$SerialNumber[i], "_SEQ",
+                                    meta_df$EventNumber[i], sep="_")
+    } else {
+      meta_df$SeqNumber[i] <- NA
     }
     
     # add temp data
@@ -105,18 +123,18 @@ extract_metadata <- function(data_dir = NULL, file_extensions = ".jpg",
     
     # add trigger data
     if("TriggerMode" %in% colnames(dat)) {
-      meta_df$Trigger <- dat$TriggerMode
+      meta_df$Trigger[i] <- dat$TriggerMode
     } else {
-      meta_df$Trigger <- NA
+      meta_df$Trigger[i] <- NA
     }
     
     # add comment data
     if("Comment" %in% colnames(dat)) {
-      meta_df$Notes <- dat$Comment
+      meta_df$Notes[i] <- dat$Comment
     } else if("UserLabel" %in% colnames(dat)) {
-      meta_df$Notes <- dat$UserLabel
+      meta_df$Notes[i] <- dat$UserLabel
     } else if("UserComment" %in% colnames(dat)) {
-      meta_df$Notes <- dat$UserComment
+      meta_df$Notes[i] <- dat$UserComment
     }
     
     # print update
@@ -125,8 +143,74 @@ extract_metadata <- function(data_dir = NULL, file_extensions = ".jpg",
     }
   }
   
-  cat(paste0("\nMetadata loaded from all images. Generating camera and sequence ids.\n"))
+  cat(paste0("\nMetadata loaded from all images.\n"))
   
-  # -- 
+  # -- Create directory-based camera IDs
+  if(!is.null(cam_prefix)) {
+    cat(paste0("Loading camera ids from directory.\n"))
+    
+    # create new column for dir-based camera id
+    meta_df$CameraId <- NA
+    
+    # loop through values of camera id
+    for(i in 1:length(cam_prefix)) {
+      # comb filepaths for matches to each camera id
+      id <- data.frame(id_match = stringr::str_match(meta_df$FilePath, cam_prefix[i]))
+      
+      # add matches to df
+      meta_df$CameraId <- ifelse(is.na(meta_df$CameraId), id$id_match, meta_df$CameraId)
+    }
+    
+    # -- Create timestamp-based sequence ids
+    if(burst_length > 1) {
+      if(wait_time == 0){
+        stop(paste0("Wait time between bursts must be greater than ", wait_time, " seconds.\n"))
+      }
+      
+      cat(paste0("Generating sequence ids.\n"))
+      
+      # convert timestamp from character to date
+      meta_df$TimeStamp <- lubridate::ymd_hms(meta_df$TimeStamp)
+      
+      # create empty column to add sequence id
+      meta_df$SequenceId <- NA
+      
+      # sort obs by camera, timestamp
+      meta_df$TimeDiff <- NA
+      meta_df <- meta_df[with(meta_df, order(CameraId, TimeStamp)), ]
+      
+      # calculate time between obs
+      for(i in 2:nrow(meta_df)){
+        meta_df$TimeDiff[i] <- as.numeric(lubridate::dseconds(
+          lubridate::as.duration(meta_df$TimeStamp[i] - meta_df$TimeStamp[i-1])))
+      }
+      
+      # randomly assign starting sequence id
+      seq_no <- floor(runif(1, 100, 1001))
+      
+      # create vector to hold ids
+      meta_df$SequenceId <- NA
+      
+      # manually set first id
+      meta_df$SequenceId[1] <- paste0(meta_df$CameraId[1], "_SEQ", seq_no)
+      
+      # loop through rest of df and update sequence ids
+      for(i in 2:nrow(meta_df)){
+        # update sequence id based on wait time
+        if(meta_df$TimeDiff[i] > wait_time | (meta_df$CameraId[i] != meta_df$CameraId[i-1])) {
+          seq_no <- seq_no + 1
+        } 
+        #set sequence id
+        meta_df$SequenceId[i] <- paste0(meta_df$CameraId[i], "_SEQ", seq_no)
+      }
+      
+    }
+    
+  }
   
+  # -- Remove NA columns
+  meta_df <- meta_df[ , colSums(is.na(meta_df)) < nrow(meta_df)]
+  
+  return(meta_df)
 }
+#END
