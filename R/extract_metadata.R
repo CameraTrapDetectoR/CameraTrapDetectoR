@@ -163,9 +163,6 @@ extract_metadata <- function(data_dir = NULL, file_extensions = ".jpg",
     
     # -- Create timestamp-based sequence ids
     if(burst_length > 1) {
-      if(wait_time == 0){
-        stop(paste0("Wait time between bursts must be greater than ", wait_time, " seconds.\n"))
-      }
       
       cat(paste0("Generating sequence ids.\n"))
       
@@ -196,8 +193,10 @@ extract_metadata <- function(data_dir = NULL, file_extensions = ".jpg",
       
       # loop through rest of df and update sequence ids
       for(i in 2:nrow(meta_df)){
-        # update sequence id based on wait time
-        if(meta_df$TimeDiff[i] > wait_time | (meta_df$CameraId[i] != meta_df$CameraId[i-1])) {
+        # update sequence id based on wait time, burst length, cam id
+        if(meta_df$TimeDiff[i] > wait_time | 
+           (meta_df$CameraId[i] != meta_df$CameraId[i-1]) | 
+           (i %% burst_length == 1)) {
           seq_no <- seq_no + 1
         } 
         #set sequence id
