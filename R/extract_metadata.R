@@ -183,7 +183,7 @@ extract_metadata <- function(data_dir = NULL, file_extensions = ".jpg",
       }
       
       # randomly assign starting sequence id
-      seq_no <- floor(runif(1, 100, 1001))
+      seq_no <- floor(stats::runif(1, 100, 1001))
       
       # create vector to hold ids
       meta_df$SequenceId <- NA
