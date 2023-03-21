@@ -59,8 +59,7 @@
 #' @param overlap_threshold Overlap threshold used when determining if bounding box
 #' detections are to be considered a single detection. Accepts values from 0-1
 #' representing the proportion of bounding box overlap.
-#' @param prediction_format The format to be used for the prediction file.  Accepts
-#' values of 'wide' or 'long'.
+#' @param get_metadata boolean. Collect metadata for each image when it runs through the model.
 #' @param latitude image location latitude. Use only if all images in the model run come from the same location.
 #' @param longitude image location longitude. Use only if all images in the model run come from the same location.
 #' @param h The image height (in pixels) for the annotated plot. Only used if
@@ -408,8 +407,16 @@ deploy_model <- function(
           
         }
         
-        # add prediction df to list
+        # add full filepath to prediction
         pred_df$filename <- rep(normalizePath(filename), nrow(pred_df))
+        
+        # extract image metadata and add to predictions
+        if(get_metadata){
+          meta_df <- extract_metadata(pred_df$filename[1])
+          pred_df <- dplyr::left_join(pred_df, meta_df, dplyr::join_by(filename == FilePath))
+        }
+        
+        # add prediction df to list
         predictions_list[[i]] <- pred_df
         
         # save results every 10th image
@@ -418,7 +425,7 @@ deploy_model <- function(
           full_df <- apply_score_threshold(predictions_list, score_threshold)
           
           # convert to output format
-          df_out <- write_output(full_df, prediction_format, label_encoder)
+          df_out <- write_output(full_df)
           
           # cat previous results if they exists
           if(exists("results")){

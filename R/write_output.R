@@ -32,15 +32,11 @@ write_output <- function(full_df) {
   det_df<-det_df[,colnames(full_df)]
   
   full_df_cnt<-rbind.data.frame(det_df, full_df[full_df$certainty=="detections_below_score_threshold",])
-  colnames(full_df_cnt) <- c("filename","prediction","confidence_score","count","certainty")
   
   # assign zero to counts if empty
   full_df_cnt[full_df_cnt$prediction=="empty","count"]<-0
   
-  df_long <-full_df_cnt[order(full_df_cnt$filename,full_df_cnt$prediction),]
-  
-  # save df as output
-  df_out <- df_long
+  df_out <-full_df_cnt[order(full_df_cnt$filename,full_df_cnt$prediction),]
   
   
   # return data frame

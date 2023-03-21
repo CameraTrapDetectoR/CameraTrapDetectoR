@@ -18,13 +18,12 @@ apply_score_threshold <- function(predictions_list, score_threshold){
   
   
   # convert list into dataframe
-  predictions_df <- do.call(rbind, predictions_list)
+  df <- do.call(rbind, predictions_list)
   
-  # output dataframe with all predictions for each file
-  df <- data.frame("filename" = predictions_df$filename
-                        , "prediction" = predictions_df$label.y
-                        , "confidence_in_pred" = predictions_df$scores
-                        , "number_predictions" = predictions_df$number_bboxes)
+  # rename columns
+  colnames(df)[colnames(df) == 'label.y'] <- 'prediction'
+  colnames(df)[colnames(df) == 'scores'] <- 'confidence_in_pred'
+  colnames(df)[colnames(df) == 'number_bboxes'] <- 'number_predictions'
   
   file_list <- unique(df$filename)
   
