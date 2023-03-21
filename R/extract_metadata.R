@@ -26,6 +26,7 @@
 #' @import exifr
 #' @import lubridate
 #' @import stringr
+#' @import dplyr
 #'  
 #' @export
 extract_metadata <- function(data_dir = NULL, file_extensions = ".jpg",
@@ -207,8 +208,9 @@ extract_metadata <- function(data_dir = NULL, file_extensions = ".jpg",
     
   }
   
-  # -- Remove NA columns
-  meta_df <- meta_df[ , colSums(is.na(meta_df)) < nrow(meta_df)]
+  # -- Remove columns with all NA values
+  not_all_na <- function(x) {any(!is.na(x))}
+  meta_df <- dplyr::select(meta_df, where(not_all_na))
   
   return(meta_df)
 }
