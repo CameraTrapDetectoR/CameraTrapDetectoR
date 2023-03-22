@@ -19,7 +19,7 @@
 #' 
 #' @export
 sort_images <- function(results = NULL, output_dir = NULL,
-                        review_threshold = NA, count_subdir = FALSE, 
+                        review_threshold = 0, count_subdir = FALSE, 
                         remove_originals = FALSE){
   
   # define output_dir; create it if it doesn't exist
@@ -30,17 +30,16 @@ sort_images <- function(results = NULL, output_dir = NULL,
   # create folders within output dir based on results classes
   classes <- unique(results$prediction)
   for(i in 1:length(classes)){
+    # create class dir
     dir.create(paste(output_dir, classes[i], sep="/"))
-  }
-  
-  # make a folder for manual review if requested
-  if(!is.na(review_threshold)){
-    dir.create(paste(output_dir, "manual_review", sep="/"))
-  }
-  
-  # make subfolders for counts if based on user input
-  if(count_subdir){
-    for(i in 1:length(classes)){
+    
+    # make manual review folders
+    if(review_threshold > 0){
+      dir.create(paste(output_dir, classes[i], "manual_review", sep="/"))
+    }
+    
+    # make count folders
+    if(count_subdir){
       # filter results to a given class
       res_class <- results[results$class == class[i]]
       # get unique counts for that class
@@ -50,7 +49,7 @@ sort_images <- function(results = NULL, output_dir = NULL,
       }
     }
   }
-  
+
   # create placeholder vector for new file paths
   new_filename <- rep(NA, nrow(results))
   
@@ -70,27 +69,17 @@ sort_images <- function(results = NULL, output_dir = NULL,
     
     
     # create full path for new image loc/name
-    if(count_subdir){
+    if(conf < review_threshold){
+      new_loc <- paste(output_dir, class, "manual_review", img_name, sep="/")
+    } else if(count_subdir){
       new_loc <- paste(output_dir, class, count, img_name, sep="/")
     }
     else{
       new_loc <- paste(output_dir, class, img_name, sep="/")
     }
     
-    # update destination based on user input for review_threshold
-    if(!is.na(review_threshold)){
-      if(conf < review_threshold){
-        if(count_subdir){
-          new_loc <- paste(output_dir, "manual_review", count, img_name, sep="/")
-        }
-        new_loc <- paste(output_dir, "manual_review", img_name, sep="/")
-      }
-    }
-    
-    # copy image to new directory using new image name
-    if(is.na(review_threshold)){
-      file.copy(from=old_loc, to=new_loc, overwrite=F, recursive=F)
-    }
+    # copy image to new location
+    file.copy(old_loc, new_loc)
     
     # update new filename column
     new_filename[i] <- new_loc
@@ -104,7 +93,7 @@ sort_images <- function(results = NULL, output_dir = NULL,
   # add new_filename to results
   results_df <- cbind(results, new_filename)
   
-  print("All files transferred")
+  print("All images transferred")
   
   return(results_df)
 }

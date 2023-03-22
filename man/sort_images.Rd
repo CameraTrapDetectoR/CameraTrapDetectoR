@@ -8,6 +8,7 @@ sort_images(
   results = NULL,
   output_dir = NULL,
   review_threshold = NA,
+  count_subdir = FALSE,
   remove_originals = FALSE
 )
 }
@@ -18,6 +19,8 @@ sort_images(
 
 \item{review_threshold}{images with detections below this threshold will be moved into a folder
 titled "Manual_Review". Accepts values 0.01 - 1; default = NA.}
+
+\item{count_subdir}{boolean. Create subfolders inside each class directory for individual counts.}
 
 \item{remove_originals}{boolean. Delete original image files. Default = FALSE}
 }
