@@ -6,6 +6,7 @@
 #' @param w image width
 #' @param h image height
 #' @param bboxes existing predicted boxes df
+#' @param score_threshold score threshold to filter bboxes
 #'
 #' 
 #' @export
@@ -17,11 +18,13 @@ write_bbox_df <- function(predictions_list, w, h, bboxes) {
   bbox_df <- data.frame("filename" = predictions_df$filename,
                         "prediction" = predictions_df$label.y,
                         "confidence" = predictions_df$scores,
-                        "number_predictions" = predictions_df$number_bboxes,
                         "XMin" = as.numeric(predictions_df$XMin)/w,
                         "XMax" = as.numeric(predictions_df$XMax)/w,
                         "YMin" = as.numeric(predictions_df$YMin)/h,
                         "YMax" = as.numeric(predictions_df$YMax)/h)
+ 
+   # filter out predicted bboxes below score_threshold
+  bbox_df <- bbox_df[bbox_df$confidence < score_threshold, ]
   
   # combine new bboxes with any existing results
   bbox_df <- unique(rbind(bbox_df, bboxes))

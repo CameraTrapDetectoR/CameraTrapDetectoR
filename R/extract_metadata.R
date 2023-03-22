@@ -15,7 +15,7 @@
 extract_metadata <- function(file){
   
   # initialize df to hold metadata
-  meta_df <- data.frame(matrix(nrow = length(file_list), ncol = 13))
+  meta_df <- data.frame(matrix(nrow = 1, ncol = 13))
   colnames(meta_df) <- c("FilePath", "ImageName", "ImageWidth", "ImageHeight", 
                          "TimeStamp", "MakeModel", "SerialNumber", "EventNumber",
                          "SeqNumber", "TempF", "TempC",  "Tigger", "Notes")
@@ -24,7 +24,7 @@ extract_metadata <- function(file){
   dat <- exifr::read_exif(file)
   
   # add filepath
-  meta_df$FilePath <- dat$SourceFile
+  meta_df$FilePath <- normalizePath(dat$SourceFile, winslash = "/")
   
   # add image name
   meta_df$ImageName <- dat$FileName
