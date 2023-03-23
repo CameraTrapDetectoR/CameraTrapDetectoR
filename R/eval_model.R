@@ -36,25 +36,31 @@ eval_model <- function(preds = NULL, data = NULL,
   # warnings if receiving the wrong type of input:
   if(!is.data.frame(preds)){
     stop(paste0(preds, " must be in data.frame format. 
-                \nUse as.data.frame(", preds, ") to format your predictions.\n"))
+                \nUse as.data.frame(", deparse(substitute(preds)), ") to format your predictions.\n"))
+  }
+  
+  # warnings if cannot find predictions column
+  if(!("predictions" %in% colnames(preds))){
+    stop(paste0("Cannot find column of predictions in ", deparse(substitute(dataframe)), ". 
+                \nPlease ensure this column is named 'predictions' .\n"))
   }
   
   if(!is.data.frame(data)){
     stop(paste0(data, " must be in data.frame format. 
-                \nUse as.data.frame(", data, ") to format your annotations.\n"))
+                \nUse as.data.frame(", deparse(substitute(data)), ") to format your annotations.\n"))
   }
   
   # warning if incorrect format for counts 
   if(assess_counts & is.null(true_counts)){
-    stop(paste0("Please provide the column name for animal counts in ", data, 
+    stop(paste0("Please provide the column name for animal counts in ", deparse(substitute(data)), 
                 " in the argument `true_count`\n"))
   }
   
   # warning if incorrect format for counts 
   if(event_level == "sequence" & is.null(seq_id)){
-    stop(paste0("Please provide the column name for sequence id in ", data, 
+    stop(paste0("Please provide the column name for sequence id in ", deparse(substitute(data)), 
                 " in the argument `seq_id`\nTo define sequence info for your dataset,
-                see the function *assign_seq_metadata*\n"))
+                see the function *extract_metadata*\n"))
   }
   
   # -- Join
@@ -63,9 +69,9 @@ eval_model <- function(preds = NULL, data = NULL,
   results <- dplyr::left_join(preds, data, dplyr::join_by(filename == filepath))
   
   # flag any predictions that do not have associated annotations
-  results$true_class <- ifelse(is.na(results$true_class), 
-                               "Annotation_not_found",
-                               results$true_class)
+  results[, true_class] <- ifelse(is.na(results[, true_class]), 
+                                  "Annotation_not_found",
+                                  results[, true_class])
   
   print("Removing predictions without associated annotations from evaluation calculations.\n")
   
@@ -74,18 +80,18 @@ eval_model <- function(preds = NULL, data = NULL,
   
   # update var types for class truths and predictions
   evals$prediction <- as.factor(evals$prediction)
-  evals$true_class <- as.factor(evals$true_class)
+  evals[, true_class] <- as.factor(evals[, true_class])
   
   
   # -- Calculate image-level id eval metrics  
   
   if("image" %in% event_level) {
     # create contingency table of class levels
-    class_tab <- table(evals$prediction, evals$true_class)
+    class_tab <- table(evals[, prediction], evals[, true_class])
     
     # pull out true positives
     class_df <- as.data.frame.matrix(class_tab)
-    class_name <- sort(as.character(unique(evals$true_class)))
+    class_name <- sort(as.character(unique(evals[, true_class])))
     
     # sum class counts for preds and truths
     TP_FP <- data.frame(ct = rowSums(class_df)) # true positives + false positives
@@ -148,16 +154,52 @@ eval_model <- function(preds = NULL, data = NULL,
   }
   
   # -- Calculate image-level id+count eval metrics
+  
   if("image" %in% event_level & assess.counts) {
     
-    # add counts to eval data
-    ct_evals <- cbind(evals, count, true_count)
+    # function to perform evals on counts
     
     
     
   }
   
   # -- Calculate sequence-level id eval metrics
+  
+  if("sequence" %in% event_level) {
+    # make sure confidence score is included
+    if(!("confidence_in_pred" %in% colnames(evals))){
+      stop(paste0("Cannot find column with confidence scores in ", deparse(substitute(preds)), ". 
+                \nPlease ensure this column is named 'confidence_in_pred' .\n"))
+    }
+    # get list of unique sequence ids
+    sequences <- unique(evals[, seq_id])
+    
+    # create empty df to house filtered predictions
+    seq_evals <- 
+    
+    # loop through each sequence
+    for(i in 1:length(sequences)){
+      # isolate a given sequence
+      imgs <- evals[evals[,seq_id] == sequences[i],]
+      
+      # group sequence images by prediction
+      imgs <- dplyr::group_by(imgs, prediction)
+      
+      # keep only highest class-wise predictions
+      imgs <- dplyr::filter(imgs, confidence_in_pred == max(confidence_in_pred))
+    }
+    
+    # group df by sequence id and predicted class
+    seq_evals <- dplyr::group_by(evals, evals[, seq_id], prediction)
+    
+    # Keep highest confidence classwise predictions for each sequence
+    seq_evals <- dplyr::filter(seq_evals, confidence_in_pred == max(confidence_in_pred))
+    
+    # exclude redundant empty predictions
+    seq_evals <- dplyr::filter(seq_evals, prediction != "empty", .preserve = TRUE)
+    
+    
+  }
   
   # -- Calculate sequence-level id+count eval metrics
   

@@ -84,14 +84,21 @@ sort_images <- function(results = NULL, output_dir = NULL,
     # update new filename column
     new_filename[i] <- new_loc
     
-    # perform action on original image based on user input
-    if(remove_originals){
-      file.remove(old_loc)
-    }
+    # create metadata tags
+    exif_tags <- write_exif_tags(class, conf, count, review_threshold)
+    exifr::exiftool_call(args = exif_tags, fnames = new_loc)
   }
   
   # add new_filename to results
   results_df <- cbind(results, new_filename)
+  
+  # rename col for old filename
+  colnames(results_df)[colnames(results_df) == "filename"] = "old_filename"
+  
+  # perform action on original image based on user input
+  if(remove_originals){
+    file.remove(old_filename)
+  }
   
   print("All images transferred")
   
