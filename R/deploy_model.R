@@ -433,7 +433,7 @@ deploy_model <- function(
           # if saving all bboxes, make df and save to csv
           # Write Bounding Box File
           if(write_bbox_csv){
-            bbox_df <- write_bbox_df(predictions_list, w, h, bboxes)
+            bbox_df <- write_bbox_df(predictions_list, w, h, bboxes, score_threshold)
             utils::write.csv(bbox_df, file.path(output_dir, paste(model_type, "predicted_bboxes.csv", sep="_")), row.names=FALSE)
           }
           # print update
@@ -478,7 +478,7 @@ deploy_model <- function(
   # if saving all bboxes, make df and save to csv
   # Write Bounding Box File
   if(write_bbox_csv){
-    bbox_df <- write_bbox_df(predictions_list, w, h, bboxes)
+    bbox_df <- write_bbox_df(predictions_list, w, h, bboxes, score_threshold)
     utils::write.csv(bbox_df, file.path(output_dir, paste(model_type, "predicted_bboxes.csv", sep="_")), row.names=FALSE)
     cat(paste0("The coordinates of predicted bounding boxes are in the file: ", model_type,  "_predicted_bboxes.csv"))
   }

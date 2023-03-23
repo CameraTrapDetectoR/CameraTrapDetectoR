@@ -10,7 +10,7 @@
 #'
 #' 
 #' @export
-write_bbox_df <- function(predictions_list, w, h, bboxes) {
+write_bbox_df <- function(predictions_list, w, h, bboxes, score_threshold) {
   
   # convert list into dataframe
   predictions_df <- do.call(rbind, predictions_list)
