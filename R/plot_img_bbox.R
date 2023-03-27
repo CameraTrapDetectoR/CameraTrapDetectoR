@@ -90,7 +90,7 @@ plot_img_bbox<- function(filename,
                          x1=pred_df$XMax[i], y1=pred_df$YMin[i], 
                          col=col, lty=lty, lwd=lwd)
       if(plot_label){
-        graphics::text(x= pred_df$XMin[i]+6, y=pred_df$YMin[i]+10, pred_df$label.y[i],
+        graphics::text(x= pred_df$XMin[i]+6, y=pred_df$YMin[i]+10, pred_df$prediction[i],
                        col=col, adj=0)  
       }
     }

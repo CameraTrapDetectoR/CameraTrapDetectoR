@@ -37,7 +37,7 @@ decode_output <- function(
   }
   
   # remove boxes below threshold
-  #pred_df <- pred_df[pred_df$scores >= score_threshold, ]
+  pred_df <- pred_df[pred_df$scores >= score_threshold, ]
   
   # the predicted y coordinates from the model assume that the y axis 
   # starts in the upper left hand corner of the image, but this is not how
@@ -47,5 +47,8 @@ decode_output <- function(
   
   # get name of label
   pred_df <- merge(pred_df, label_encoder, by.x="label", by.y="encoder")
+  
+  # rename prediction
+  colnames(pred_df)[colnames(pred_df) == "label.y"] = "prediction"
   return(pred_df)
 }

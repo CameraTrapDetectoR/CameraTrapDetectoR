@@ -359,7 +359,7 @@ deploy_model <- function(
         # evaluate predictions using possible species
         if(is.null(location)==FALSE){
           pred_df<-smart_relabel(pred_df, possible.labels, label_encoder)
-          pred_df<-pred_df[pred_df$label.y %in% possible.labels$label,]
+          pred_df<-pred_df[pred_df$prediction %in% possible.labels$label,]
         }
         
         if(nrow(pred_df)==1){

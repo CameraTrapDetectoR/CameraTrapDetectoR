@@ -23,7 +23,7 @@ apply_score_threshold <- function(predictions_list, score_threshold){
   df <- do.call(dplyr::bind_rows, predictions_list)
   
   # rename select columns
-  colnames(df)[colnames(df) == "label.y"] = "prediction"
+  #colnames(df)[colnames(df) == "label.y"] = "prediction"
   colnames(df)[colnames(df) == "scores"] = "confidence_in_pred"
   colnames(df)[colnames(df) == "number_bboxes"] = "number_predictions"
   
