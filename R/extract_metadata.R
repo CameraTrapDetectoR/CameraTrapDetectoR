@@ -117,6 +117,9 @@ extract_metadata <- function(files){
     }
   }
   
+  # remove all NA columns
+  meta_df <- remove_na(meta_df)
+  
   
   # return obs
   return(meta_df)
