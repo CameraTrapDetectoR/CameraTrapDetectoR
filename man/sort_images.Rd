@@ -7,7 +7,7 @@
 sort_images(
   results = NULL,
   output_dir = NULL,
-  review_threshold = NA,
+  review_threshold = 0,
   count_subdir = FALSE,
   remove_originals = FALSE
 )

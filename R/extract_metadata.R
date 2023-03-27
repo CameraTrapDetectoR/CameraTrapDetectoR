@@ -4,11 +4,9 @@
 #' 
 #' @details Helper function for `deploy_model`, `generate_sequences` functions
 #' 
-#' @param files absolute path to image file/files
+#' @param files character vector with absolute path to image file/files
 #'  
 #' @import exifr
-#' @import lubridate
-#' @import stringr
 #' @import dplyr
 #'  
 #' @export
