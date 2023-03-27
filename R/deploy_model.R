@@ -59,7 +59,7 @@
 #' @param overlap_threshold Overlap threshold used when determining if bounding box
 #' detections are to be considered a single detection. Accepts values from 0-1
 #' representing the proportion of bounding box overlap.
-#' @param get_metadata boolean. Collect metadata for each image when it runs through the
+#' @param get_metadata boolean. Collect metadata for each image.
 #' @param latitude image location latitude. Use only if all images in the model run come from the same location.
 #' @param longitude image location longitude. Use only if all images in the model run come from the same location.
 #' @param h The image height (in pixels) for the annotated plot. Only used if
