@@ -405,12 +405,6 @@ deploy_model <- function(
         # add full filepath to prediction
         pred_df$filename <- rep(filename, nrow(pred_df))
         
-        # extract image metadata and add to predictions
-        if(get_metadata){
-          meta_df <- extract_metadata(filename)
-          pred_df <- dplyr::left_join(pred_df, meta_df, dplyr::join_by(filename == FilePath))
-        }
-        
         # add prediction df to list
         predictions_list[[i]] <- pred_df
         
@@ -436,6 +430,13 @@ deploy_model <- function(
             bbox_df <- write_bbox_df(predictions_list, w, h, bboxes, score_threshold)
             utils::write.csv(bbox_df, file.path(output_dir, paste(model_type, "predicted_bboxes.csv", sep="_")), row.names=FALSE)
           }
+          
+          # extract metadata if requested
+          if(get_metadata){
+            meta_df <- extract_metadata(df_out$filename)
+            utils::write.csv(meta_df, file.path(output_dir, "metadata.csv"), row.names = FALSE)
+          }
+          
           # print update
           cat(paste0("\nResults saved for ", i, " images.\n"))
         }
@@ -465,6 +466,12 @@ deploy_model <- function(
   # cat previous results if they exists
   if(exists("results")){
     df_out <- unique(rbind(results, df_out))
+  }
+  
+  # extract and join metadata if requested
+  if(get_metadata){
+    meta_df <- extract_metadata(df_out$filename)
+    df_out <- dplyr::left_join(df_out, meta_df, dplyr::join_by(filename == FilePath))
   }
   
   # save predictions to csv
