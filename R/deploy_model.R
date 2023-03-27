@@ -389,10 +389,11 @@ deploy_model <- function(
         # when there is no predicted bounding box, create a relevant pred_df
         # first get the encoder value for the background class. This should always be zero
         if(nrow(pred_df) < 1) {
-          background_encoder <- label_encoder[which("empty"%in%label_encoder$label),]$encoder
+          #background_encoder <- label_encoder[which("empty"%in%label_encoder$label),]$encoder
           pred_df[1,] <- c(0, # using 0 instead of background_encoder, because empty will always be 0
                            rep(NA, (ncol(pred_df)-2)),
                            "empty")
+          # pred_df[1,] <- c(0, rep(NA, 5), "empty")
           
           # add column for number of bboxes
           pred_df$number_bboxes<-0
