@@ -3,8 +3,6 @@
 #' @details Under development! Function to convert model output to wide format. 
 #' 
 #' @param df df of predictions returned from `deploy_model` function
-#'
-#' @import
 #' 
 #' @export
 write_output <- function(df) {

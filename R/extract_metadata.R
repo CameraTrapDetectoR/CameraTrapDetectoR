@@ -7,8 +7,6 @@
 #' @param files absolute path to image file/files
 #'  
 #' @import exifr
-#' @import lubridate
-#' @import stringr
 #' @import dplyr
 #'  
 #' @export
