@@ -85,7 +85,7 @@ deploy_model <- function(
     model_type = 'general',
     recursive = TRUE,
     redownload = TRUE,
-    file_extensions = c(".jpg", ".JPG"),
+    file_extensions = c(".jpg"),
     make_plots = TRUE,
     plot_label = TRUE,
     output_dir = NULL,
