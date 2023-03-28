@@ -10,18 +10,18 @@
 #' @import dplyr
 #'  
 #' @export
-extract_metadata <- function(files){
+extract_metadata <- function(meta_files){
   # break list down to unique files
-  file_list <- unique(files)
+  meta_files <- unique(meta_files)
   
   # initialize df to hold metadata
-  meta_df <- data.frame(matrix(nrow = length(file_list), ncol = 13))
+  meta_df <- data.frame(matrix(nrow = length(meta_files), ncol = 13))
   colnames(meta_df) <- c("FilePath", "ImageName", "ImageWidth", "ImageHeight", 
                          "TimeStamp", "MakeModel", "SerialNumber", "EventNumber",
                          "SeqNumber", "TempF", "TempC",  "Tigger", "Notes")
   
   # load metadata
-  dat <- exifr::read_exif(file_list)
+  dat <- exifr::read_exif(meta_files)
   
   # bulk col values
   # add filepath
@@ -115,8 +115,8 @@ extract_metadata <- function(files){
     }
   }
   
-  # remove all NA columns
-  meta_df <- remove_na(meta_df)
+  # # remove all NA columns
+  # meta_df <- remove_na(meta_df)
   
   
   # return obs

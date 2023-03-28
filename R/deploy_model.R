@@ -435,6 +435,8 @@ deploy_model <- function(
           # extract metadata if requested
           if(get_metadata){
             meta_df <- extract_metadata(df_out$filename)
+            # remove all NA columns
+            meta_df <- remove_na(meta_df)
             utils::write.csv(meta_df, file.path(output_dir, "metadata.csv"), row.names = FALSE)
           }
           
