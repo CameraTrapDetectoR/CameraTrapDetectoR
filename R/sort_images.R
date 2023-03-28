@@ -85,8 +85,8 @@ sort_images <- function(results = NULL, output_dir = NULL,
     new_filename[i] <- new_loc
     
     # create metadata tags
-    exif_tags <- write_exif_tags(class, conf, count, review_threshold)
-    exifr::exiftool_call(args = exif_tags, fnames = new_loc)
+    # exif_tags <- write_exif_tags(class, conf, count, review_threshold)
+    # exifr::exiftool_call(args = exif_tags, fnames = new_loc)
   }
   
   # add new_filename to results
