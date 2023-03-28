@@ -59,8 +59,7 @@
 #' @param overlap_threshold Overlap threshold used when determining if bounding box
 #' detections are to be considered a single detection. Accepts values from 0-1
 #' representing the proportion of bounding box overlap.
-#' @param prediction_format The format to be used for the prediction file.  Accepts
-#' values of 'wide' or 'long'.
+#' @param get_metadata boolean. Collect metadata for each image.
 #' @param latitude image location latitude. Use only if all images in the model run come from the same location.
 #' @param longitude image location longitude. Use only if all images in the model run come from the same location.
 #' @param h The image height (in pixels) for the annotated plot. Only used if
@@ -86,7 +85,7 @@ deploy_model <- function(
     model_type = 'general',
     recursive = TRUE,
     redownload = TRUE,
-    file_extensions = c(".jpg", ".JPG"),
+    file_extensions = c(".jpg"),
     make_plots = TRUE,
     plot_label = TRUE,
     output_dir = NULL,
@@ -95,7 +94,7 @@ deploy_model <- function(
     overlap_correction = TRUE,
     overlap_threshold = 0.9,
     score_threshold = 0.6,
-    prediction_format = "long",
+    get_metadata = TRUE,
     latitude = NULL,
     longitude = NULL,
     h=307,
@@ -134,13 +133,6 @@ deploy_model <- function(
   # test score_threshold
   if (score_threshold < 0 | score_threshold >= 1){
     stop("score_threshold must be between 0 and 1")
-  }
-  
-  # check prediction_format
-  formats <- c('wide', 'long')
-  if(!prediction_format %in% formats) {
-    stop(paste0("prediction_format must be one of the available options: ",
-                list(formats)))
   }
   
   # check location arguments
@@ -219,7 +211,7 @@ deploy_model <- function(
   #utils::install.packages(c("shiny", "shinyjs"))
   
   # load model 
-  cat("\nLoading model architecture and weights. If this is your first time deploying a model on this computer, this step can take a few minutes. \n")
+  cat("\nLoading model architecture and weights. If you are redownloading model weights on this computer, this step can take a few minutes. \n")
   model <- weightLoader(model_type, num_classes = nrow(label_encoder), redownload=redownload)
   model$eval()
   
@@ -233,7 +225,7 @@ deploy_model <- function(
   }
   
   # set placeholder for predicted bboxes
-  if(write_bbox_csv==TRUE){
+  if(write_bbox_csv){
     bboxes <- NULL
   }
   
@@ -290,7 +282,7 @@ deploy_model <- function(
     overlap_correction = overlap_correction,
     overlap_threshold = overlap_threshold,
     score_threshold = score_threshold,
-    prediction_format = prediction_format,
+    get_metadata = get_metadata,
     latitude = latitude,
     longitude = longitude,
     h=h,
@@ -309,8 +301,7 @@ deploy_model <- function(
   #-- Make dataframe of possible labels using species range data
   if (is.null(latitude) & is.null(longitude)) {
     location <- NULL
-  }
-  else {
+  } else {
     location <- data.frame(longitude=longitude, latitude=latitude)
   }
   
@@ -352,10 +343,10 @@ deploy_model <- function(
       if("error" %in% input){
         # set up output so that I can put into the data frame
         # get file name
-        filename <- file_list[i]
-        pred_df <- data.frame(label = 'image_error', XMin = NA, YMin = NA, XMax=NA, YMax=NA,
+        filename <- normalizePath(file_list[i], winslash = "/")
+        pred_df <- data.frame(label = 0, XMin = NA, YMin = NA, XMax=NA, YMax=NA,
                               scores = 1.0, label.y = 'image_error', number_bboxes = 0,
-                              'filename' = normalizePath(filename))
+                              'filename' = filename)
         predictions_list[[i]] <- pred_df
       } else {
         # deploy the model. suppressing warnings here, because it is not important
@@ -368,7 +359,7 @@ deploy_model <- function(
         # evaluate predictions using possible species
         if(is.null(location)==FALSE){
           pred_df<-smart_relabel(pred_df, possible.labels, label_encoder)
-          pred_df<-pred_df[pred_df$label.y %in% possible.labels$label,]
+          pred_df<-pred_df[pred_df$prediction %in% possible.labels$label,]
         }
         
         if(nrow(pred_df)==1){
@@ -383,10 +374,13 @@ deploy_model <- function(
             pred_df <- reduce_overlapping_bboxes(pred_df, overlap_threshold)
           }
         }
+        # add filename
+        filename <- normalizePath(file_list[i], winslash = "/")
+        
         # subset by score threshold for plotting
         pred_df_plot <- pred_df[pred_df$scores >= score_threshold, ]
+        
         # make plots
-        filename <- file_list[i]
         if(make_plots){
           plot_img_bbox(filename, pred_df_plot, output_dir, data_dir, plot_label, col,
                         lty, lwd, FALSE, w, h)
@@ -395,21 +389,25 @@ deploy_model <- function(
         # when there is no predicted bounding box, create a relevant pred_df
         # first get the encoder value for the background class. This should always be zero
         if(nrow(pred_df) < 1) {
-          background_encoder <- label_encoder[which("empty"%in%label_encoder$label),]$encoder
-          pred_df[1,] <- c(0, # using 0 instead of background_encoder, because empty will always be 0
-                           rep(NA, (ncol(pred_df)-2)),
-                           "empty")
+          #background_encoder <- label_encoder[which("empty"%in%label_encoder$label),]$encoder
+          # pred_df[1,] <- c(0, # using 0 instead of background_encoder, because empty will always be 0
+          #                  rep(NA, (ncol(pred_df)-2)),
+          #                  "empty")
+          pred_df <- data.frame(label = 0, XMin = 0, YMin = 0, XMax = 0, YMax = 0,
+                                prediction = "empty", number_bboxes = 0, scores = 1)
           
-          # add column for number of bboxes
-          pred_df$number_bboxes<-0
-          
-          # add value for scores to address NA logical issues later
-          pred_df$scores<-1.0
+          # # add column for number of bboxes
+          # pred_df$number_bboxes<-0
+          # 
+          # # add value for scores to address NA logical issues later
+          # pred_df$scores<-1.0
           
         }
         
+        # add full filepath to prediction
+        pred_df$filename <- rep(filename, nrow(pred_df))
+        
         # add prediction df to list
-        pred_df$filename <- rep(normalizePath(filename), nrow(pred_df))
         predictions_list[[i]] <- pred_df
         
         # save results every 10th image
@@ -418,11 +416,11 @@ deploy_model <- function(
           full_df <- apply_score_threshold(predictions_list, score_threshold)
           
           # convert to output format
-          df_out <- write_output(full_df, prediction_format, label_encoder)
+          df_out <- write_output(full_df)
           
           # cat previous results if they exists
           if(exists("results")){
-            df_out <- unique(rbind(results, df_out))
+            df_out <- unique(dplyr::bind_rows(results, df_out))
           }
           
           # save predictions to csv
@@ -431,9 +429,18 @@ deploy_model <- function(
           # if saving all bboxes, make df and save to csv
           # Write Bounding Box File
           if(write_bbox_csv){
-            bbox_df <- write_bbox_df(predictions_list, w, h, bboxes)
+            bbox_df <- write_bbox_df(predictions_list, w, h, bboxes, score_threshold)
             utils::write.csv(bbox_df, file.path(output_dir, paste(model_type, "predicted_bboxes.csv", sep="_")), row.names=FALSE)
           }
+          
+          # extract metadata if requested
+          if(get_metadata){
+            meta_df <- extract_metadata(df_out$filename)
+            # remove all NA columns
+            meta_df <- remove_na(meta_df)
+            utils::write.csv(meta_df, file.path(output_dir, "metadata.csv"), row.names = FALSE)
+          }
+          
           # print update
           cat(paste0("\nResults saved for ", i, " images.\n"))
         }
@@ -458,11 +465,17 @@ deploy_model <- function(
   full_df <- apply_score_threshold(predictions_list, score_threshold)
   
   # convert to output format
-  df_out <- write_output(full_df, prediction_format, label_encoder)
+  df_out <- write_output(full_df)
   
   # cat previous results if they exists
   if(exists("results")){
     df_out <- unique(rbind(results, df_out))
+  }
+  
+  # extract and join metadata if requested
+  if(get_metadata){
+    meta_df <- extract_metadata(df_out$filename)
+    df_out <- dplyr::left_join(df_out, meta_df, dplyr::join_by(filename == FilePath))
   }
   
   # save predictions to csv
@@ -476,7 +489,7 @@ deploy_model <- function(
   # if saving all bboxes, make df and save to csv
   # Write Bounding Box File
   if(write_bbox_csv){
-    bbox_df <- write_bbox_df(predictions_list, w, h, bboxes)
+    bbox_df <- write_bbox_df(predictions_list, w, h, bboxes, score_threshold)
     utils::write.csv(bbox_df, file.path(output_dir, paste(model_type, "predicted_bboxes.csv", sep="_")), row.names=FALSE)
     cat(paste0("The coordinates of predicted bounding boxes are in the file: ", model_type,  "_predicted_bboxes.csv"))
   }

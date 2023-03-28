@@ -4,7 +4,7 @@
 \alias{write_bbox_df}
 \title{separate function to write bboxes to df}
 \usage{
-write_bbox_df(predictions_list, w, h, bboxes)
+write_bbox_df(predictions_list, w, h, bboxes, score_threshold)
 }
 \arguments{
 \item{predictions_list}{prediction output}
@@ -14,6 +14,8 @@ write_bbox_df(predictions_list, w, h, bboxes)
 \item{h}{image height}
 
 \item{bboxes}{existing predicted boxes df}
+
+\item{score_threshold}{score threshold to filter bboxes}
 }
 \description{
 separate function to write bboxes to df

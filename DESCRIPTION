@@ -9,9 +9,11 @@ URL: https://github.com/CameraTrapDetectoR/CameraTrapDetectoR
 Encoding: UTF-8
 RoxygenNote: 7.2.1
 Imports: 
+    dplyr,
     exifr,
     fs,
     googledrive,
+    lubridate,
     magick,
     rappdirs,
     sf,
@@ -19,6 +21,7 @@ Imports:
     shinyBS,
     shinyFiles,
     shinyjs,
+    stringr,
     torch,
     torchvision,
     torchvisionlib
