@@ -73,6 +73,8 @@ extract_metadata <- function(meta_files){
     # add camera make/model
     if(("Make" %in% colnames(dat)) & ("Model" %in% colnames(dat))) {
       meta_df$MakeModel[i] <- paste(dat$Make[i], dat$Model[i], sep = "_")
+      # replace NA_NA with true NA value
+      meta_df$MakeModel[i] <- ifelse(meta_df$MakeModel[i] == "NA_NA", NA, meta_df$MakeModel[i])
     } 
     
     # Pull available sequence info

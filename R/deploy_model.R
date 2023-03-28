@@ -474,7 +474,11 @@ deploy_model <- function(
   
   # extract and join metadata if requested
   if(get_metadata){
+    # extract metadata
     meta_df <- extract_metadata(df_out$filename)
+    # remove all NA columns
+    meta_df <- remove_na(meta_df)
+    # join metadata to results
     df_out <- dplyr::left_join(df_out, meta_df, dplyr::join_by(filename == FilePath))
   }
   
