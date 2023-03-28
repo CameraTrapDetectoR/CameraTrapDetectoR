@@ -390,16 +390,17 @@ deploy_model <- function(
         # first get the encoder value for the background class. This should always be zero
         if(nrow(pred_df) < 1) {
           #background_encoder <- label_encoder[which("empty"%in%label_encoder$label),]$encoder
-          pred_df[1,] <- c(0, # using 0 instead of background_encoder, because empty will always be 0
-                           rep(NA, (ncol(pred_df)-2)),
-                           "empty")
-          # pred_df[1,] <- c(0, rep(NA, 5), "empty")
+          # pred_df[1,] <- c(0, # using 0 instead of background_encoder, because empty will always be 0
+          #                  rep(NA, (ncol(pred_df)-2)),
+          #                  "empty")
+          pred_df <- data.frame(label = 0, XMin = 0, YMin = 0, XMax = 0, YMax = 0,
+                                prediction = "empty", number_bboxes = 0, scores = 1)
           
-          # add column for number of bboxes
-          pred_df$number_bboxes<-0
-          
-          # add value for scores to address NA logical issues later
-          pred_df$scores<-1.0
+          # # add column for number of bboxes
+          # pred_df$number_bboxes<-0
+          # 
+          # # add value for scores to address NA logical issues later
+          # pred_df$scores<-1.0
           
         }
         
