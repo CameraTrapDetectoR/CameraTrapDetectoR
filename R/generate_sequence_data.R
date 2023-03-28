@@ -32,8 +32,7 @@
 extract_metadata <- function(data_dir = NULL, 
                              cam_prefix = NULL,
                              burst_length = 1, 
-                             wait_time = 0,
-                             ) {
+                             wait_time = 0) {
   
   # -- load operators so we can use the dataset function
   load_operators()
