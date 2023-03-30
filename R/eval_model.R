@@ -21,7 +21,7 @@
 #' @param event_level evaluate results at the individual level or at the sequence level? 
 #' Accepts values `c("image", "sequence")`. If including evaluation by sequence, @param seq_id must be specified
 #' @param seq_id name of the column in `data` that contains sequence ids for each image. If you need to generate this
-#' information, see *assign_seq_metadata* function.
+#' information, see the *generate_sequence_data* function.
 #' 
 #' @import dplyr
 #' 
@@ -39,10 +39,16 @@ eval_model <- function(preds = NULL, data = NULL,
                 \nUse as.data.frame(", deparse(substitute(preds)), ") to format your predictions.\n"))
   }
   
+  # warnings if cannot find filename column
+  if(!("filename" %in% colnames(preds))){
+    stop(paste0("Cannot find column of absolute paths to image files in ", deparse(substitute(preds)), ". 
+                \nPlease ensure this column is named 'filename' .\n"))
+  }
+  
   # warnings if cannot find predictions column
-  if(!("predictions" %in% colnames(preds))){
-    stop(paste0("Cannot find column of predictions in ", deparse(substitute(dataframe)), ". 
-                \nPlease ensure this column is named 'predictions' .\n"))
+  if(!("prediction" %in% colnames(preds))){
+    stop(paste0("Cannot find column of predictions in ", deparse(substitute(preds)), ". 
+                \nPlease ensure this column is named 'prediction' .\n"))
   }
   
   if(!is.data.frame(data)){
@@ -60,23 +66,23 @@ eval_model <- function(preds = NULL, data = NULL,
   if(event_level == "sequence" & is.null(seq_id)){
     stop(paste0("Please provide the column name for sequence id in ", deparse(substitute(data)), 
                 " in the argument `seq_id`\nTo define sequence info for your dataset,
-                see the function *extract_metadata*\n"))
+                see the function *generate_sequence_data*\n"))
   }
   
   # -- Join
   
   # join results to ground truths 
-  results <- dplyr::left_join(preds, data, dplyr::join_by(filename == filepath))
+  results <- merge(preds, data, by.x = "filename", by.y = filepath, all.x = TRUE, all.y = FALSE)
   
   # flag any predictions that do not have associated annotations
   results[, true_class] <- ifelse(is.na(results[, true_class]), 
                                   "Annotation_not_found",
                                   results[, true_class])
   
-  print("Removing predictions without associated annotations from evaluation calculations.\n")
+  # print("Removing predictions without associated annotations from evaluation calculations.\n")
   
   # filter out predictions without labels
-  evals <- dplyr::filter(results, true_class != "Annotation_not_found")
+  evals <- results[results[,true_class] != "Annotation_not_found",]
   
   # update var types for class truths and predictions
   evals$prediction <- as.factor(evals$prediction)
@@ -87,7 +93,7 @@ eval_model <- function(preds = NULL, data = NULL,
   
   if("image" %in% event_level) {
     # create contingency table of class levels
-    class_tab <- table(evals[, prediction], evals[, true_class])
+    class_tab <- table(evals[, "prediction"], evals[, true_class])
     
     # pull out true positives
     class_df <- as.data.frame.matrix(class_tab)
@@ -145,11 +151,11 @@ eval_model <- function(preds = NULL, data = NULL,
                            "f1_score" = f1_score)
     
     # calculate overall eval metrics 
-    mAP <- sum(TP) / sum(TP_FP$ct)
-    mAR <- sum(TP) / sum(TP_FN$ct)
-    F1 <- 2 * ((mAP * mAR) / (mAP + mAR))
-    
-    image_metrics <- data.frame("mAP" = mAP, "mAR" = mAR, "F1_score" = F1)
+    # mAP <- sum(TP) / sum(TP_FP$ct)
+    # mAR <- sum(TP) / sum(TP_FN$ct)
+    # F1 <- 2 * ((mAP * mAR) / (mAP + mAR))
+    # 
+    # image_metrics <- data.frame("mAP" = mAP, "mAR" = mAR, "F1_score" = F1)
     
   }
   
@@ -171,23 +177,20 @@ eval_model <- function(preds = NULL, data = NULL,
       stop(paste0("Cannot find column with confidence scores in ", deparse(substitute(preds)), ". 
                 \nPlease ensure this column is named 'confidence_in_pred' .\n"))
     }
-    # get list of unique sequence ids
-    sequences <- unique(evals[, seq_id])
+    # # get list of unique sequence ids
+    # sequences <- unique(evals[, seq_id])
     
-    # create empty df to house filtered predictions
-    seq_evals <- 
-    
-    # loop through each sequence
-    for(i in 1:length(sequences)){
-      # isolate a given sequence
-      imgs <- evals[evals[,seq_id] == sequences[i],]
-      
-      # group sequence images by prediction
-      imgs <- dplyr::group_by(imgs, prediction)
-      
-      # keep only highest class-wise predictions
-      imgs <- dplyr::filter(imgs, confidence_in_pred == max(confidence_in_pred))
-    }
+    # # loop through each sequence
+    # for(i in 1:length(sequences)){
+    #   # isolate a given sequence
+    #   imgs <- evals[evals[,seq_id] == sequences[i],]
+    #   
+    #   # group sequence images by prediction
+    #   imgs <- dplyr::group_by(imgs, prediction)
+    #   
+    #   # keep only highest class-wise predictions
+    #   imgs <- dplyr::filter(imgs, confidence_in_pred == max(confidence_in_pred))
+    # }
     
     # group df by sequence id and predicted class
     seq_evals <- dplyr::group_by(evals, evals[, seq_id], prediction)
