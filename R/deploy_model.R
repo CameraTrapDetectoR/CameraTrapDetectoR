@@ -28,11 +28,12 @@
 #' @param recursive boolean. Do you have images in subfolders within your
 #'  data_dir that you want to analyze, if so, set to TRUE. If you only want to 
 #'  analyze images within your data_dir and not within sub-folders, set to FALSE.
-#' @param model_type Options are c('general', 'species', 'family', 'pig_only'). 
-#'  The `general` model predicts to the level of mammal, bird, humans, vehicles. 
-#'  The `species` model recognizes 77 species. 
-#'  The `family` model recognizes 33 families.
-#'  The `pig_only` model recognizes only pigs.
+#' @param model_type Options are 'general', 'species', 'family', or 'pig_only' 
+#'  with appropriate version appended with an underscore. For example, to use the version 1 species model,
+#'  list `model_type` as "species_v1". Specifying a model type without a version appended will default to
+#'  the latest version of that model available for your package vesion.
+#'  A full list of available models and details is available 
+#'  on the CameraTrapDetectoR Github wiki.
 #' @param redownload boolean. Set to TRUE if you want to download the latest model weights; 
 #' this may only be possible while disconnected from VPN.
 #' @param file_extensions The types of extensions on your image files. Case insensitive; enter as a string.
@@ -111,7 +112,10 @@ deploy_model <- function(
   #-- Check arguments provided 
   
   # check model_type
-  models_available <- c('general', 'species', 'family', 'mammalBirdVehicle', 'pig_only')
+  models_available <- c('general', 'general_v1', 
+                        'species', 'species_v1', 'species_v2',
+                        'family', 'family_v1',
+                        'pig_only', 'pig_only_v1')
   if(!model_type %in% models_available) {
     stop(paste0("model_type must be one of the available options: ",
                 list(models_available)))
@@ -179,12 +183,15 @@ deploy_model <- function(
   
   #-- Load model
   
+  # AB: already deprecated; ready for deletion
   # load encoder. build these dataframes in the script to avoid attaching tables
-  if(model_type == "mammalBirdVehicle"){
-    #label_encoder = utils::read.csv("./label_encoders/mammalBirdVehicle.csv")
-    label_encoder = data.frame('label' = c('background', 'mammal', 'bird', 'vehicle'),
-                               'encoder' = 0:3)
-  }
+  # if(model_type == "mammalBirdVehicle"){
+  #   #label_encoder = utils::read.csv("./label_encoders/mammalBirdVehicle.csv")
+  #   label_encoder = data.frame('label' = c('background', 'mammal', 'bird', 'vehicle'),
+  #                              'encoder' = 0:3)
+  # }
+  
+  
   if(model_type == "pig_only"){
     # AB : fix to overwrite labels from fam model until pig model can be retrained
     categories <- c('empty', rep('not_pig', 31), 'pig')
@@ -218,14 +225,22 @@ deploy_model <- function(
   #install_dependencies(package_vector)
   #utils::install.packages(c("shiny", "shinyjs"))
   
-  # load model 
-  cat("\nLoading model architecture and weights. If this is your first time deploying a model on this computer, this step can take a few minutes. \n")
-  model <- weightLoader(model_type, num_classes = nrow(label_encoder), redownload=redownload)
+  # # load model 
+  # cat("\nLoading model architecture and weights. If this is your first time deploying a model on this computer, this step can take a few minutes. \n")
+  
+  # download model files
+  folder <- download_cache(model_type, redownload)
+  
+  # load label encoder
+  label_encoder <- utils::read.table(file.path(folder, "label_encoder.txt"), 
+                                     sep = ":", col.names = c("label", "encoder"))
+  
+  # load model
+  model <- weightLoader(folder)
   model$eval()
   
   # load inputs
-  file_list <- dataset(data_dir, recursive,
-                       file_extensions)
+  file_list <- dataset(data_dir, recursive, file_extensions)
   
   # take random sample if sample50=TRUE  
   if(sample50 & length(file_list) >50){
