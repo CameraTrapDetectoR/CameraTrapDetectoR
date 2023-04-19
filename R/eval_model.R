@@ -84,20 +84,35 @@ eval_model <- function(preds = NULL, data = NULL,
   # filter out predictions without labels
   evals <- results[results[,true_class] != "Annotation_not_found",]
   
+  # update name for ground truth
+  evals$true_class <- evals[, true_class]
+  
   # update var types for class truths and predictions
   evals$prediction <- as.factor(evals$prediction)
-  evals[, true_class] <- as.factor(evals[, true_class])
+  evals$true_class <- as.factor(evals$true_class)
+  
+  # calculate overall eval metrics
+  evals$TP <- ifelse(evals$prediction == evals$true_class, 1, 0)
+  evals$FP <- ifelse((evals$prediction != "empty" & evals$true_class == "empty"), 1, 0)
+  evals$FP <- ifelse((evals$prediction != evals$true_class & evals$prediction != "empty"), 1, evals$FP)
+  evals$FN <- ifelse((evals$prediction == "empty" & evals$true_class != "empty"), 1, 0)
+  
+  mAP <- sum(evals$TP) / sum(sum(evals$TP) + sum(evals$FP))
+  mAR <- sum(evals$TP) / sum(sum(evals$TP) + sum(evals$FN))
+  F1 <- 2 * ((mAP * mAR) / (mAP + mAR))
+  
+  image_metrics <- data.frame("mAP" = mAP, "mAR" = mAR, "F1_score" = F1)
   
   
   # -- Calculate image-level id eval metrics  
   
   if("image" %in% event_level) {
     # create contingency table of class levels
-    class_tab <- table(evals[, "prediction"], evals[, true_class])
+    class_tab <- table(evals$prediction, evals$true_class)
     
     # pull out true positives
     class_df <- as.data.frame.matrix(class_tab)
-    class_name <- sort(as.character(unique(evals[, true_class])))
+    class_name <- sort(as.character(unique(evals$true_class)))
     
     # sum class counts for preds and truths
     TP_FP <- data.frame(ct = rowSums(class_df)) # true positives + false positives
@@ -150,12 +165,6 @@ eval_model <- function(preds = NULL, data = NULL,
                            "recall" = recall,
                            "f1_score" = f1_score)
     
-    # calculate overall eval metrics 
-    # mAP <- sum(TP) / sum(TP_FP$ct)
-    # mAR <- sum(TP) / sum(TP_FN$ct)
-    # F1 <- 2 * ((mAP * mAR) / (mAP + mAR))
-    # 
-    # image_metrics <- data.frame("mAP" = mAP, "mAR" = mAR, "F1_score" = F1)
     
   }
   
@@ -192,10 +201,13 @@ eval_model <- function(preds = NULL, data = NULL,
     #   imgs <- dplyr::filter(imgs, confidence_in_pred == max(confidence_in_pred))
     # }
     
-    # group df by sequence id and predicted class
-    seq_evals <- dplyr::group_by(evals, evals[, seq_id], prediction)
+    # rename seq_id variable for ease of use
+    evals$seq_id <- evals[, seq_id]
     
-    # Keep highest confidence classwise predictions for each sequence
+    # group df by sequence id and predicted class
+    seq_evals <- dplyr::group_by(evals, seq_id, prediction)
+    
+    # Keep highest confidence class-wise predictions for each sequence
     seq_evals <- dplyr::filter(seq_evals, confidence_in_pred == max(confidence_in_pred))
     
     # exclude redundant empty predictions
