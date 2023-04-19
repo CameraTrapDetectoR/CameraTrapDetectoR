@@ -101,70 +101,15 @@ eval_model <- function(preds = NULL, data = NULL,
   mAR <- sum(evals$TP) / sum(sum(evals$TP) + sum(evals$FN))
   F1 <- 2 * ((mAP * mAR) / (mAP + mAR))
   
-  image_metrics <- data.frame("mAP" = mAP, "mAR" = mAR, "F1_score" = F1)
+  overall_metrics <- data.frame("mAP" = mAP, "mAR" = mAR, "F1_score" = F1)
   
   
   # -- Calculate image-level id eval metrics  
   
   if("image" %in% event_level) {
-    # create contingency table of class levels
-    class_tab <- table(evals$prediction, evals$true_class)
     
-    # pull out true positives
-    class_df <- as.data.frame.matrix(class_tab)
-    class_name <- sort(as.character(unique(evals$true_class)))
-    
-    # sum class counts for preds and truths
-    TP_FP <- data.frame(ct = rowSums(class_df)) # true positives + false positives
-    TP_FP$class <- rownames(TP_FP)
-    
-    TP_FN <- data.frame(ct = colSums(class_df)) # true positives + false negatives
-    TP_FN$class <- rownames(TP_FN)
-    
-    # create empty vectors to hold performance metrics
-    TP <- rep(NA, length(class_name))
-    precision <- rep(NA, length(class_name))
-    recall <- rep(NA, length(class_name))
-    f1_score <- rep(NA, length(class_name))
-    
-    # loop through ground truth categories
-    for(i in 1:length(class_name)){
-      
-      # define class name and denominators
-      classi <- class_name[i]
-      
-      # get TP+FP for class[i]
-      if(classi %in% TP_FP$class){
-        TPFP <- TP_FP$ct[TP_FP$class == classi]
-      } else {TPFP <- 0}
-      
-      # get TP+FN for class[i]
-      if(classi %in% TP_FN$class){
-        TPFN <- TP_FN$ct[TP_FN$class == classi]
-      } else {TPFN <- 0}
-      
-      # calculate true positives
-      TP[i] <- class_df[classi, classi]
-      if(is.na(TP[i])){TP[i] <- 0}
-      
-      # calculate metrics
-      precision[i] <- TP[i] / TPFP
-      if(is.na(precision[i])) {precision[i] <- -1}
-      
-      recall[i] <- TP[i] / TPFN
-      if(is.na(recall[i])) {recall[i] <- -1}
-      
-      f1_score[i] <- 2 * ((precision[i]*recall[i])/(precision[i]+recall[i]))
-      if(is.na(f1_score[i])) {f1_score[i] <- -1}
-      
-    }
-    
-    # combine classwise evals into a dataframe
-    image_df <- data.frame("class" = class_name,
-                           "precision" = precision,
-                           "recall" = recall,
-                           "f1_score" = f1_score)
-    
+    # evaluate model at the image level
+    image_results <- classwise_metrics(evals)
     
   }
   
@@ -186,20 +131,6 @@ eval_model <- function(preds = NULL, data = NULL,
       stop(paste0("Cannot find column with confidence scores in ", deparse(substitute(preds)), ". 
                 \nPlease ensure this column is named 'confidence_in_pred' .\n"))
     }
-    # # get list of unique sequence ids
-    # sequences <- unique(evals[, seq_id])
-    
-    # # loop through each sequence
-    # for(i in 1:length(sequences)){
-    #   # isolate a given sequence
-    #   imgs <- evals[evals[,seq_id] == sequences[i],]
-    #   
-    #   # group sequence images by prediction
-    #   imgs <- dplyr::group_by(imgs, prediction)
-    #   
-    #   # keep only highest class-wise predictions
-    #   imgs <- dplyr::filter(imgs, confidence_in_pred == max(confidence_in_pred))
-    # }
     
     # rename seq_id variable for ease of use
     evals$seq_id <- evals[, seq_id]
@@ -208,11 +139,24 @@ eval_model <- function(preds = NULL, data = NULL,
     seq_evals <- dplyr::group_by(evals, seq_id, prediction)
     
     # Keep highest confidence class-wise predictions for each sequence
-    seq_evals <- dplyr::filter(seq_evals, confidence_in_pred == max(confidence_in_pred))
+    filtrd_evals <- dplyr::filter(seq_evals, confidence_in_pred == max(confidence_in_pred))
     
-    # exclude redundant empty predictions
-    seq_evals <- dplyr::filter(seq_evals, prediction != "empty", .preserve = TRUE)
+    # create df with sequences that have only empty predictions; keep just first prediction of each sequence
+    empt_evals <- dplyr::filter(filtrd_evals, all(prediction == "empty"))
+    empt_seqs <- dplyr::slice(empt_evals, 1)
     
+    # remove all empty predictions non-empty sequences
+    nonempt_seqs <- dplyr::filter(filtrd_evals, prediction != "empty")
+    
+    # merge the two dfs
+    seq_df <- rbind(empt_seqs, nonempt_seqs)
+    
+    # ungroup the df and sort by seq_id
+    seq_df <- dplyr::ungroup(seq_df)
+    seq_df <- dplyr::arrange(seq_df, seq_id)
+    
+    # evaluate model at the sequence level
+    seq_results <- classwise_metrics(seq_df)
     
   }
   
@@ -223,7 +167,14 @@ eval_model <- function(preds = NULL, data = NULL,
   
   # -- Wrap all outputs in a list
   
-  eval_obj <- list("class_evals" = image_df, "overall_metrics" = image_metrics)
+  eval_obj <- list("overall_metrics" = overall_metrics)
+  
+  if("image" %in% event_level){
+    eval_obj <- append(eval_obj, list("image_metrics" = image_results))
+  }
+  if("sequence" %in% event_level){
+    eval_obj <- append(eval_obj, list("sequence_metrics" = seq_results))
+  }
   
   # -- Return final object
   
