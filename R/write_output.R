@@ -2,7 +2,7 @@
 #' 
 #' @details Finalize model predictions in df and csv output
 #' 
-#' @param full_df df filtered by score_threshold
+#' @param full_df predictions list filtered by score_threshold
 #' 
 #' @export
 write_output <- function(full_df) {
