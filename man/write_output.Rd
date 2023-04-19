@@ -9,7 +9,7 @@ write_output(full_df)
 write_output(full_df)
 }
 \arguments{
-\item{full_df}{df filtered by score_threshold}
+\item{full_df}{predictions list filtered by score_threshold}
 
 \item{df}{df of predictions returned from `deploy_model` function}
 }
