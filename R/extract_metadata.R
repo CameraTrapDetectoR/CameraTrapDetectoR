@@ -7,12 +7,11 @@
 #' @param files character vector with absolute path to image file/files
 #'  
 #' @import exifr
-#' @import dplyr
 #'  
 #' @export
-extract_metadata <- function(meta_files){
+extract_metadata <- function(files){
   # break list down to unique files
-  meta_files <- unique(meta_files)
+  meta_files <- unique(files)
   
   # initialize df to hold metadata
   meta_df <- data.frame(matrix(nrow = length(meta_files), ncol = 13))
@@ -117,8 +116,8 @@ extract_metadata <- function(meta_files){
     }
   }
   
-  # # remove all NA columns
-  # meta_df <- remove_na(meta_df)
+  # remove all NA columns
+  meta_df <- remove_na(meta_df)
   
   
   # return obs
