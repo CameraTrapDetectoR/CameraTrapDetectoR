@@ -1,6 +1,6 @@
 #' Function to install packages
 #' 
-#' This function will install packages that are needed in CameraTrapDetectoR
+#' @details Deprecated. This function will install packages that are needed in CameraTrapDetectoR
 #' 
 #' @param packages packages to be installed, as a vector. If you are planning to use 
 #'  the Shiny App, leave this value as default. If you want to avoid installing the
