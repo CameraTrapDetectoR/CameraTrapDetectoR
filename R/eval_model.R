@@ -21,7 +21,7 @@
 #' @param event_level evaluate results at the individual level or at the sequence level? 
 #' Accepts values `c("image", "sequence")`. If including evaluation by sequence, @param seq_id must be specified
 #' @param seq_id name of the column in `data` that contains sequence ids for each image. If you need to generate this
-#' information, see the *generate_sequence_data* function.
+#' information, see the *generate_sequences* function.
 #' 
 #' @import dplyr
 #' 
@@ -57,13 +57,13 @@ eval_model <- function(preds = NULL, data = NULL,
   }
   
   # warning if incorrect format for counts 
-  if(assess_counts & is.null(true_counts)){
+  if(assess_counts & is.null(true_count)){
     stop(paste0("Please provide the column name for animal counts in ", deparse(substitute(data)), 
                 " in the argument `true_count`\n"))
   }
   
   # warning if incorrect format for counts 
-  if(event_level == "sequence" & is.null(seq_id)){
+  if(("sequence" %in% event_level) & is.null(seq_id)){
     stop(paste0("Please provide the column name for sequence id in ", deparse(substitute(data)), 
                 " in the argument `seq_id`\nTo define sequence info for your dataset,
                 see the function *generate_sequence_data*\n"))
@@ -87,10 +87,6 @@ eval_model <- function(preds = NULL, data = NULL,
   # update name for ground truth
   evals$true_class <- evals[, true_class]
   
-  # update var types for class truths and predictions
-  evals$prediction <- as.factor(evals$prediction)
-  evals$true_class <- as.factor(evals$true_class)
-  
   # calculate overall eval metrics
   evals$TP <- ifelse(evals$prediction == evals$true_class, 1, 0)
   evals$FP <- ifelse((evals$prediction != "empty" & evals$true_class == "empty"), 1, 0)
@@ -103,7 +99,6 @@ eval_model <- function(preds = NULL, data = NULL,
   
   overall_metrics <- data.frame("mAP" = mAP, "mAR" = mAR, "F1_score" = F1)
   
-  
   # -- Calculate image-level id eval metrics  
   
   if("image" %in% event_level) {
@@ -115,7 +110,7 @@ eval_model <- function(preds = NULL, data = NULL,
   
   # -- Calculate image-level id+count eval metrics
   
-  if("image" %in% event_level & assess.counts) {
+  if("image" %in% event_level & assess_counts) {
     
     # function to perform evals on counts
     
