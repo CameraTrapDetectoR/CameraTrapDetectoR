@@ -95,8 +95,8 @@ deploy_model <- function(
     overlap_threshold = 0.9,
     score_threshold = 0.6,
     get_metadata = TRUE,
-    latitude = NULL,
-    longitude = NULL,
+    latitude = NA,
+    longitude = NA,
     h=307,
     w=408,
     lty=1,
@@ -136,22 +136,22 @@ deploy_model <- function(
   }
   
   # check location arguments
-  if (!is.null(latitude)) {
+  if (!is.na(latitude)) {
     if (latitude < -90 | latitude > 90){
       stop("latitude must be between -90 and 90")
     } 
   }
-  if (!is.null(longitude)) {
+  if (!is.na(longitude)) {
     if (longitude < -180 | latitude > 180) {
       stop("longitude must be between -180 and 180")
     }
   }
-  if (is.null(latitude) & !is.null(longitude)){
-    stop("invalid location; please include both latitude and longitude or leave both as NULL")
+  if (is.na(latitude) & !is.na(longitude)){
+    stop("invalid location; please include both latitude and longitude or leave both blank")
   }
   
-  if (!is.null(latitude) & is.null(longitude)){
-    stop("invalid location; please include both latitude and longitude or leave both as NULL")
+  if (!is.na(latitude) & is.na(longitude)){
+    stop("invalid location; please include both latitude and longitude or leave both blank")
   }
   
   # test lty 
@@ -299,7 +299,7 @@ deploy_model <- function(
   
   
   #-- Make dataframe of possible labels using species range data
-  if (is.null(latitude) & is.null(longitude)) {
+  if (is.na(latitude) & is.na(longitude)) {
     location <- NULL
   } else {
     location <- data.frame(longitude=longitude, latitude=latitude)

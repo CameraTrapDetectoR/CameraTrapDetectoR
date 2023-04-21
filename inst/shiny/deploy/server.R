@@ -81,15 +81,6 @@ shinyServer(function(input, output) {
       output_dir <- paste0("'", dirname_output_dir(), "'")
     }
     
-    # set location values to NULL if no selection has been made
-    if(length(input$latitude) == 0){
-      input$latitude <- NULL
-    } 
-    if(identical(input$longitude, character(0)) == TRUE){
-      input$longitude <- NULL
-    }
-    
-    
     output$deploy_modelCode <- shiny::renderText({
       paste0("predictions <- deploy_model(", 
              "data_dir = ", data_dir, ", ",
