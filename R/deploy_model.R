@@ -95,8 +95,8 @@ deploy_model <- function(
     overlap_threshold = 0.9,
     score_threshold = 0.6,
     get_metadata = TRUE,
-    latitude = NULL,
-    longitude = NULL,
+    latitude = NA,
+    longitude = NA,
     h=307,
     w=408,
     lty=1,
@@ -136,22 +136,22 @@ deploy_model <- function(
   }
   
   # check location arguments
-  if (!is.null(latitude)) {
+  if (!is.na(latitude)) {
     if (latitude < -90 | latitude > 90){
       stop("latitude must be between -90 and 90")
     } 
   }
-  if (!is.null(longitude)) {
+  if (!is.na(longitude)) {
     if (longitude < -180 | latitude > 180) {
       stop("longitude must be between -180 and 180")
     }
   }
-  if (is.null(latitude) & !is.null(longitude)){
-    stop("invalid location; please include both latitude and longitude or leave both as NULL")
+  if (is.na(latitude) & !is.na(longitude)){
+    stop("invalid location; please include both latitude and longitude or leave both blank")
   }
   
-  if (!is.null(latitude) & is.null(longitude)){
-    stop("invalid location; please include both latitude and longitude or leave both as NULL")
+  if (!is.na(latitude) & is.na(longitude)){
+    stop("invalid location; please include both latitude and longitude or leave both blank")
   }
   
   # test lty 
@@ -299,7 +299,7 @@ deploy_model <- function(
   
   
   #-- Make dataframe of possible labels using species range data
-  if (is.null(latitude) & is.null(longitude)) {
+  if (is.na(latitude) & is.na(longitude)) {
     location <- NULL
   } else {
     location <- data.frame(longitude=longitude, latitude=latitude)
@@ -423,14 +423,12 @@ deploy_model <- function(
             df_out <- unique(dplyr::bind_rows(results, df_out))
           }
           
-          # save predictions to csv
-          utils::write.csv(df_out, file.path(output_dir, paste(model_type, 'model_predictions.csv', sep="_")), row.names=FALSE)
-          
           # if saving all bboxes, make df and save to csv
           # Write Bounding Box File
           if(write_bbox_csv){
             bbox_df <- write_bbox_df(predictions_list, w, h, bboxes, score_threshold)
-            utils::write.csv(bbox_df, file.path(output_dir, paste(model_type, "predicted_bboxes.csv", sep="_")), row.names=FALSE)
+            utils::write.csv(bbox_df, file.path(output_dir, paste(model_type, "predicted_bboxes.csv", sep="_")), 
+                             row.names=FALSE)
           }
           
           # extract metadata if requested
@@ -438,8 +436,17 @@ deploy_model <- function(
             meta_df <- extract_metadata(df_out$filename)
             # remove all NA columns
             meta_df <- remove_na(meta_df)
-            utils::write.csv(meta_df, file.path(output_dir, "metadata.csv"), row.names = FALSE)
+            #utils::write.csv(meta_df, file.path(output_dir, "metadata.csv"), row.names = FALSE)
+            # join metadata to results
+            df_out <- dplyr::left_join(df_out, meta_df, 
+                                       dplyr::join_by(filename == FilePath), 
+                                       suffix = c("", ".y"), keep=FALSE)
+            # remove duplicates
+            df_out <- dplyr::select(df_out, -ends_with(".y"))
           }
+          
+          # save predictions to csv
+          utils::write.csv(df_out, file.path(output_dir, paste(model_type, 'model_predictions.csv', sep="_")), row.names=FALSE)
           
           # print update
           cat(paste0("\nResults saved for ", i, " images.\n"))
@@ -467,11 +474,6 @@ deploy_model <- function(
   # convert to output format
   df_out <- write_output(full_df)
   
-  # cat previous results if they exists
-  if(exists("results")){
-    df_out <- unique(rbind(results, df_out))
-  }
-  
   # extract and join metadata if requested
   if(get_metadata){
     # extract metadata
@@ -479,7 +481,17 @@ deploy_model <- function(
     # remove all NA columns
     meta_df <- remove_na(meta_df)
     # join metadata to results
-    df_out <- dplyr::left_join(df_out, meta_df, dplyr::join_by(filename == FilePath))
+    df_out <- dplyr::left_join(df_out, meta_df, 
+                               dplyr::join_by(filename == FilePath), 
+                               suffix = c("", ".y"), keep=FALSE)
+    # remove duplicate columns
+    df_out <- dplyr::select(df_out, -ends_with(".y"))
+    
+  }
+  
+  # cat previous results if they exists
+  if(exists("results")){
+    df_out <- unique(dplyr::bind_rows(results, df_out))
   }
   
   # save predictions to csv

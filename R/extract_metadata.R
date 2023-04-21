@@ -7,7 +7,6 @@
 #' @param files character vector with absolute path to image file/files
 #'  
 #' @import exifr
-#' @import dplyr
 #'  
 #' @export
 extract_metadata <- function(files){
@@ -117,8 +116,8 @@ extract_metadata <- function(files){
     }
   }
   
-  # # remove all NA columns
-  # meta_df <- remove_na(meta_df)
+  # remove all NA columns
+  meta_df <- remove_na(meta_df)
   
   
   # return obs

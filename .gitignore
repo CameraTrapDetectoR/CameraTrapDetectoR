@@ -27,4 +27,6 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 inst/doc
-
+# Temp data
+.RDataTmp
+.RDataTmp1

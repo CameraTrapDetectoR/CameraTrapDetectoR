@@ -8,15 +8,16 @@
 #' @param bboxes existing predicted boxes df
 #' @param score_threshold score threshold to filter bboxes
 #'
-#' 
+#' @import dplyr
+#'
 #' @export
 write_bbox_df <- function(predictions_list, w, h, bboxes, score_threshold) {
   
   # convert list into dataframe
-  predictions_df <- do.call(rbind, predictions_list)
+  predictions_df <- do.call(dplyr::bind_rows, predictions_list)
   
   bbox_df <- data.frame("filename" = predictions_df$filename,
-                        "prediction" = predictions_df$label.y,
+                        "prediction" = predictions_df$prediction,
                         "confidence" = predictions_df$scores,
                         "XMin" = as.numeric(predictions_df$XMin)/w,
                         "XMax" = as.numeric(predictions_df$XMax)/w,
@@ -24,7 +25,7 @@ write_bbox_df <- function(predictions_list, w, h, bboxes, score_threshold) {
                         "YMax" = as.numeric(predictions_df$YMax)/h)
  
    # filter out predicted bboxes below score_threshold
-  bbox_df <- bbox_df[bbox_df$confidence < score_threshold, ]
+  bbox_df <- bbox_df[bbox_df$confidence >= score_threshold, ]
   
   # combine new bboxes with any existing results
   bbox_df <- unique(rbind(bbox_df, bboxes))
