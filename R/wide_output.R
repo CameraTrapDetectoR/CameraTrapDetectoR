@@ -5,7 +5,7 @@
 #' @param df df of predictions returned from `deploy_model` function
 #' 
 #' @export
-write_output <- function(df) {
+wide_output <- function(df) {
   # write function to widen output
   # do we need full list of available model labels, or just predicted model labels?
     
