@@ -21,7 +21,7 @@
 #' for each camera in your dataset as it appears in the absolute path. The function will use
 #' this identifier if your camera metadata do not contain serial numbers. 
 #' 
-#' @import lubridate
+#' @rawNamespace import(lubridate, except = show)
 #' @import stringr
 #' @import dplyr
 #'  
