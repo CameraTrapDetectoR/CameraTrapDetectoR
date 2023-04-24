@@ -35,7 +35,7 @@ column must contain ground truth species.}
 Accepts values `c("image", "sequence")`. If including evaluation by sequence, @param seq_id must be specified}
 
 \item{seq_id}{name of the column in `data` that contains sequence ids for each image. If you need to generate this
-information, see *assign_seq_metadata* function.}
+information, see the *generate_sequences* function.}
 }
 \description{
 join model_predictions output to a user-generated df of ground 
