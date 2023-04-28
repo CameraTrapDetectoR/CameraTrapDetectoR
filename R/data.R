@@ -15,7 +15,6 @@
 #' \item{\code{confidence_in_pred}}{model confidence score in the prediction}
 #' \item{\code{count}}{individual prediction count per image}
 #' \item{\code{certainty}}{categorical measure of certainty in prediction}
-#' ...
 #' }
 "preds"
 
@@ -27,3 +26,9 @@
 #'
 #'@format ## `labels`
 #'A data frame with 31 rows and 3 columns
+#'\describe{
+#'\item{\code{filename}}{path to image file}
+#'\item{\code{true_class}}{ground truth in taxonomic class common name}
+#'\item{\code}{count}{number of animals per \code{true_class} per image}
+#'}
+"labels"
