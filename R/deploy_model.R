@@ -94,7 +94,7 @@ deploy_model <- function(
     overlap_correction = TRUE,
     overlap_threshold = 0.9,
     score_threshold = 0.6,
-    get_metadata = TRUE,
+    get_metadata = FALSE,
     latitude = NA,
     longitude = NA,
     h=307,
