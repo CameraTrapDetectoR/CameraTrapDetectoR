@@ -4,7 +4,7 @@
 #' @param num_classes The number of classes in the model
 #' @param redownload Should model weights be redownloaded?
 #' 
-#' @details Keep model weight names generic by model type so latest weights will automatically be downloaded
+#' @description Keep model weight names generic by model type so latest weights will automatically be downloaded
 #' 
 #' @return model weights
 #' 

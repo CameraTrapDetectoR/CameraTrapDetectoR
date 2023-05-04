@@ -1,10 +1,14 @@
-#' This function loads a batch of data to be passed to the model
+#' Load image data
+#' 
+#' @description Loads data from user input and transforms it into tensors to 
+#' pass to the model. Helper function for `deploy_model`
 #'
 #' @param h image height after resizing. Recommend not changing this
 #' @param w image width after resizing. Recommend not changing this
 #' @param file_list passed from deploy function
 #' @param index i value from deploy function
-#' @return loads data from user input and transforms it into tensors to pass to the model
+#' 
+#' @returns list of image tensors
 #' 
 #' @export
 dataLoader <- function(file_list,
