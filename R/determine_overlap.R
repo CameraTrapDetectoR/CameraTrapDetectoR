@@ -1,11 +1,13 @@
-#' Finds overlap of two bounding boxes
+#' Find overlap of two bounding boxes
 #' 
-#' Helper function that returns the proportion of overlap among two bounding boxes
+#' @description Calculates the proportion of overlap among two bounding boxes. 
+#' Run when the user specifies an overlap correction; helper function for `find_unique_sets`
 #' 
 #' @param a Bounding box that will be compared with b
-#' @param b Bounding box 
-#' @return overlap area of two bboxes
+#' @param b Second bounding box to compare with a
 #' 
+#' @returns overlap area of `a` and `b`
+#'
 #' @export
 #' 
 

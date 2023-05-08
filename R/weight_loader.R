@@ -1,12 +1,13 @@
-#' Load model weights
+#' Initiate model
+#' 
+#' @description Initiate model architecture and load model weights. Helper
+#' function for `deploy_model`
 #' 
 #' @param model_type The type of model: general, family, species, or pig-only.  
 #' @param num_classes The number of classes in the model
 #' @param redownload Should model weights be redownloaded?
 #' 
-#' @description Keep model weight names generic by model type so latest weights will automatically be downloaded
-#' 
-#' @return model weights
+#' @returns loaded model
 #' 
 #' @export
 #' 

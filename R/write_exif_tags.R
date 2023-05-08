@@ -1,12 +1,12 @@
 #' Write results to image metadata
 #' 
+#' @description -UNDER DEVELOPMENT- write model outputs to image metadata
+#' 
 #' @param class predicted class
 #' @param conf prediction confidence score
 #' @param count prediction count
 #' @param review_threshold review threshold for accepting predictions
 #' 
-#' @details write exiftool config file 
-#' @return call for exifr::exiftool_call
 #' 
 #' @export
 write_exif_tags <- function(class, conf, count, review_threshold){
@@ -51,5 +51,4 @@ write_exif_tags <- function(class, conf, count, review_threshold){
                  paste0(" -CTDReviewStatus=", review_status))
   
   return(exif_call)
-  
 }

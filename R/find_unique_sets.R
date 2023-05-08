@@ -1,11 +1,13 @@
 #' Find unique sets of polygons that overlap
 #' 
-#' Evaluates overlapping bounding boxes using user specified threshold that determines overlap and returns
-#' sets of polygons that overlap
+#' @description Evaluate overlapping bounding boxes using user-specified 
+#' threshold to determines overlap and returns sets of polygons that overlap.
+#' Helper function for `reduce_overlapping_bboxes`
 #' 
 #' @param df The data frame containing bounding box values and predictions
-#' @param overlap_threshold The threshold (proportion) used in determining which bounding boxes are considered unique detections
-#' @return overlapping polygons 
+#' @param overlap_threshold Threshold used in determining which bounding boxes are considered unique detections
+#' 
+#' @returns Matrix with sets of polygons that overlap 
 #' 
 #' @export
 #' 

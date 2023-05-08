@@ -16,6 +16,12 @@
 #' @param count_subdir boolean. Create subfolders inside each class directory for individual counts.
 #' @param remove_originals boolean. Delete original image files. Default = FALSE
 #' 
+#' @returns Image directory with images sorted by predicted class, score_threshold, count. 
+#' Also returns a data frame of model_predictions that includes new/updated location for images.
+#' 
+#' @examples
+#' load(preds)
+#' results <- sort_images(preds, "./sorted_images/", 0.9)
 #' 
 #' @export
 sort_images <- function(results = NULL, output_dir = NULL,

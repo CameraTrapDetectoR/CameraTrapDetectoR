@@ -1,10 +1,10 @@
 #' Finds all potential combinations within data frame
 #' 
-#' Helper function that generates table of all possible combinations of
-#' bounding boxes to evaluate
+#' @description Generate table of all possible combinations of
+#' bounding boxes to evaluate. Helper function for `find_unique_sets`
 #' 
 #' @param df The data frame containing bounding box values and predictions
-#' @return matrix of all possible combos
+#' @returns matrix of all possible combinations
 #' 
 #' @export
 #' 
