@@ -1,4 +1,7 @@
-#' This function will download files necessary to run the model and store them in the package space
+#' Download model files
+#' 
+#' @description download model files and store them in project cache
+#' helper function for `weight_loader`
 #' 
 #' @param name location of file to download
 #' @param redownload bool - whether or not to redownload model weights from online storage

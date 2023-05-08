@@ -24,7 +24,11 @@
 #' @rawNamespace import(lubridate, except = show)
 #' @import stringr
 #' @import dplyr
-#'  
+#' 
+#' @examples
+#' load(preds)
+#' seq_preds <- generate_sequences(preds$filename, c("example_set"), 5, 300)
+#' 
 #' @export
 generate_sequences <- function(data_dir = NULL, 
                              cam_prefix = NULL,

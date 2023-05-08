@@ -1,11 +1,14 @@
-#' This function will convert the output from NN into a format that can be used
-#' to make plots and provide a csv with information
+#' Extract relevant model output  
+#' 
+#' @description Converts the output from the neural network into a format that 
+#' can be used in reporting results. Helper function for `deploy_model`
 #' 
 #' @param output this is a subset of the list output from the neural net
 #' @param score_threshold threshold score for keeping bounding boxes
 #' @param label_encoder passed from deploy model function
 #' @param h image height after resizing. Recommend not changing this
-#' @return converted output from model that can be interpreted in R
+#' 
+#' @returns a dataframe of model output for an image that can be interpreted in R
 #' 
 #' @export
 decode_output <- function(

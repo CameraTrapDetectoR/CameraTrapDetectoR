@@ -1,10 +1,11 @@
 #' Remove NA columns
 #' 
-#' @details Helper function to remove columns with all NA values 
+#' @description Remove columns with all NA values. Helper function 
+#' for `extract_metadata`
 #' 
 #' @param df df to filter
 #' 
-#' @return df with all NA columns removed
+#' @returns df with all NA columns removed
 #' 
 #' @import dplyr
 #' 
