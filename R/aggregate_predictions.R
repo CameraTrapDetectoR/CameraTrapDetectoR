@@ -1,14 +1,17 @@
 #' Aggregate predictions by sequence
 #' 
 #' @description Apply sequence id to results from the `deploy_model` function to 
-#' aggregate predictions to the sequence level. Returns a dataframe of predictions filtered
-#' down to the highest confidence prediction per class per sequence. If all predictions for a 
-#' given sequence are "empty", the first image prediction in the sequence will be retained. If
-#' a sequence has non-"empty" predictions, all "empty" predictions from that sequence will be removed. 
+#' aggregate predictions to the sequence level. 
 #' 
-#' @details The function requires model output from the `deploy_model` function and sequence
+#' @returns Returns a dataframe of predictions filtered down to the highest 
+#' confidence prediction per class per sequence. 
+#' 
+#' @details If all predictions for a given sequence are "empty", the first image
+#' prediction in the sequence will be retained. If a sequence has non-"empty" 
+#' predictions, all "empty" predictions from that sequence will be removed. 
+#' The function requires model output from the `deploy_model` function and sequence
 #' information about the dataset. Sequences may be provided by the user or from the 
-#' `generate_sequences` function. 
+#' `generate_sequences` or `extract_metadata` functions. 
 #' 
 #' @param preds dataframe of predictions provided by `deploy_model`
 #' @param sequences sequence information for the dataset included in "preds". 
@@ -19,6 +22,18 @@
 #' using the function `generate_sequences` and selecting the appropriate columns.
 #' 
 #' @import dplyr
+#' 
+#' @examples 
+#' # with sequences in the same data frame as predictions
+#' load(preds)
+#' seq_preds <- generate_sequences(preds$filename, c("example_set"), 5, 300)
+#' agg_preds <- aggregate_predictions(seq_preds, SequenceId) # directory-generated sequences
+#' agg_preds <- aggregate_predictions(seq_preds, SeqNumber) # metadata-generated sequences
+#' 
+#' # with sequences as a separate data frame
+#' load(preds)
+#' meta_df <- extract_metadata(preds$filename)
+#' agg_preds <- aggregate_predictions(preds, meta_df) # this will take the first sequence column in meta_df
 #' 
 #' @export
 #' 
@@ -60,7 +75,7 @@ aggregate_predictions <- function(preds = NULL,
     file_col <- colnames(sequences)[grepl("File", colnames(sequences), ignore.case = TRUE)]
     
     # identify column of sequence ids
-    seq_col <- colnames(sequences)[grepl("seq", colnames(sequences), ignore.case = TRUE)]
+    seq_col <- colnames(sequences)[grepl("seq", colnames(sequences), ignore.case = TRUE)][1]
     
     seq_df <- sequences[, c(file_col, seq_col)]
     
