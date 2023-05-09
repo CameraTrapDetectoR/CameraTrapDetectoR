@@ -34,8 +34,6 @@
 #'  the latest version of that model available for your package vesion.
 #'  A full list of available models and details is available 
 #'  on the CameraTrapDetectoR Github wiki.
-#' @param redownload boolean. Set to TRUE if you want to download the latest model weights; 
-#' this may only be possible while disconnected from VPN.
 #' @param file_extensions The types of extensions on your image files. Case insensitive; enter as a string.
 #' Accepts the following file types: ".jpg", ".png", ".tif", ".pdf". Default is ".jpg"
 #' @param make_plots boolean. Do you want to make plots of the images with
@@ -86,7 +84,6 @@ deploy_model <- function(
     data_dir = NULL,
     model_type = 'general',
     recursive = TRUE,
-    redownload = TRUE,
     file_extensions = c(".jpg", ".JPG"),
     make_plots = TRUE,
     plot_label = TRUE,
@@ -229,7 +226,7 @@ deploy_model <- function(
   # cat("\nLoading model architecture and weights. If this is your first time deploying a model on this computer, this step can take a few minutes. \n")
   
   # download model files
-  folder <- download_cache(model_type, redownload)
+  folder <- download_cache(model_type)
   
   # load label encoder
   label_encoder <- utils::read.table(file.path(folder, "label_encoder.txt"), 

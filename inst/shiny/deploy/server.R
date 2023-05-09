@@ -85,7 +85,6 @@ shinyServer(function(input, output) {
       paste0("predictions <- deploy_model(", 
              "data_dir = ", data_dir, ", ",
              "model_type = '", input$model_type, "', ", 
-             "redownload = ", as.logical(input$redownload), ", ",
              "recursive = ", as.logical(input$recursive), ", ",
              "file_extensions = c('", paste(input$file_extensions, collapse = "', '"), "'), ",
              "make_plots = ", as.logical(input$make_plots), ", ",
@@ -157,7 +156,6 @@ shinyServer(function(input, output) {
       withConsoleRedirect("console", {
         predictions <<- deploy_model(data_dir = dirname_data_dir(), 
                                      model_type = input$model_type, 
-                                     redownload = as.logical(input$redownload),
                                      recursive = as.logical(input$recursive), 
                                      file_extensions = input$file_extensions, 
                                      make_plots = as.logical(input$make_plots), 

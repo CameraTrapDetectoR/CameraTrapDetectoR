@@ -1,14 +1,15 @@
+#' Download model files
+#' 
 #' This function will download files necessary to run the model and store them in the package space
 #' 
 #' @param model_type
-#' @param redownload bool - whether or not to redownload model weights from online storage
 #' 
 #' @import rappdirs
 #' @import fs
 #' 
 #' @export
 #' 
-download_cache <- function(model_type = "species", redownload = TRUE)
+download_cache <- function(model_type = "species")
   {
 
   # set cache destination
