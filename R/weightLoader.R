@@ -1,8 +1,8 @@
 #' Load model weights
 #' 
-#' @param folder path to folder containing model files
+#' @description Initiate model, using model weights and architecture stored in cache
 #' 
-#' @details Loads model architecture and weights from the provided folder
+#' @param folder path to folder containing model files
 #' 
 #' @return weighted model
 #' 
