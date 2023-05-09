@@ -1,8 +1,11 @@
 #' Download model files
 #' 
-#' This function will download files necessary to run the model and store them in the package space
+#' @description Download files necessary to run the model and store them in
+#' the package cache. Helper function for `deploy_model`
 #' 
 #' @param model_type
+#' 
+#' @returns path to folder containing model files
 #' 
 #' @import rappdirs
 #' @import fs
@@ -20,44 +23,46 @@ download_cache <- function(model_type = "species")
   if(model_type == 'general' | 'general_v1') {
     path <- file.path(cache_path, fs::path_file("general_v1.zip"))
     folder <- file.path(cache_path, fs::path_file("general_v1"))
-    agdata <- "link_to_zip_folder_on_AG_Data_Commons"
+    agdata <- "https://data.nal.usda.gov/system/files/general_v1_1.zip"
   }
   if(model_type == 'family' | 'family_v1') {
     path <- file.path(cache_path, fs::path_file("family_v1.zip"))
     folder <- file.path(cache_path, fs::path_file("family_v1"))
-    agdata <- "link_to_zip_folder_on_AG_Data_Commons"
+    agdata <- "https://data.nal.usda.gov/system/files/family_v1_1.zip"
   }
   if(model_type == 'pig_only' | 'pig_only_v1') {
     path <- file.path(cache_path, fs::path_file("pig_v1.zip"))
     folder <- file.path(cache_path, fs::path_file("pig_v1"))
-    agdata <- "link_to_zip_folder_on_AG_Data_Commons"
+    agdata <- "https://data.nal.usda.gov/system/files/pig_v1_1.zip"
   }
   if(model_type == 'species' | 'species_v2') {
     path <- file.path(cache_path, fs::path_file("species_v2.zip"))
     folder <- file.path(cache_path, fs::path_file("species_v2"))
-    agdata <- "link_to_zip_folder_on_AG_Data_Commons"
+    agdata <- "https://data.nal.usda.gov/system/files/species_v2_1.zip"
   }
   if(model_type == 'species_v1') {
     path <- file.path(cache_path, fs::path_file("species_v1.zip"))
     folder <- file.path(cache_path, fs::path_file("species_v1"))
-    agdata <- "link_to_zip_folder_on_AG_Data_Commons"
+    agdata <- "https://data.nal.usda.gov/system/files/species_v1_1.zip"
   }
   
   
-  if (!dir.exists(folder) | redownload==TRUE){
-    
-    # access the model weights/architecture files
-    # s_path <- file.path(.libPaths()[1], "CameraTrapDetectoR/wts/model-wts-svc-acct.json")   # access service acct credentials
-    # googledrive::drive_auth(path = s_path)
+  if (!dir.exists(folder)){
     
     # download zip file from AG Data
-    cat(paste0("downloading model weights, arch, and labels.\n"))
-    # googledrive::drive_download(name, path=path, overwrite = TRUE)
+    cat(paste0("Downloading model weights, architecture, and labels.\n
+               If your download times out before completion, try disconnecting from VPN and 
+               running the function again.\n"))
     utils::download.file(url=agdata, destfile=path, quiet=TRUE)
     
     # unzip the folder
     utils::unzip(zipfile=path, exdir=cache_path)
+    
+    # delete zipped folder
+    file.remove(path)
   }
+  
+  cat(paste0("Model files are downloaded and stored.\n"))
 
 
   return(folder)

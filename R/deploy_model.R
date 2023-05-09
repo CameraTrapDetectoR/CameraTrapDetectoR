@@ -179,51 +179,7 @@ deploy_model <- function(
   }
   
   #-- Load model
-  
-  # AB: already deprecated; ready for deletion
-  # load encoder. build these dataframes in the script to avoid attaching tables
-  # if(model_type == "mammalBirdVehicle"){
-  #   #label_encoder = utils::read.csv("./label_encoders/mammalBirdVehicle.csv")
-  #   label_encoder = data.frame('label' = c('background', 'mammal', 'bird', 'vehicle'),
-  #                              'encoder' = 0:3)
-  # }
-  
-  
-  if(model_type == "pig_only"){
-    # AB : fix to overwrite labels from fam model until pig model can be retrained
-    categories <- c('empty', rep('not_pig', 31), 'pig')
-    label_encoder = data.frame('label' = categories,
-                               'encoder' = 0:(length(categories)-1))
-  }
-  if(model_type == "general"){
-    categories <- c('empty', 'mammal', 'bird', 'human', 'vehicle')
-    label_encoder = data.frame('label' = categories,
-                               'encoder' = 0:(length(categories)-1))
-  }
-  if(model_type == "species"){
-    # run target2label.values() in python to get this list, but empty will be at the end
-    categories <- c('empty', 'squirrel_spp', 'American_Badger', 'American_Black_Bear', 'American_Crow', 'American_Marten', 'American_Mink', 'American_Robin', 'Arctic_Fox', 'Wolf', 'Owl', 'Bighorn_Sheep', 'Vulture', 'Jackrabbit', 'Prairie_Dog', 'Grackle', 'Bobcat', 'Quail', 'Canada_Lynx', 'Red_Fox', 'Chipmunk', 'Collared_Peccary', 'Common_Raccoon', 'Common_Raven', 'Cottontail_Rabbit', 'Coyote', 'Domestic_Cat', 'Domestic_Chicken', 'Domestic_Cow', 'Domestic_Dog', 'Domestic_Donkey', 'Domestic_Goat', 'Domestic_Sheep', 'Dove', 'Dusky_Grouse', 'Fisher', 'Golden_Eagle', 'Gray_Fox', 'Gray_Jay', 'Grizzly_Bear', 'Horse', 'Human', 'Iguana', 'Jaguar', 'Jaguarundi', 'Margay', 'Moose', 'Mountain_Lion', 'Mouse_Rat', 'Mule_Deer', 'Nilgai', 'Nine-Banded_Armadillo', 'North American Beaver', 'North_American_Porcupine', 'Ocelot', 'Polar_Bear', 'Prairie_Chicken', 'Pronghorn', 'River_Otter', 'Rocky_Mountain_Elk', 'Ruffed_Grouse', 'Snowshoe_Hare', "Steller's_Jay", 'Striped_Skunk', 'Vehicle', 'Virginia_Opossum', 'White-nosed_Coati', 'White-Tailed_Deer', 'Wild_Pig', 'Wild_Turkey', 'Wolverine', 'Woodchuck', 'Yellow-Bellied_Marmot')
-    # remove special characters
-    categories <- gsub("'", "", categories)
-    categories <- gsub(" ", "_", categories)
-    categories <- gsub("-", "_", categories)
-    label_encoder = data.frame('label' = categories,
-                               'encoder' = 0:(length(categories)-1))
-  }
-  if(model_type == "family"){
-    categories <- c('empty','Sciuridae', 'Mustelidae', 'Ursidae', 'Corvidae', 'Turdidae', 'Canidae', 'Columbidae', 'Strigidae', 'Bovidae', 'Ardeidae', 'Leporidae', 'Cathartidae', 'Icteridae', 'Felidae', 'Odontophoridae', 'Cervidae', 'Tayassuidae', 'Procyonidae', 'Phasianidae', 'Equidae', 'Accipitridae', 'Hominidae', 'Iguanidae', 'Aramidae', 'Dasypodidae', 'Castoridae', 'Erethizontidae', 'Antilocapridae', 'Mephitidae', 'vehicle', 'Didelphidae', 'Suidae')
-    label_encoder = data.frame('label' = categories,
-                               'encoder' = 0:(length(categories)-1))
-  }
 
-  
-  # install dependencies
-  #package_vector <- c('torchvision', 'torch', 'magick', 'shiny', 'shinyFiles', 'shinyBS', 'shinyjs')
-  #install_dependencies(package_vector)
-  #utils::install.packages(c("shiny", "shinyjs"))
-  
-  # # load model 
-  # cat("\nLoading model architecture and weights. If this is your first time deploying a model on this computer, this step can take a few minutes. \n")
   
   # download model files
   folder <- download_cache(model_type)
@@ -233,7 +189,7 @@ deploy_model <- function(
                                      sep = ":", col.names = c("label", "encoder"))
   
   # load model
-  model <- weightLoader(folder)
+  model <- weight_loader(folder)
   model$eval()
   
   # load inputs
