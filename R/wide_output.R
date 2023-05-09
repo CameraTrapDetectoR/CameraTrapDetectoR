@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 #' -UNDER DEVELOPMENT- Convert output to wide format
 #' 
 #' @description Convert output from `deploy_model` to wide format 
@@ -28,4 +26,4 @@ wide_output <- function(df) {
   
 
 }
->>>>>>> main
+
