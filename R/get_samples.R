@@ -8,7 +8,7 @@
 #' 
 #' @export
 #' 
-get_samples(){
+get_samples() <- function() {
   
   # get dir to sample images
   img_dir <- system.file("extdata", package = "CameraTrapDetectoR")
