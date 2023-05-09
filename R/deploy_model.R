@@ -231,7 +231,7 @@ deploy_model <- function(
   
   # load model 
   cat("\nLoading model architecture and weights. If you are redownloading model weights on this computer, this step can take a few minutes. \n")
-  model <- weightLoader(model_type, num_classes = nrow(label_encoder), redownload=redownload)
+  model <- weight_loader(model_type, num_classes = nrow(label_encoder), redownload=redownload)
   model$eval()
   
   # load inputs

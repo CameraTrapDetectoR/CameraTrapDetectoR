@@ -11,7 +11,7 @@
 #' 
 #' @export
 #' 
-weightLoader <- function(
+weight_loader <- function(
     model_type = 'general',
     num_classes = 5,
     redownload = TRUE
