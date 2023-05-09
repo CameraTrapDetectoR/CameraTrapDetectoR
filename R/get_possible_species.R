@@ -1,11 +1,13 @@
 #' Get List of Possible Species
 #' 
-#' This function will evaluate the user provided latitude / longitude values with range
-#' extent data for species included in the trained models and will return a list of possible species.
+#' @description Evaluate user-provided latitude / longitude values with range
+#' extent data for species included in the trained models. Helper function for
+#' `delpoy_model`
 #' 
 #' @param location dataframe containing a single longitude and latitude value
 #' @param extent.data auxiliary location database
-#' @return possible species list
+#' 
+#' @returns possible species list
 #' 
 #' @export
 

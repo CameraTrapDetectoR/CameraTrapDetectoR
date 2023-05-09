@@ -1,4 +1,7 @@
-#' Applies Score Threshold to Predictions and Calculates confidence that the image is empty
+#' Apply score_threshold to model predictions
+#' 
+#' @description Remove detections that fall below the score_threshold and
+#' calculate confidence that an image is empty. Helper function for `deploy_model`
 #' 
 #' This function removes detections that fall below the score_threshold.  When an image
 #' has all detections removed it is assigned a value of 'empty'. The confidence in the
@@ -12,11 +15,10 @@
 #' @param predictions_list list of predictions from model
 #' @param score_threshold Threshold score for keeping bounding boxes
 #' 
-#' @return df with score threshold applied
+#' @returns df with score threshold applied
 #' 
 #' @export
-
-
+#'
 apply_score_threshold <- function(predictions_list, score_threshold){
   
   # convert list into dataframe

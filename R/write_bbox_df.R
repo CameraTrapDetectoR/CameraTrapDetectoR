@@ -1,6 +1,6 @@
 #' separate function to write bboxes to df
 #' 
-#' @details create bbox df for saving in checkpoint, csv
+#' @description helper function for `deploy_model` to create bbox df for saving in checkpoint, csv
 #' 
 #' @param predictions_list prediction output
 #' @param w image width

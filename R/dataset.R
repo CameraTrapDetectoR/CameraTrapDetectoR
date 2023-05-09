@@ -1,10 +1,12 @@
-#' This function sets up the image dataset 
+#' Define image dataset 
+#' 
+#' @description Create list of image files from data_dir. Helper function for `deploy_model`
 #' 
 #' @param data_dir data directory
 #' @param recursive boolean
 #' @param file_extensions file extensions
 #' 
-#' @return dataset for reading into model
+#' @returns list of image paths for reading into model
 #' 
 #' @export
 dataset <- function(data_dir,

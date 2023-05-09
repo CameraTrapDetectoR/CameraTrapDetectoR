@@ -1,12 +1,18 @@
 #' Extract metadata helper function
 #' 
-#' @description extract metadata for a single image file or list of files
+#' @description extract metadata for a single image file or list of files. 
+#' Helper function for `deploy_model`, `generate_sequences` functions.
 #' 
-#' @details Helper function for `deploy_model`, `generate_sequences` functions
+#' @details Depends on the `exifr` package to install and call exiftool
 #' 
 #' @param files character vector with absolute path to image file/files
 #'  
 #' @import exifr
+#' 
+#' @examples
+#' load(labels) # use annotations file to get filenames
+#' meta_df <- extract_metadata(labels$filename)
+#' 
 #'  
 #' @export
 extract_metadata <- function(files){

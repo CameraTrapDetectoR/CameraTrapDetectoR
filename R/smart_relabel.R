@@ -1,16 +1,17 @@
-#' Relabel predictions using location of photo
+#' Relabel predictions using location 
 #' 
-#' This function compares the labels provided by the model with a list of possible
+#' @description This function compares the labels provided by the model with a list of possible
 #' species based on species ranges.  In some cases it relabels mis-classifications
-#' resulting from assumption that all species could be present in photo.  
+#' resulting from assumption that all species could be present in photo. Helper
+#' function for `deploy_model`
 #' 
 #' @param pred_df dataframe containing predictions for image
 #' @param possible.labels dataframe containing possible labels based on species occurrence
 #' @param label_encoder label dictionary for model being run
+#' 
 #' @return relabeled predictions based on location
 #' 
 #' @export
-
 
 smart_relabel <- function(pred_df, possible.labels, label_encoder){
   

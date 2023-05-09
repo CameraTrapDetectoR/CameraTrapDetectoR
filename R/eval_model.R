@@ -1,16 +1,16 @@
-#' Evaluate results for images subject to manual review
+#' Evaluate model results
 #' 
-#' @description join model_predictions output to a user-generated df of ground 
-#' truth identifications and assess overall and/or classwise performance
+#' @description Join model_predictions output to a user-generated df of ground 
+#' truth identifications and assess overall and/or class-wise performance
 #' 
-#' @details this function takes your output results from deploy_model and joins them
-#' to a dataframe with ground truth identifications. The final object returned is a list containing 
+#' @details This function takes your output results from deploy_model and joins them
+#' to a data frame with ground truth identifications. The final object returned is a list containing 
 #' overall and class-wise evaluation metrics for class identification at the image and/or
 #' sequence level, and optionally for counts at the image and/or sequence level.
 #' 
 #' 
 #' @param preds df of output from deploy_model. Currently only supports 'long' prediction format
-#' @param data ground truth results. Must be an R dataframe and contain the following columns:
+#' @param data ground truth results. Must be an R data frame and contain the following columns:
 #' @param filepath name of the column in `data` that contains absolute paths to the the images being assessed
 #' @param true_class name of the column in `data` that contains ground truth classifications. 
 #' Must match the class level of `preds` i.e. if `preds` contained predictions for the species model, this
@@ -19,11 +19,17 @@
 #' @param true_count name of the column in `data` that contains ground truth counts for the class listed in 
 #' `true_class` for a given row.  
 #' @param event_level evaluate results at the individual level or at the sequence level? 
-#' Accepts values `c("image", "sequence")`. If including evaluation by sequence, @param seq_id must be specified
+#' Accepts values `c("image", "sequence")`. If including evaluation by sequence, `seq_id` must be specified
 #' @param seq_id name of the column in `data` that contains sequence ids for each image. If you need to generate this
-#' information, see the *generate_sequences* function.
+#' information, see the `generate_sequences` function.
 #' 
 #' @import dplyr
+#' 
+#' @examples 
+#' # load predictions and annotations
+#' load(preds)
+#' load(labels)
+#' results <- eval_model(preds, labels, "filename", "true_class", "image")
 #' 
 #' @export
 eval_model <- function(preds = NULL, data = NULL,
