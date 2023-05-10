@@ -3,7 +3,7 @@
 export(aggregate_predictions)
 export(apply_score_threshold)
 export(classwise_metrics)
-export(dataLoader)
+export(data_loader)
 export(dataset)
 export(decode_output)
 export(deploy_model)

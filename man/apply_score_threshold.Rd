@@ -17,7 +17,8 @@ df with score threshold applied
 \description{
 Remove detections that fall below the score_threshold and
 calculate confidence that an image is empty. Helper function for `deploy_model`
-
+}
+\details{
 This function removes detections that fall below the score_threshold.  When an image
 has all detections removed it is assigned a value of 'empty'. The confidence in the
 prediction that the image is empty is calculated as 1 - max(x) where x is a vector of
