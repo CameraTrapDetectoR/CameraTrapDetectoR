@@ -2,16 +2,16 @@
 % Please edit documentation in R/wide_output.R
 \name{wide_output}
 \alias{wide_output}
-\title{Convert output to wide format}
+\title{-UNDER DEVELOPMENT- Convert output to wide format}
 \usage{
 wide_output(df)
 }
 \arguments{
 \item{df}{df of predictions returned from `deploy_model` function}
 }
-\description{
-Convert output to wide format
+\value{
+df with output widened to facilitate counts
 }
-\details{
-Under development! Function to convert model output to wide format.
+\description{
+Convert output from `deploy_model` to wide format
 }

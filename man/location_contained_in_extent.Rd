@@ -2,7 +2,7 @@
 % Please edit documentation in R/location_contained_in_extent.R
 \name{location_contained_in_extent}
 \alias{location_contained_in_extent}
-\title{Evaluates if location falls within bounding box of extent}
+\title{Determine if location falls within a species range}
 \usage{
 location_contained_in_extent(location, extent.values)
 }
@@ -15,6 +15,6 @@ location_contained_in_extent(location, extent.values)
 location extent helper function
 }
 \description{
-This function will evaluate if a location (latitude / longitude) is within
-a bounding box representing a geographic extent. values with range.
+Evaluate if a location (latitude / longitude) is within a geographic 
+extent. Helper function for `get_possible_species`
 }

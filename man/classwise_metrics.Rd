@@ -10,10 +10,11 @@ classwise_metrics(df)
 \item{df}{dataframe formatted upstream in `eval_model` of predictions joined 
 to ground truths, either at the image level or at the sequence level}
 }
-\description{
-helper function for `eval_model`
+\value{
+a dataframe of evaluation metrics
 }
-\details{
-given a dataframe of predictions joined to manual results, 
-calculates the precision, recall, and F1 scores for the dataset
+\description{
+Calculates the precision, recall, and F1 scores for a set of 
+predictions joined to a set of corresponding annotations. Helper function for 
+`eval_model`
 }
