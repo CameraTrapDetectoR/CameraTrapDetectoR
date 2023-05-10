@@ -90,9 +90,6 @@ bboxes (it will be more stringent).}
 \item{lwd}{line width for bbox plot. See \code{?plot} for details}
 
 \item{col}{line color for bbox plot. See \code{?plot} for details}
-
-\item{redownload}{boolean. Set to TRUE if you want to download the latest model weights; 
-this may only be possible while disconnected from VPN.}
 }
 \value{
 a data frame of model predictions, with predicted number of individuals

@@ -7,7 +7,8 @@
 download_cache(model_type = "species")
 }
 \arguments{
-\item{model_type}{}
+\item{model_type}{user-specified model type and version. Defaults to 
+latest version of model type if no version given}
 }
 \value{
 path to folder containing model files
