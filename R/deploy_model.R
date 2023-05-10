@@ -40,8 +40,6 @@
 #'  the latest version of that model available for your package vesion.
 #'  A full list of available models and details is available 
 #'  on the CameraTrapDetectoR Github wiki.
-#' @param redownload boolean. Set to TRUE if you want to download the latest model weights; 
-#' this may only be possible while disconnected from VPN.
 #' @param file_extensions The types of extensions on your image files. Case insensitive; enter as a string.
 #' Accepts the following file types: ".jpg", ".png", ".tif", ".pdf". Default is ".jpg"
 #' @param make_plots boolean. Do you want to make plots of the images with
@@ -99,6 +97,7 @@
 #' @import torchvision
 #' @import torchvisionlib
 #' @import magick
+#' @import dplyr
 #' 
 #' @export
 deploy_model <- function(

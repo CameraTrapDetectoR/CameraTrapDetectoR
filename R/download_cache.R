@@ -3,7 +3,8 @@
 #' @description Download files necessary to run the model and store them in
 #' the package cache. Helper function for `deploy_model`
 #' 
-#' @param model_type
+#' @param model_type user-specified model type and version. Defaults to 
+#' latest version of model type if no version given
 #' 
 #' @returns path to folder containing model files
 #' 

@@ -24,6 +24,8 @@
 #' @import dplyr
 #' 
 #' @examples 
+#' #not run
+#' 
 #' # with sequences in the same data frame as predictions
 #' load(preds)
 #' seq_preds <- generate_sequences(preds$filename, c("example_set"), 5, 300)
@@ -33,7 +35,8 @@
 #' # with sequences as a separate data frame
 #' load(preds)
 #' meta_df <- extract_metadata(preds$filename)
-#' agg_preds <- aggregate_predictions(preds, meta_df) # this will take the first sequence column in meta_df
+#' # this will take the first sequence column in meta_df
+#' agg_preds <- aggregate_predictions(preds, meta_df) 
 #' 
 #' @export
 #' 
