@@ -81,10 +81,9 @@ shinyUI(fluidPage(
       shinyBS::bsTooltip("overlap_threshold", 
                          "Proportion of bounding box overlap to determine if detections are to be considered a single detection.",
                          placement = "top"),
-      
-      ## prediction_format
-      shiny::selectInput("prediction_format", "prediction_format", choices = c('wide', 'long')),
-      shinyBS::bsTooltip("prediction_format", "What format do you want used for your prediction file?",
+      ## get metadata
+      shiny::selectInput("get_metadata", "get_metadata", choices = c(TRUE, FALSE)),
+      shinyBS::bsTooltip("get_metadata", "Do you want to include image metadata in your output?",
                          placement = "top"),
       
       ## location
@@ -117,10 +116,6 @@ shinyUI(fluidPage(
                                      "green", "blue", "orange", "purple"), 
                          selected = "red"),
       shinyBS::bsTooltip("col", "line color for bbox plot", placement = "top"),
-      
-      ## labeled - commented out due to non-functionality
-      # shiny::selectInput("labeled", "labeled", choices = c(FALSE, TRUE)),
-      # shinyBS::bsTooltip("labeled", "This is not functional yet", placement = "top"),
       
     ),
     
@@ -170,7 +165,7 @@ shinyUI(fluidPage(
       shiny::p(strong("overlap_correction : "),"  TRUE/FALSE. Should overlapping detections be evaluated for proportion overlap (determined by overlap_threshold)
                and the highest confidence detection returned?"),
       shiny::p(strong("overlap_threshold : "),"  Proportion of overlap for two detections to be considered a single detection. Accepts values from 0-0.99."),
-      shiny::p(strong("prediction_format : "),"  Format to be used for model_predictions.csv file; accepts values of 'wide' or 'long'."),
+      shiny::p(strong("get_metadata : "),"  TRUE/FALSE. Collect image metadata as it runs through the model."),
       shiny::p(strong("latitude and longitude : "),"  Optional image location to filter model predictions to species within range. Input takes one location per model run;
                      if images originate from multiple locations, separate them into different model runs based on location. Currently only applies to species model."),
       shiny::p(strong("h : "),"  Image height (in pixels) for the annotated plot. Only used if make_plots=TRUE."),

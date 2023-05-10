@@ -1,5 +1,5 @@
 #' Download model files
-#' 
+#'
 #' @description Download files necessary to run the model and store them in
 #' the package cache. Helper function for `deploy_model`
 #' 

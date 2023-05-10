@@ -18,5 +18,8 @@ Shiny-specific dependencies, use \code{packages=c('torchvision', 'torch', 'magic
 note that all dependencies are installed or need to be installed
 }
 \description{
-This function will install packages that are needed in CameraTrapDetectoR
+Function to install packages
+}
+\details{
+Deprecated. This function will install packages that are needed in CameraTrapDetectoR
 }

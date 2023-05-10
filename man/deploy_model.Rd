@@ -9,7 +9,7 @@ deploy_model(
   model_type = "general",
   recursive = TRUE,
   redownload = TRUE,
-  file_extensions = c(".jpg", ".JPG"),
+  file_extensions = c(".jpg"),
   make_plots = TRUE,
   plot_label = TRUE,
   output_dir = NULL,
@@ -18,9 +18,9 @@ deploy_model(
   overlap_correction = TRUE,
   overlap_threshold = 0.9,
   score_threshold = 0.6,
-  prediction_format = "long",
-  latitude = NULL,
-  longitude = NULL,
+  get_metadata = TRUE,
+  latitude = NA,
+  longitude = NA,
   h = 307,
   w = 408,
   lty = 1,
@@ -77,8 +77,7 @@ values from 0-1. A lower number will produce more bboxes (it will be less
 stringent in deciding to make a bbox). A higher number will produce fewer
 bboxes (it will be more stringent).}
 
-\item{prediction_format}{The format to be used for the prediction file.  Accepts
-values of 'wide' or 'long'.}
+\item{get_metadata}{boolean. Collect metadata for each image.}
 
 \item{latitude}{image location latitude. Use only if all images in the model run come from the same location.}
 

@@ -4,14 +4,10 @@
 \alias{write_output}
 \title{Write model output}
 \usage{
-write_output(full_df, prediction_format, label_encoder)
+write_output(full_df)
 }
 \arguments{
-\item{full_df}{df filtered by score_threshold}
-
-\item{prediction_format}{wide or long}
-
-\item{label_encoder}{class label dict}
+\item{full_df}{predictions list filtered by score_threshold}
 }
 \description{
 Write model output

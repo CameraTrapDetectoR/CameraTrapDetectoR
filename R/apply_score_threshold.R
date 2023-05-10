@@ -1,4 +1,7 @@
-#' Applies Score Threshold to Predictions and Calculates confidence that the image is empty
+#' Apply score_threshold to model predictions
+#' 
+#' @description Remove detections that fall below the score_threshold and
+#' calculate confidence that an image is empty. Helper function for `deploy_model`
 #' 
 #' This function removes detections that fall below the score_threshold.  When an image
 #' has all detections removed it is assigned a value of 'empty'. The confidence in the
@@ -7,24 +10,29 @@
 #' that the image is empty is assumed to be directly related to the largest confidence in
 #' the detections that will be removed.
 #' 
+#' @import dplyr
+#'
 #' @param predictions_list list of predictions from model
 #' @param score_threshold Threshold score for keeping bounding boxes
-#' @return df with score threshold applied
+#' 
+#' @returns df with score threshold applied
 #' 
 #' @export
-
-
+#'
 apply_score_threshold <- function(predictions_list, score_threshold){
   
-  
   # convert list into dataframe
-  predictions_df <- do.call(rbind, predictions_list)
+  df <- do.call(dplyr::bind_rows, predictions_list)
   
-  # output dataframe with all predictions for each file
-  df <- data.frame("filename" = predictions_df$filename
-                        , "prediction" = predictions_df$label.y
-                        , "confidence_in_pred" = predictions_df$scores
-                        , "number_predictions" = predictions_df$number_bboxes)
+  # rename select columns
+  #colnames(df)[colnames(df) == "label.y"] = "prediction"
+  colnames(df)[colnames(df) == "scores"] = "confidence_in_pred"
+  colnames(df)[colnames(df) == "number_bboxes"] = "number_predictions"
+  
+  # df <- data.frame("filename" = predictions_df$filename
+  #                  , "prediction" = predictions_df$label.y
+  #                  , "confidence_in_pred" = predictions_df$scores
+  #                  , "number_predictions" = predictions_df$number_bboxes)
   
   file_list <- unique(df$filename)
   
@@ -32,7 +40,7 @@ apply_score_threshold <- function(predictions_list, score_threshold){
   limted_df <- df[df$confidence_in_pred >= score_threshold,]
   
   #--Generate list of images that have been removed
-  empty.images<-normalizePath(file_list[!normalizePath(file_list) %in% limted_df$filename])
+  empty.images<-file_list[!file_list %in% limted_df$filename]
   
   #--If applying threshold results in empty images
   if(length(empty.images)>0){
@@ -55,7 +63,7 @@ apply_score_threshold <- function(predictions_list, score_threshold){
     )
     
     #--Merge
-    df_out <- rbind.data.frame(limted_df, empty_df)
+    df_out <- dplyr::bind_rows(limted_df, empty_df)
   }
   
   #--If applying threshold does not results in empty images

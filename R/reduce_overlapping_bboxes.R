@@ -1,16 +1,16 @@
-#' Find overlapping bounding boxes and return classification with maximum confidence
+#' Take overlapping bounding boxes and return classification with maximum confidence
 #' 
-#' Evaluates overlapping bounding boxes using user specified threshold that determines overlap and returns
-#' bounding boxes and classification with maximum confidence
+#' @description Evaluates overlapping bounding boxes using user specified threshold that 
+#' determines overlap and returns bounding boxes and classification with maximum confidence.
+#' Helper function for `deploy_model`
 #' 
 #' @param df The data frame containing bounding box values and predictions
-#' @param overlap_threshold The threshold (proportion) used in determining which bounding boxes are considered unique detections
-#' @return unique bboxes set by overlap threshold
+#' @param overlap_threshold The threshold used in determining which bounding boxes are considered unique detections
+#' 
+#' @returns data frame bboxes above overlap threshold aggregated by maximum confidence
 #' 
 #' @export
 #' 
-
-
 reduce_overlapping_bboxes <- function(df, overlap_threshold=0.8){
   
   #--Find unique polygon sets
@@ -26,12 +26,12 @@ reduce_overlapping_bboxes <- function(df, overlap_threshold=0.8){
     out[j,"number_bboxes"] <- length(unique.sets[[j]])
   }
   
-  #--When highest Ensure no duplicates
+  #--Remove duplicates
   out<-unique(out)
   
   #--When sets overlap and the same box is found in each set aggregate
   #(this is a short term solution but results in inflated number of bboxes)
-  out<-stats::aggregate(number_bboxes~label+XMin+YMin+XMax+YMax+scores+label.y, data=out, FUN=sum)
+  out<-stats::aggregate(number_bboxes~label+XMin+YMin+XMax+YMax+scores+prediction, data=out, FUN=sum)
   
   return(out)
 }

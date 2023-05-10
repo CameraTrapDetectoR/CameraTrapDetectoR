@@ -1,7 +1,8 @@
-#' Make plots of the image with bounnding box predictions
+#' Plot image with bounding box predictions
 #' 
-#' Plots original image with predicted bounding box and (optionally)
-#' the predicted category
+#' @description Create a copy of the original image with predicted bounding box 
+#' and, optionally, the predicted category plotted on the image copy. Helper
+#' function for `deploy_model`
 #' 
 #' @param filename The file containing the image
 #' @param pred_df Prediction dataframe that is output from deployment
@@ -17,7 +18,10 @@
 #'  for an explanation of `col`, `lwd`, and `lty`
 #' @param lwd line width of bbox
 #' @param lty line type of bbox
-#' @return image copies with bboxes and labels plotted
+#' 
+#' @returns png image file in output_dir with bboxes and labels plotted
+#' 
+#' @import magick
 #' 
 #' @export
 #' 
@@ -90,7 +94,7 @@ plot_img_bbox<- function(filename,
                          x1=pred_df$XMax[i], y1=pred_df$YMin[i], 
                          col=col, lty=lty, lwd=lwd)
       if(plot_label){
-        graphics::text(x= pred_df$XMin[i]+6, y=pred_df$YMin[i]+10, pred_df$label.y[i],
+        graphics::text(x= pred_df$XMin[i]+6, y=pred_df$YMin[i]+10, pred_df$prediction[i],
                        col=col, adj=0)  
       }
     }
