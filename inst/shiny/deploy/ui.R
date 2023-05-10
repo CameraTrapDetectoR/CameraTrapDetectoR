@@ -18,7 +18,7 @@ shinyUI(fluidPage(
       
       ## model_type
       shiny::selectInput("model_type", "model_type", 
-                         choices = c("general", "species", "family", "pig_only")),
+                         choices = c("general_v1", "family_v1", "species_v1", "species_v2", "pig_only_v1")),
       shinyBS::bsTooltip("model_type", "This defines how you want to ID animals, generally (to class), to species, to family, or to pig_only",
                          placement = "top"),
 
@@ -80,11 +80,6 @@ shinyUI(fluidPage(
                           min = 0, max = 0.99, step = 0.01),
       shinyBS::bsTooltip("overlap_threshold", 
                          "Proportion of bounding box overlap to determine if detections are to be considered a single detection.",
-                         placement = "top"),
-      
-      ## return_data_frame
-      shiny::selectInput("return_data_frame", "return_data_frame", choices = c(FALSE, TRUE)),
-      shinyBS::bsTooltip("return_data_frame", "Do you want a dataframe read into R environment with predictions for each file? The rows in this dataframe are the file names in your `data_dir`; the columns are the categories in the model. If any of your images were not loaded properly, there will be a column in the dataframe called `image_error`. Images with a 1 in this column had issues and the model was not deployed on them.",
                          placement = "top"),
       
       ## prediction_format
@@ -154,11 +149,11 @@ shinyUI(fluidPage(
       # Argument descriptions
       shiny::h3("Below are some more details about each of the options on the left:"),
       shiny::p(strong("data_dir : "),"	Absolute path to the folder containing your images"),
-      shiny::p(strong("model_type : "),"	Options are 'general', 'species', 'family', 'pig_only'.  
-               The `general` model predicts to the level of mammal, bird, humans, vehicles.  
-               The `species` model recognizes 77 species. 
-               The `family` model recognizes 33 families. 
-               The `pig_only` model recognizes only pigs."),
+      shiny::p(strong("model_type : "),"	Model types 'general', 'species', 'family', 'pig_only'.  
+               The `general` model predicts mammals, birds, humans, and vehicles; latest version is V1.  
+               The `species` model recognizes 75 species; latest version is V2. 
+               The `family` model recognizes 31 families; latest version is V1. 
+               The `pig_only` model recognizes only pigs; latest version is V1."),
       shiny::p(strong("recursive : "),"	 TRUE/FALSE. Do you have images in subfolders within your data_dir that you want to analyze?"),
       shiny::p(strong("file_extensions : " ),"	Types of images accepted by the model. Select all options represented in your data_dir."),
       shiny::p(strong("make_plots : "),"	TRUE/FALSE. Do you want to make copies of your images with bounding boxes plotted on them?"),
@@ -175,8 +170,6 @@ shinyUI(fluidPage(
       shiny::p(strong("overlap_correction : "),"  TRUE/FALSE. Should overlapping detections be evaluated for proportion overlap (determined by overlap_threshold)
                and the highest confidence detection returned?"),
       shiny::p(strong("overlap_threshold : "),"  Proportion of overlap for two detections to be considered a single detection. Accepts values from 0-0.99."),
-      shiny::p(strong("return_data_frame"),"  TRUE/FALSE. Do you want your output to be returned as an R dataframe as well as a .csv file? 
-               This option is recommended if you will be evaluating the predictions in R."),
       shiny::p(strong("prediction_format : "),"  Format to be used for model_predictions.csv file; accepts values of 'wide' or 'long'."),
       shiny::p(strong("latitude and longitude : "),"  Optional image location to filter model predictions to species within range. Input takes one location per model run;
                      if images originate from multiple locations, separate them into different model runs based on location. Currently only applies to species model."),
