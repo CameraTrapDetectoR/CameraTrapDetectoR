@@ -38,7 +38,7 @@ download_cache <- function(model_type = "species")
   if(model_type == 'species' | 'species_v2') {
     path <- file.path(cache_path, fs::path_file("species_v2.zip"))
     folder <- file.path(cache_path, fs::path_file("species_v2"))
-    agdata <- "https://data.nal.usda.gov/system/files/species_v2_1.zip"
+    agdata <- "https://data.nal.usda.gov/system/files/species_v2_3.zip"
   }
   if(model_type == 'species_v1') {
     path <- file.path(cache_path, fs::path_file("species_v1.zip"))
