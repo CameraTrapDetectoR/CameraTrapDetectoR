@@ -21,7 +21,6 @@
 #' Model version details, including class-wise results on an out-of-sample test
 #' data set, are available on the CameraTrapDetectoR github repository.
 #' 
-#' 
 #' @returns a data frame of model predictions, with predicted number of individuals
 #' within each detected class for each image in the data directory. This data frame 
 #' is automatically saved as a .csv file in the output directory, along with a .txt
@@ -31,13 +30,16 @@
 #' saved in the output directory.If the user requests image plots with bounding boxes,
 #' these plotted image copies will be saved as .png files in the output directory. 
 #' 
-#' @param data_dir string. Absolute path to the folder or directory head with images to run
-#' @param recursive boolean. Searches for images in sub folders within the specified
-#'  data_dir. Default is TRUE.
-#' @param model_type string. Model type to load and deploy. type options
-#'  are c('general', 'species', 'family', 'pig_only'). A version may be specified 
-#'  after the model type, separated by an underscore. If no version is specified, the
-#'  latest version of the model type will be used. 
+#' @param data_dir Absolute path to the folder containing your images
+#' @param recursive boolean. Do you have images in subfolders within your
+#'  data_dir that you want to analyze, if so, set to TRUE. If you only want to 
+#'  analyze images within your data_dir and not within sub-folders, set to FALSE.
+#' @param model_type Options are 'general', 'species', 'family', or 'pig_only' 
+#'  with appropriate version appended with an underscore. For example, to use the version 1 species model,
+#'  list `model_type` as "species_v1". Specifying a model type without a version appended will default to
+#'  the latest version of that model available for your package vesion.
+#'  A full list of available models and details is available 
+#'  on the CameraTrapDetectoR Github wiki.
 #' @param redownload boolean. Set to TRUE if you want to download the latest model weights; 
 #' this may only be possible while disconnected from VPN.
 #' @param file_extensions The types of extensions on your image files. Case insensitive; enter as a string.
@@ -103,7 +105,6 @@ deploy_model <- function(
     data_dir = NULL,
     model_type = 'general',
     recursive = TRUE,
-    redownload = TRUE,
     file_extensions = c(".jpg"),
     make_plots = TRUE,
     plot_label = TRUE,
@@ -129,7 +130,10 @@ deploy_model <- function(
   #-- Check arguments provided 
   
   # check model_type
-  models_available <- c('general', 'species', 'family', 'mammalBirdVehicle', 'pig_only')
+  models_available <- c('general', 'general_v1', 
+                        'species', 'species_v1', 'species_v2',
+                        'family', 'family_v1',
+                        'pig_only', 'pig_only_v1')
   if(!model_type %in% models_available) {
     stop(paste0("model_type must be one of the available options: ",
                 list(models_available)))
@@ -189,54 +193,21 @@ deploy_model <- function(
   }
   
   #-- Load model
-  
-  # load encoder. build these dataframes in the script to avoid attaching tables
-  if(model_type == "mammalBirdVehicle"){
-    #label_encoder = utils::read.csv("./label_encoders/mammalBirdVehicle.csv")
-    label_encoder = data.frame('label' = c('background', 'mammal', 'bird', 'vehicle'),
-                               'encoder' = 0:3)
-  }
-  if(model_type == "pig_only"){
-    # AB : fix to overwrite labels from fam model until pig model can be retrained
-    categories <- c('empty', rep('not_pig', 31), 'pig')
-    label_encoder = data.frame('label' = categories,
-                               'encoder' = 0:(length(categories)-1))
-  }
-  if(model_type == "general"){
-    categories <- c('empty', 'mammal', 'bird', 'human', 'vehicle')
-    label_encoder = data.frame('label' = categories,
-                               'encoder' = 0:(length(categories)-1))
-  }
-  if(model_type == "species"){
-    # run target2label.values() in python to get this list, but empty will be at the end
-    categories <- c('empty', 'squirrel_spp', 'American_Badger', 'American_Black_Bear', 'American_Crow', 'American_Marten', 'American_Mink', 'American_Robin', 'Arctic_Fox', 'Wolf', 'Owl', 'Bighorn_Sheep', 'Vulture', 'Jackrabbit', 'Prairie_Dog', 'Grackle', 'Bobcat', 'Quail', 'Canada_Lynx', 'Red_Fox', 'Chipmunk', 'Collared_Peccary', 'Common_Raccoon', 'Common_Raven', 'Cottontail_Rabbit', 'Coyote', 'Domestic_Cat', 'Domestic_Chicken', 'Domestic_Cow', 'Domestic_Dog', 'Domestic_Donkey', 'Domestic_Goat', 'Domestic_Sheep', 'Dove', 'Dusky_Grouse', 'Fisher', 'Golden_Eagle', 'Gray_Fox', 'Gray_Jay', 'Grizzly_Bear', 'Horse', 'Human', 'Iguana', 'Jaguar', 'Jaguarundi', 'Margay', 'Moose', 'Mountain_Lion', 'Mouse_Rat', 'Mule_Deer', 'Nilgai', 'Nine-Banded_Armadillo', 'North American Beaver', 'North_American_Porcupine', 'Ocelot', 'Polar_Bear', 'Prairie_Chicken', 'Pronghorn', 'River_Otter', 'Rocky_Mountain_Elk', 'Ruffed_Grouse', 'Snowshoe_Hare', "Steller's_Jay", 'Striped_Skunk', 'Vehicle', 'Virginia_Opossum', 'White-nosed_Coati', 'White-Tailed_Deer', 'Wild_Pig', 'Wild_Turkey', 'Wolverine', 'Woodchuck', 'Yellow-Bellied_Marmot')
-    # remove special characters
-    categories <- gsub("'", "", categories)
-    categories <- gsub(" ", "_", categories)
-    categories <- gsub("-", "_", categories)
-    label_encoder = data.frame('label' = categories,
-                               'encoder' = 0:(length(categories)-1))
-  }
-  if(model_type == "family"){
-    categories <- c('empty','Sciuridae', 'Mustelidae', 'Ursidae', 'Corvidae', 'Turdidae', 'Canidae', 'Columbidae', 'Strigidae', 'Bovidae', 'Ardeidae', 'Leporidae', 'Cathartidae', 'Icteridae', 'Felidae', 'Odontophoridae', 'Cervidae', 'Tayassuidae', 'Procyonidae', 'Phasianidae', 'Equidae', 'Accipitridae', 'Hominidae', 'Iguanidae', 'Aramidae', 'Dasypodidae', 'Castoridae', 'Erethizontidae', 'Antilocapridae', 'Mephitidae', 'vehicle', 'Didelphidae', 'Suidae')
-    label_encoder = data.frame('label' = categories,
-                               'encoder' = 0:(length(categories)-1))
-  }
 
   
-  # install dependencies
-  #package_vector <- c('torchvision', 'torch', 'magick', 'shiny', 'shinyFiles', 'shinyBS', 'shinyjs')
-  #install_dependencies(package_vector)
-  #utils::install.packages(c("shiny", "shinyjs"))
+  # download model files
+  folder <- download_cache(model_type)
   
-  # load model 
-  cat("\nLoading model architecture and weights. If you are redownloading model weights on this computer, this step can take a few minutes. \n")
-  model <- weightLoader(model_type, num_classes = nrow(label_encoder), redownload=redownload)
+  # load label encoder
+  label_encoder <- utils::read.table(file.path(folder, "label_encoder.txt"), 
+                                     sep = ":", col.names = c("label", "encoder"))
+  
+  # load model
+  model <- weight_loader(folder)
   model$eval()
   
   # load inputs
-  file_list <- dataset(data_dir, recursive,
-                       file_extensions)
+  file_list <- dataset(data_dir, recursive, file_extensions)
   
   # take random sample if sample50=TRUE  
   if(sample50 & length(file_list) >50){
