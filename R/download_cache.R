@@ -21,22 +21,22 @@ download_cache <- function(model_type = "species")
   fs::dir_create(cache_path)
   
   # create a file path depending on model type
-  if(model_type == 'general' | 'general_v1') {
+  if(model_type %in% c('general', 'general_v1')) {
     path <- file.path(cache_path, fs::path_file("general_v1.zip"))
     folder <- file.path(cache_path, fs::path_file("general_v1"))
     agdata <- "https://data.nal.usda.gov/system/files/general_v1_1.zip"
   }
-  if(model_type == 'family' | 'family_v1') {
+  if(model_type %in% c('family', 'family_v1')) {
     path <- file.path(cache_path, fs::path_file("family_v1.zip"))
     folder <- file.path(cache_path, fs::path_file("family_v1"))
     agdata <- "https://data.nal.usda.gov/system/files/family_v1_1.zip"
   }
-  if(model_type == 'pig_only' | 'pig_only_v1') {
+  if(model_type %in% c('pig_only', 'pig_only_v1')) {
     path <- file.path(cache_path, fs::path_file("pig_v1.zip"))
     folder <- file.path(cache_path, fs::path_file("pig_v1"))
     agdata <- "https://data.nal.usda.gov/system/files/pig_v1_1.zip"
   }
-  if(model_type == 'species' | 'species_v2') {
+  if(model_type %in% c('species', 'species_v2')) {
     path <- file.path(cache_path, fs::path_file("species_v2.zip"))
     folder <- file.path(cache_path, fs::path_file("species_v2"))
     agdata <- "https://data.nal.usda.gov/system/files/species_v2_3.zip"
