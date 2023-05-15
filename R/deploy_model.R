@@ -95,7 +95,6 @@
 #'  
 #' @import torch
 #' @import torchvision
-#' @import torchvisionlib
 #' @import magick
 #' @import dplyr
 #' 
