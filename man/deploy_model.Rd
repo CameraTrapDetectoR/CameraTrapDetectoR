@@ -137,7 +137,7 @@ deploy_model(data_dir = data_dir, model_type = 'species', score_threshold = scor
 }
 
 # loop through each model
-load(models)
+data(models)
 for(i in 1:nrow(models)){
 deploy_model(data_dir = data_dir, model_type = models$model_name[i])
 }

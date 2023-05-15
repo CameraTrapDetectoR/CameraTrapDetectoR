@@ -35,13 +35,13 @@ information about the dataset. Sequences may be provided by the user or from the
 \examples{
 
 # with sequences in the same data frame as predictions
-#load("preds")
+data(preds)
 seq_preds <- generate_sequences(preds$filename, c("example_set"), 5, 300)
 agg_preds <- aggregate_predictions(seq_preds, SequenceId) # directory-generated sequences
 agg_preds <- aggregate_predictions(seq_preds, SeqNumber) # metadata-generated sequences
 
 # with sequences as a separate data frame
-#load("preds")
+data(preds)
 meta_df <- extract_metadata(preds$filename)
 # this will take the first sequence column in meta_df
 agg_preds <- aggregate_predictions(preds, meta_df) 

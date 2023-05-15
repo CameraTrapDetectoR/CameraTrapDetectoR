@@ -39,7 +39,7 @@ accurate sequence information. Sequences with different burst lengths must  be r
 separately if relying on `cam_prefix` and image timestamp to generate sequence information.
 }
 \examples{
-load(preds)
+data(preds)
 seq_preds <- generate_sequences(preds$filename, c("example_set"), 5, 300)
 
 }

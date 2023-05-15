@@ -20,7 +20,8 @@
 #' Also returns a data frame of model_predictions that includes new/updated location for images.
 #' 
 #' @examples
-#' load(preds)
+#' data(preds)
+#' # separate predictions with confidence score below 0.9 for manual review
 #' results <- sort_images(preds, "./sorted_images/", 0.9)
 #' 
 #' @export

@@ -40,7 +40,8 @@ updated filepath. Optionally removes original images. Optionally puts all images
 below a certain threshold into a separate folder for manual review.
 }
 \examples{
-load(preds)
+data(preds)
+# separate predictions with confidence score below 0.9 for manual review
 results <- sort_images(preds, "./sorted_images/", 0.9)
 
 }

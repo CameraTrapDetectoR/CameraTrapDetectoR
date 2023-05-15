@@ -17,7 +17,7 @@ Helper function for `deploy_model`, `generate_sequences` functions.
 Depends on the `exifr` package to install and call exiftool
 }
 \examples{
-load(labels) # use annotations file to get filenames
+data(labels) # use annotations file to get filenames
 meta_df <- extract_metadata(labels$filename)
 
  

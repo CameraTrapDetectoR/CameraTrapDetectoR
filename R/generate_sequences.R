@@ -26,7 +26,7 @@
 #' @import dplyr
 #' 
 #' @examples
-#' load(preds)
+#' data(preds)
 #' seq_preds <- generate_sequences(preds$filename, c("example_set"), 5, 300)
 #' 
 #' @export
