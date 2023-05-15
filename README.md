@@ -1,15 +1,28 @@
 # CameraTrapDetectoR: Detect, classify, and count animals in camera trap images  
 
-Use deep learning computer vision models to automatically detect, count, and classify common North American domestic and wild species in camera trap images. CameraTrapDetectoR can be deployed as a R function or in an interactive Shiny application.  
-  
-Four types of models are available: a taxonomic class model that classifies objects as mammal or avian; a taxonomic family model that recognizes 31 mammal, avian, and reptile families; a pig-only model that recognizes wild pigs and classifies all other detections as not-pig; a species model that recognizes 75 unique domestic and wild species including all North American wild cat species, bear species, and Canid species. Each model also includes a category for vehicles and empty images.  
+Use deep learning computer vision models to automatically detect, count, and classify common North American domestic and wild species in camera trap images. The models can be deployed R function or in an interactive Shiny application on a local machine with little to no coding needed. CameraTrapDetectoR makes it easy to harness the power of AI image processing while protecting dataset privacy, and 
 
 \
 *Note: this package takes over development of previous github repository 'TabakM/CameraTrapDetectoR'. If you have downloaded the previous version of CameraTrapDetectoR, please uninstall and reinstall from this repository to stay connected with ongoing package developments.*  
+
+
+## About the Models
+
+Four types of models are available: 
+  1. a taxonomic class model that classifies objects as mammal or avian
+  2. a taxonomic family model that recognizes mammal, avian, and reptile families
+  3. a species model that recognizes unique domestic and wild species including all North American wild cat species, bear species, and Canid species.
+  4. a pig-only model that recognizes wild pigs and classifies all other detections as not-pig
+  
+The taxonomic models also include categories for vehicles and humans. All models include a category for empty images.  
+
+New model versions are trained iteratively over time
   
 
 
 ## Install CameraTrapDetectoR
+
+CameraTrapDetectoR models are now compatible only with package version $>=$  v1.0.0  Please make sure to reinstall the package if your version is older.
 
 Install devtools if you don't have it, then install CameraTrapDetectoR:  
 
