@@ -38,3 +38,8 @@ sufficient metadata fields in each image or reasonable directory organization in
 accurate sequence information. Sequences with different burst lengths must  be run through the function 
 separately if relying on `cam_prefix` and image timestamp to generate sequence information.
 }
+\examples{
+load(preds)
+seq_preds <- generate_sequences(preds$filename, c("example_set"), 5, 300)
+
+}

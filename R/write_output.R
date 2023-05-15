@@ -5,6 +5,8 @@
 #' 
 #' @param full_df predictions list filtered by score_threshold
 #' 
+#' @import dplyr
+#' 
 #' @export
 write_output <- function(full_df) {
 

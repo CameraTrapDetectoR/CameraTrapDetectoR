@@ -15,12 +15,6 @@ write_exif_tags(class, conf, count, review_threshold)
 
 \item{review_threshold}{review threshold for accepting predictions}
 }
-\value{
-call for exifr::exiftool_call
-}
 \description{
-Write results to image metadata
-}
-\details{
-write exiftool config file
+-UNDER DEVELOPMENT- write model outputs to image metadata
 }

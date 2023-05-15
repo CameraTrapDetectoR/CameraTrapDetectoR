@@ -11,7 +11,7 @@
 #' @returns list of image tensors
 #' 
 #' @export
-dataLoader <- function(file_list,
+data_loader <- function(file_list,
                        index,
                        w = 408, h=307){
   
