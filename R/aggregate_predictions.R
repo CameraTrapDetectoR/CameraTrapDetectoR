@@ -25,17 +25,15 @@
 #' 
 #' @examples 
 #' 
-#' # with sequences in the same data frame as predictions
+#' # directory-generated sequences
 #' data(preds)
 #' data_dir <- get_samples()
 #' seq_preds <- generate_sequences(data_dir, c("example_set"), 5, 300)
-#' agg_preds <- aggregate_predictions(seq_preds, SequenceId) # directory-generated sequences
-#' agg_preds <- aggregate_predictions(seq_preds, SeqNumber) # metadata-generated sequences
+#' agg_preds <- aggregate_predictions(preds, seq_preds) # directory-generated sequences
 #' 
-#' # with sequences as a separate data frame
+#' # metadata-generated sequences
 #' data(preds)
 #' meta_df <- extract_metadata(preds$filename)
-#' # this will take the first sequence column in meta_df
 #' agg_preds <- aggregate_predictions(preds, meta_df) 
 #' 
 #' @export
@@ -50,12 +48,18 @@ aggregate_predictions <- function(preds = NULL,
                 \nUse as.data.frame(", deparse(substitute(preds)), ") to format your predictions.\n"))
   }
   
-  # warnings if cannot find filename column
-  if(!("filename" %in% colnames(preds))){
+  # identify column with filename/filepath
+  file_path <- colnames(preds)[grepl("File", colnames(preds), ignore.case = TRUE)]
+  # send error message if no matches
+  if(length(file_path) == 0){
     stop(paste0("Cannot find column of absolute paths to image files in ", deparse(substitute(preds)), ". 
-              \nPlease ensure this column is named 'filename' .\n"))
+              \nPlease ensure this column contains the string 'file' .\n"))
   }
-    
+  # take first match if more than one col contains the string 'file'
+  if(length(file_path) > 1){
+    file_path <- file_path[1]
+  }
+  
   # warnings if cannot find predictions column
   if(!("prediction" %in% colnames(preds))){
     stop(paste0("Cannot find column of predictions in ", deparse(substitute(preds)), ". 

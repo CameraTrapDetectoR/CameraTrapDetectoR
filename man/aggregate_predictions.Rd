@@ -36,7 +36,8 @@ information about the dataset. Sequences may be provided by the user or from the
 
 # with sequences in the same data frame as predictions
 data(preds)
-seq_preds <- generate_sequences(preds$filename, c("example_set"), 5, 300)
+data_dir <- get_samples()
+seq_preds <- generate_sequences(data_dir, c("example_set"), 5, 300)
 agg_preds <- aggregate_predictions(seq_preds, SequenceId) # directory-generated sequences
 agg_preds <- aggregate_predictions(seq_preds, SeqNumber) # metadata-generated sequences
 
