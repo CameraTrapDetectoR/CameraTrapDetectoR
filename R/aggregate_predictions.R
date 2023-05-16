@@ -49,27 +49,27 @@ aggregate_predictions <- function(preds = NULL,
   }
   
   # identify column with filename/filepath
-  file_path <- colnames(preds)[grepl("File", colnames(preds), ignore.case = TRUE)]
+  file_path <- colnames(preds)[grepl("File", colnames(preds), ignore.case = TRUE)][1]
   # send error message if no matches
   if(length(file_path) == 0){
     stop(paste0("Cannot find column of absolute paths to image files in ", deparse(substitute(preds)), ". 
               \nPlease ensure this column contains the string 'file' .\n"))
   }
-  # take first match if more than one col contains the string 'file'
-  if(length(file_path) > 1){
-    file_path <- file_path[1]
-  }
   
-  # warnings if cannot find predictions column
-  if(!("prediction" %in% colnames(preds))){
-    stop(paste0("Cannot find column of predictions in ", deparse(substitute(preds)), ". 
-              \nPlease ensure this column is named 'prediction' .\n"))
+  # identify predictions column
+  pred_col <- colnames(preds)[grepl("pred", colnames(preds), ignore.case = TRUE)][1]
+  # send error message if no matches
+  if(length(pred_col) == 0){
+    stop(paste0("Cannot find prediction column in ", deparse(substitute(preds)), ". 
+              \nPlease ensure this column contains the string 'pred'.\n"))
   }
     
   # warnings if cannot find confidence score column
-  if(!("confidence_in_pred" %in% colnames(preds))){
-    stop(paste0("Cannot find column of predictions in ", deparse(substitute(preds)), ". 
-              \nPlease ensure this column is named 'confidence_in_pred' .\n"))
+  conf_col <- colnames(preds)[grepl("conf", colnames(preds), ignore.case = TRUE)][1]
+  # send error message if no matches
+  if(length(conf_col) == 0){
+    stop(paste0("Cannot find column of confidence scores in ", deparse(substitute(preds)), ". 
+              \nPlease ensure this column contains the string 'conf' .\n"))
   }
   
   # add warnings related to the sequences input
@@ -78,16 +78,27 @@ aggregate_predictions <- function(preds = NULL,
   
   # if sequences is a separate df
   if(is.data.frame(sequences)){
+    
     # identify column with filename/filepath
-    file_col <- colnames(sequences)[grepl("File", colnames(sequences), ignore.case = TRUE)]
+    file_col <- colnames(sequences)[grepl("File", colnames(sequences), ignore.case = TRUE)][1]
+    # send error message if no matches
+    if(length(file_col) == 0){
+      stop(paste0("Cannot find column of file paths in ", deparse(substitute(sequences)), ". 
+              \nPlease ensure this column contains the string 'file' .\n"))
+    }
     
     # identify column of sequence ids
     seq_col <- colnames(sequences)[grepl("seq", colnames(sequences), ignore.case = TRUE)][1]
+    # send error message if no matches
+    if(length(seq_col) == 0){
+      stop(paste0("Cannot find column of sequences in ", deparse(substitute(sequences)), ". 
+              \nPlease ensure this column contains the string 'seq' .\n"))
+    }
     
     seq_df <- sequences[, c(file_col, seq_col)]
     
     # merge dataframes
-    preds <- merge(preds, seq_df, by.x = "filename", by.y = file_col, all.x = TRUE, all.y = FALSE)
+    preds <- merge(preds, seq_df, by.x = file_path, by.y = file_col, all.x = TRUE, all.y = FALSE)
 
   }
   

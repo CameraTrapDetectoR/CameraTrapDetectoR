@@ -34,17 +34,15 @@ information about the dataset. Sequences may be provided by the user or from the
 }
 \examples{
 
-# with sequences in the same data frame as predictions
+# directory-generated sequences
 data(preds)
 data_dir <- get_samples()
 seq_preds <- generate_sequences(data_dir, c("example_set"), 5, 300)
-agg_preds <- aggregate_predictions(seq_preds, SequenceId) # directory-generated sequences
-agg_preds <- aggregate_predictions(seq_preds, SeqNumber) # metadata-generated sequences
+agg_preds <- aggregate_predictions(preds, seq_preds) # directory-generated sequences
 
-# with sequences as a separate data frame
+# metadata-generated sequences
 data(preds)
 meta_df <- extract_metadata(preds$filename)
-# this will take the first sequence column in meta_df
 agg_preds <- aggregate_predictions(preds, meta_df) 
 
 }
