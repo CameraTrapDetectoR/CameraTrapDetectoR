@@ -21,7 +21,8 @@ Imports:
     shinyjs,
     stringr,
     torch,
-    torchvision
+    torchvision,
+    torchvisionlib
 Suggests: 
     knitr,
     rmarkdown
