@@ -20,9 +20,8 @@ Imports:
     shinyFiles,
     shinyjs,
     stringr,
-    torch,
-    torchvision,
-    torchvisionlib
+    torch==0.9.0,
+    torchvision==0.4.0
 Suggests: 
     knitr,
     rmarkdown
