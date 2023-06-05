@@ -321,6 +321,11 @@ deploy_model <- function(
   pb = utils::txtProgressBar(min = 0, max = length(file_list), initial = 0,
                              style=3, char="*")  
   
+  # explicitly load torch packages into environment
+  library(torch)
+  library(torchvision)
+  library(torchvisionlib)
+
   # loop over each image
   toc <- Sys.time()
   torch::with_no_grad({
