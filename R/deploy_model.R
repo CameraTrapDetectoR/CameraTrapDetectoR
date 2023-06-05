@@ -322,9 +322,11 @@ deploy_model <- function(
                              style=3, char="*")  
   
   # explicitly load torch packages into environment
-  library(torch)
-  library(torchvision)
-  library(torchvisionlib)
+  suppressWarnings(suppressPackageStartupMessages({
+    library(torch)
+    library(torchvision)
+    library(torchvisionlib)
+  }))
 
   # loop over each image
   toc <- Sys.time()
