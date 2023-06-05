@@ -2,7 +2,7 @@
 % Please edit documentation in R/eval_model.R
 \name{eval_model}
 \alias{eval_model}
-\title{Evaluate results for images subject to manual review}
+\title{Evaluate model results}
 \usage{
 eval_model(
   preds = NULL,
@@ -18,7 +18,7 @@ eval_model(
 \arguments{
 \item{preds}{df of output from deploy_model. Currently only supports 'long' prediction format}
 
-\item{data}{ground truth results. Must be an R dataframe and contain the following columns:}
+\item{data}{ground truth results. Must be an R data frame and contain the following columns:}
 
 \item{filepath}{name of the column in `data` that contains absolute paths to the the images being assessed}
 
@@ -32,18 +32,25 @@ column must contain ground truth species.}
 `true_class` for a given row.}
 
 \item{event_level}{evaluate results at the individual level or at the sequence level? 
-Accepts values `c("image", "sequence")`. If including evaluation by sequence, @param seq_id must be specified}
+Accepts values `c("image", "sequence")`. If including evaluation by sequence, `seq_id` must be specified}
 
 \item{seq_id}{name of the column in `data` that contains sequence ids for each image. If you need to generate this
-information, see the *generate_sequences* function.}
+information, see the `generate_sequences` function.}
 }
 \description{
-join model_predictions output to a user-generated df of ground 
-truth identifications and assess overall and/or classwise performance
+Join model_predictions output to a user-generated df of ground 
+truth identifications and assess overall and/or class-wise performance
 }
 \details{
-this function takes your output results from deploy_model and joins them
-to a dataframe with ground truth identifications. The final object returned is a list containing 
+This function takes your output results from deploy_model and joins them
+to a data frame with ground truth identifications. The final object returned is a list containing 
 overall and class-wise evaluation metrics for class identification at the image and/or
 sequence level, and optionally for counts at the image and/or sequence level.
+}
+\examples{
+# load predictions and annotations
+data(preds)
+data(labels)
+results <- eval_model(preds, labels, "filename", "true_class", "image")
+
 }

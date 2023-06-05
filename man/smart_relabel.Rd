@@ -2,7 +2,7 @@
 % Please edit documentation in R/smart_relabel.R
 \name{smart_relabel}
 \alias{smart_relabel}
-\title{Relabel predictions using location of photo}
+\title{Relabel predictions using location}
 \usage{
 smart_relabel(pred_df, possible.labels, label_encoder)
 }
@@ -19,5 +19,6 @@ relabeled predictions based on location
 \description{
 This function compares the labels provided by the model with a list of possible
 species based on species ranges.  In some cases it relabels mis-classifications
-resulting from assumption that all species could be present in photo.
+resulting from assumption that all species could be present in photo. Helper
+function for `deploy_model`
 }

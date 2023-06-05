@@ -13,8 +13,6 @@ remove_na(df)
 df with all NA columns removed
 }
 \description{
-Remove NA columns
-}
-\details{
-Helper function to remove columns with all NA values
+Remove columns with all NA values. Helper function 
+for `extract_metadata`
 }

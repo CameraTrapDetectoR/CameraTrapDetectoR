@@ -9,12 +9,13 @@ find_unique_sets(df, overlap_threshold = overlap_threshold)
 \arguments{
 \item{df}{The data frame containing bounding box values and predictions}
 
-\item{overlap_threshold}{The threshold (proportion) used in determining which bounding boxes are considered unique detections}
+\item{overlap_threshold}{Threshold used in determining which bounding boxes are considered unique detections}
 }
 \value{
-overlapping polygons
+Matrix with sets of polygons that overlap
 }
 \description{
-Evaluates overlapping bounding boxes using user specified threshold that determines overlap and returns
-sets of polygons that overlap
+Evaluate overlapping bounding boxes using user-specified 
+threshold to determines overlap and returns sets of polygons that overlap.
+Helper function for `reduce_overlapping_bboxes`
 }

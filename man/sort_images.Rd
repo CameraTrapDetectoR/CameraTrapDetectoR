@@ -24,6 +24,10 @@ titled "Manual_Review". Accepts values 0.01 - 1; default = NA.}
 
 \item{remove_originals}{boolean. Delete original image files. Default = FALSE}
 }
+\value{
+Image directory with images sorted by predicted class, score_threshold, count. 
+Also returns a data frame of model_predictions that includes new/updated location for images.
+}
 \description{
 make copies of image files into a new directory with a folder for each output class
 }
@@ -34,4 +38,10 @@ detected in a single image, copies of that image will be placed in every folder 
 to a predicted detection. Also returns a df of the deploy_model output with a new column for 
 updated filepath. Optionally removes original images. Optionally puts all images with detections 
 below a certain threshold into a separate folder for manual review.
+}
+\examples{
+data(preds)
+# separate predictions with confidence score below 0.9 for manual review
+results <- sort_images(preds, "./sorted_images/", 0.9)
+
 }

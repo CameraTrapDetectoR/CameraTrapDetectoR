@@ -2,19 +2,20 @@
 % Please edit documentation in R/reduce_overlapping_bboxes.R
 \name{reduce_overlapping_bboxes}
 \alias{reduce_overlapping_bboxes}
-\title{Find overlapping bounding boxes and return classification with maximum confidence}
+\title{Take overlapping bounding boxes and return classification with maximum confidence}
 \usage{
 reduce_overlapping_bboxes(df, overlap_threshold = 0.8)
 }
 \arguments{
 \item{df}{The data frame containing bounding box values and predictions}
 
-\item{overlap_threshold}{The threshold (proportion) used in determining which bounding boxes are considered unique detections}
+\item{overlap_threshold}{The threshold used in determining which bounding boxes are considered unique detections}
 }
 \value{
-unique bboxes set by overlap threshold
+data frame bboxes above overlap threshold aggregated by maximum confidence
 }
 \description{
-Evaluates overlapping bounding boxes using user specified threshold that determines overlap and returns
-bounding boxes and classification with maximum confidence
+Evaluates overlapping bounding boxes using user specified threshold that 
+determines overlap and returns bounding boxes and classification with maximum confidence.
+Helper function for `deploy_model`
 }

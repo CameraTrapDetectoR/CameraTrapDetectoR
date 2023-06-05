@@ -2,7 +2,7 @@
 % Please edit documentation in R/dataset.R
 \name{dataset}
 \alias{dataset}
-\title{This function sets up the image dataset}
+\title{Define image dataset}
 \usage{
 dataset(data_dir, recursive = TRUE, file_extensions = c(".jpg", ".JPG"))
 }
@@ -14,8 +14,8 @@ dataset(data_dir, recursive = TRUE, file_extensions = c(".jpg", ".JPG"))
 \item{file_extensions}{file extensions}
 }
 \value{
-dataset for reading into model
+list of image paths for reading into model
 }
 \description{
-This function sets up the image dataset
+Create list of image files from data_dir. Helper function for `deploy_model`
 }

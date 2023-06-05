@@ -18,8 +18,5 @@ write_bbox_df(predictions_list, w, h, bboxes, score_threshold)
 \item{score_threshold}{score threshold to filter bboxes}
 }
 \description{
-separate function to write bboxes to df
-}
-\details{
-create bbox df for saving in checkpoint, csv
+helper function for `deploy_model` to create bbox df for saving in checkpoint, csv
 }

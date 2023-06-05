@@ -27,8 +27,8 @@
 #' 
 #' @examples 
 #' # load predictions and annotations
-#' load(preds)
-#' load(labels)
+#' data(preds)
+#' data(labels)
 #' results <- eval_model(preds, labels, "filename", "true_class", "image")
 #' 
 #' @export

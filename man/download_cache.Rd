@@ -2,15 +2,18 @@
 % Please edit documentation in R/download_cache.R
 \name{download_cache}
 \alias{download_cache}
-\title{This function will download files necessary to run the model and store them in the package space}
+\title{Download model files}
 \usage{
-download_cache(name = "weights_family_cpu.pth", redownload = TRUE)
+download_cache(model_type = "species")
 }
 \arguments{
-\item{name}{location of file to download}
-
-\item{redownload}{bool - whether or not to redownload model weights from online storage}
+\item{model_type}{user-specified model type and version. Defaults to 
+latest version of model type if no version given}
+}
+\value{
+path to folder containing model files
 }
 \description{
-This function will download files necessary to run the model and store them in the package space
+Download files necessary to run the model and store them in
+the package cache. Helper function for `deploy_model`
 }

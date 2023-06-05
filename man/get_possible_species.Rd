@@ -15,6 +15,7 @@ get_possible_species(location, extent.data)
 possible species list
 }
 \description{
-This function will evaluate the user provided latitude / longitude values with range
-extent data for species included in the trained models and will return a list of possible species.
+Evaluate user-provided latitude / longitude values with range
+extent data for species included in the trained models. Helper function for
+`delpoy_model`
 }

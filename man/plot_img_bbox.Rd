@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_img_bbox.R
 \name{plot_img_bbox}
 \alias{plot_img_bbox}
-\title{Make plots of the image with bounnding box predictions}
+\title{Plot image with bounding box predictions}
 \usage{
 plot_img_bbox(
   filename,
@@ -45,9 +45,10 @@ exact coordinates? Only `TRUE` if you are using a different image size}
 \code{make_plots=TRUE}.}
 }
 \value{
-image copies with bboxes and labels plotted
+png image file in output_dir with bboxes and labels plotted
 }
 \description{
-Plots original image with predicted bounding box and (optionally)
-the predicted category
+Create a copy of the original image with predicted bounding box 
+and, optionally, the predicted category plotted on the image copy. Helper
+function for `deploy_model`
 }

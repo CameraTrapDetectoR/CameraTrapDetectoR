@@ -18,15 +18,10 @@ shinyUI(fluidPage(
       
       ## model_type
       shiny::selectInput("model_type", "model_type", 
-                         choices = c("general", "species", "family", "pig_only")),
+                         choices = c("general_v1", "family_v1", "species_v1", "species_v2", "pig_only_v1")),
       shinyBS::bsTooltip("model_type", "This defines how you want to ID animals, generally (to class), to species, to family, or to pig_only",
                          placement = "top"),
-      ## redownload
-      shiny::selectInput("redownload", "redownload", 
-                         choices = c(TRUE, FALSE)),
-      shinyBS::bsTooltip("redownload", "Do you want to download the latest model weights and architecture?", 
-                         placement = "top"),
-      
+
       ## recursive
       shiny::selectInput("recursive", "recursive", 
                          choices = c(TRUE, FALSE)),
@@ -86,7 +81,6 @@ shinyUI(fluidPage(
       shinyBS::bsTooltip("overlap_threshold", 
                          "Proportion of bounding box overlap to determine if detections are to be considered a single detection.",
                          placement = "top"),
-      
       ## get metadata
       shiny::selectInput("get_metadata", "get_metadata", choices = c(TRUE, FALSE)),
       shinyBS::bsTooltip("get_metadata", "Do you want to include image metadata in your output?",
@@ -150,12 +144,11 @@ shinyUI(fluidPage(
       # Argument descriptions
       shiny::h3("Below are some more details about each of the options on the left:"),
       shiny::p(strong("data_dir : "),"	Absolute path to the folder containing your images"),
-      shiny::p(strong("model_type : "),"	Options are 'general', 'species', 'family', 'pig_only'.  
-               The `general` model predicts to the level of mammal, bird, humans, vehicles.  
-               The `species` model recognizes 77 species. 
-               The `family` model recognizes 33 families. 
-               The `pig_only` model recognizes only pigs."),
-      shiny::p(strong("redownload : "),"	 TRUE/FALSE. Do you want to download the latest model weights?"),
+      shiny::p(strong("model_type : "),"	Model types 'general', 'species', 'family', 'pig_only'.  
+               The `general` model predicts mammals, birds, humans, and vehicles; latest version is V1.  
+               The `species` model recognizes 75 species; latest version is V2. 
+               The `family` model recognizes 31 families; latest version is V1. 
+               The `pig_only` model recognizes only pigs; latest version is V1."),
       shiny::p(strong("recursive : "),"	 TRUE/FALSE. Do you have images in subfolders within your data_dir that you want to analyze?"),
       shiny::p(strong("file_extensions : " ),"	Types of images accepted by the model. Select all options represented in your data_dir."),
       shiny::p(strong("make_plots : "),"	TRUE/FALSE. Do you want to make copies of your images with bounding boxes plotted on them?"),

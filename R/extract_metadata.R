@@ -10,7 +10,7 @@
 #' @import exifr
 #' 
 #' @examples
-#' load(labels) # use annotations file to get filenames
+#' data(labels) # use annotations file to get filenames
 #' meta_df <- extract_metadata(labels$filename)
 #' 
 #'  

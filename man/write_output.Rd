@@ -10,8 +10,6 @@ write_output(full_df)
 \item{full_df}{predictions list filtered by score_threshold}
 }
 \description{
-Write model output
-}
-\details{
-Finalize model predictions in df and csv output
+Helper function for `deploy_model`. Takes prediction df and 
+cleans into reportable output for csv files and R data frame
 }

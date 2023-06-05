@@ -8,7 +8,6 @@ deploy_model(
   data_dir = NULL,
   model_type = "general",
   recursive = TRUE,
-  redownload = TRUE,
   file_extensions = c(".jpg"),
   make_plots = TRUE,
   plot_label = TRUE,
@@ -18,7 +17,7 @@ deploy_model(
   overlap_correction = TRUE,
   overlap_threshold = 0.9,
   score_threshold = 0.6,
-  get_metadata = TRUE,
+  get_metadata = FALSE,
   latitude = NA,
   longitude = NA,
   h = 307,
@@ -31,18 +30,16 @@ deploy_model(
 \arguments{
 \item{data_dir}{Absolute path to the folder containing your images}
 
-\item{model_type}{Options are c('general', 'species', 'family', 'pig_only'). 
-The `general` model predicts to the level of mammal, bird, humans, vehicles. 
-The `species` model recognizes 77 species. 
-The `family` model recognizes 33 families.
-The `pig_only` model recognizes only pigs.}
+\item{model_type}{Options are 'general', 'species', 'family', or 'pig_only' 
+with appropriate version appended with an underscore. For example, to use the version 1 species model,
+list `model_type` as "species_v1". Specifying a model type without a version appended will default to
+the latest version of that model available for your package vesion.
+A full list of available models and details is available 
+on the CameraTrapDetectoR Github wiki.}
 
 \item{recursive}{boolean. Do you have images in subfolders within your
 data_dir that you want to analyze, if so, set to TRUE. If you only want to 
 analyze images within your data_dir and not within sub-folders, set to FALSE.}
-
-\item{redownload}{boolean. Set to TRUE if you want to download the latest model weights; 
-this may only be possible while disconnected from VPN.}
 
 \item{file_extensions}{The types of extensions on your image files. Case insensitive; enter as a string.
 Accepts the following file types: ".jpg", ".png", ".tif", ".pdf". Default is ".jpg"}
@@ -95,33 +92,54 @@ bboxes (it will be more stringent).}
 \item{col}{line color for bbox plot. See \code{?plot} for details}
 }
 \value{
-Returns a dataframe of predictions for each file. The rows in this 
- dataframe are the file names in your `data_dir`; the columns are the categories
- in the model. If any of your images were not loaded properly, there will be a 
- column in the dataframe called `image_error`. Images with a 1 in this column 
- had issues and the model was not deployed on them.
+a data frame of model predictions, with predicted number of individuals
+within each detected class for each image in the data directory. This data frame 
+is automatically saved as a .csv file in the output directory, along with a .txt
+file of all arguments used in that instance of the `deploy_model` function. 
+
+If the user specifies, a .csv of bounding box coordinates is also automatically 
+saved in the output directory.If the user requests image plots with bounding boxes,
+these plotted image copies will be saved as .png files in the output directory.
 }
 \description{
 This function deploys a model trained to identify and count the objects
-in camera trap images.
+in camera trap images. 
+
+This function deploys a customized computer vision model to detect and 
+classify objects in camera trap images. The function will find all indicated image
+files in the user-specified directory and deploy the user-specified model on these
+images.
 }
 \details{
-This function deploys a model to detect and classify objects in camera 
- trap images. The function will find all files matching the `file_extension`s 
- specified within the `data_dir` specified and deploy the `model_type` on these
- images. If you specify \code{recusive=TRUE}, the function will find relevant image
- files within all subdirectories of your `data_dir`. `deploy_model` returns a
- dataframe of predicted number of individuals within each category in each
- image. This dataframe is also written as a csv file within your `output_dir`.
- If you specify \code{make_plots=TRUE}, the function will plot predicted bounding
- boxes for each image in your `output_dir`. If you are working with many images, 
- you may wish to specify \code{sample50=TRUE} the first time you use this function,
- which will only deploy the model on 50 of your images. There are three options for
- \code{model_type}: 'general' recognizes mammals, birds, humans, and vehicles. 
- 'species' recognizes 77 species. 'family' recognizes 33 families. If you want
- to see all of the information for each bounding box (including coordinates, 
- labels, and confidence), specify \code{write_bbox_csv=TRUE} and it will be
- produced in your `output_dir`. Additionally,
- A file called "arguments" will be produced in your `output_dir`; this is a list
- of all of the arguments you passed to this function for reference.
+CameraTrapDetectoR contains four types of models: the 'general' classifies mammals, 
+birds, humans, and vehicles; the 'family' model classifies taxonomic families; 
+the 'species' model classifies taxonomic species; the 'pig_only' model classifies
+wild pigs. The most recent version of a given model will be deployed unless a
+previous version is expressly specified, i.e. \code{model_type='species_v1'}.
+Each model type and version) is trained independently to give the user the 
+option to run multiple model types and/or versions on the same dataset sequentially, 
+and treat each set of predictions as an independent observer.
+
+Model version details, including class-wise results on an out-of-sample test
+data set, are available on the CameraTrapDetectoR github repository.
+}
+\examples{
+# path to sample images shipped with the package
+data_dir <- get_samples() 
+
+# specify only the data_dir, except all other default args
+df_gen <- deploy_model(data_dir = data_dir)
+
+# run species model at varying confidence score thresholds
+scores <- c(0.3, 0.5, 0.7)
+for(i in 1:length(scores)){
+deploy_model(data_dir = data_dir, model_type = 'species', score_threshold = scores[i])
+}
+
+# loop through each model
+data(models)
+for(i in 1:nrow(models)){
+deploy_model(data_dir = data_dir, model_type = models$model_name[i])
+}
+ 
 }

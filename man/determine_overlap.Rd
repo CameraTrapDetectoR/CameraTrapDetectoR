@@ -2,18 +2,19 @@
 % Please edit documentation in R/determine_overlap.R
 \name{determine_overlap}
 \alias{determine_overlap}
-\title{Finds overlap of two bounding boxes}
+\title{Find overlap of two bounding boxes}
 \usage{
 determine_overlap(a, b)
 }
 \arguments{
 \item{a}{Bounding box that will be compared with b}
 
-\item{b}{Bounding box}
+\item{b}{Second bounding box to compare with a}
 }
 \value{
-overlap area of two bboxes
+overlap area of `a` and `b`
 }
 \description{
-Helper function that returns the proportion of overlap among two bounding boxes
+Calculates the proportion of overlap among two bounding boxes. 
+Run when the user specifies an overlap correction; helper function for `find_unique_sets`
 }

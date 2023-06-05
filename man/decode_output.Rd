@@ -2,8 +2,7 @@
 % Please edit documentation in R/decode_output.R
 \name{decode_output}
 \alias{decode_output}
-\title{This function will convert the output from NN into a format that can be used
-to make plots and provide a csv with information}
+\title{Extract relevant model output}
 \usage{
 decode_output(output, label_encoder, h, score_threshold = 0.7)
 }
@@ -17,9 +16,9 @@ decode_output(output, label_encoder, h, score_threshold = 0.7)
 \item{score_threshold}{threshold score for keeping bounding boxes}
 }
 \value{
-converted output from model that can be interpreted in R
+a dataframe of model output for an image that can be interpreted in R
 }
 \description{
-This function will convert the output from NN into a format that can be used
-to make plots and provide a csv with information
+Converts the output from the neural network into a format that 
+can be used in reporting results. Helper function for `deploy_model`
 }

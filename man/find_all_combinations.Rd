@@ -10,9 +10,9 @@ find_all_combinations(df)
 \item{df}{The data frame containing bounding box values and predictions}
 }
 \value{
-matrix of all possible combos
+matrix of all possible combinations
 }
 \description{
-Helper function that generates table of all possible combinations of
-bounding boxes to evaluate
+Generate table of all possible combinations of
+bounding boxes to evaluate. Helper function for `find_unique_sets`
 }
