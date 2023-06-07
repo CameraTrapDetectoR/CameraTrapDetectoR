@@ -19,13 +19,13 @@ smart_relabel <- function(pred_df, possible.labels, label_encoder){
   
   #--Assign Collared_Peccary to Wild_Pig
   if(all(possible.labels$label %in% "Collared_Peccary")==FALSE){
-    pred_df[pred_df$label.y=="Collared_Peccary","label.y"] <- "Wild_Pig"
-    pred_df[pred_df$label.y=="Wild_Pig","label"] <- label_encoder[label_encoder$label=="Wild_Pig","encoder"]
+    pred_df[pred_df$prediction=="Collared_Peccary","prediction"] <- "Wild_Pig"
+    pred_df[pred_df$prediction=="Wild_Pig","label"] <- label_encoder[label_encoder$label=="Wild_Pig","encoder"]
   }
   
   if(all(possible.labels$label %in% "Tayassuidae")==FALSE){
-    pred_df[pred_df$label.y=="Tayassuidae","label.y"] <- "Suidae"
-    pred_df[pred_df$label.y=="Suidae","label"] <- label_encoder[label_encoder$label=="Suidae","encoder"]
+    pred_df[pred_df$prediction=="Tayassuidae","prediction"] <- "Suidae"
+    pred_df[pred_df$prediction=="Suidae","label"] <- label_encoder[label_encoder$label=="Suidae","encoder"]
   }
   
   
@@ -34,8 +34,8 @@ smart_relabel <- function(pred_df, possible.labels, label_encoder){
   
   for(j in 1:length(potential.conflicts)){
     if(nrow(possible.labels[possible.labels$label %in% potential.conflicts[j],])==0){
-      pred_df[pred_df$label.y %in% potential.conflicts[j],"label.y"] <- "Wild_Pig"
-      pred_df[pred_df$label.y=="Wild_Pig","label"] <- label_encoder[label_encoder$label=="Wild_Pig","encoder"]
+      pred_df[pred_df$prediction %in% potential.conflicts[j],"prediction"] <- "Wild_Pig"
+      pred_df[pred_df$prediction=="Wild_Pig","label"] <- label_encoder[label_encoder$label=="Wild_Pig","encoder"]
     }#END Logical
   }#END Loop
   
@@ -45,7 +45,7 @@ smart_relabel <- function(pred_df, possible.labels, label_encoder){
   
   if(length(possible.labels[possible.labels$label %in% potential.conflicts,"label"])==1){
     if(possible.labels[possible.labels$label %in% potential.conflicts,"label"]=="White-Tailed_Deer"){
-      pred_df[pred_df$label.y %in% potential.conflicts,"label.y"] <- "White-Tailed_Deer"
+      pred_df[pred_df$prediction %in% potential.conflicts,"prediction"] <- "White-Tailed_Deer"
     }
   }
   
@@ -55,7 +55,7 @@ smart_relabel <- function(pred_df, possible.labels, label_encoder){
   
   if(length(possible.labels[possible.labels$label %in% potential.conflicts,"label"])==1){
     if(possible.labels[possible.labels$label %in% potential.conflicts,"label"]=="Bobcat"){
-      pred_df[pred_df$label.y %in% potential.conflicts,"label.y"] <- "Bobcat"
+      pred_df[pred_df$prediction %in% potential.conflicts,"prediction"] <- "Bobcat"
     }
   }
   
@@ -65,13 +65,13 @@ smart_relabel <- function(pred_df, possible.labels, label_encoder){
   
   if(length(possible.labels[possible.labels$label %in% potential.conflicts,"label"])==1){
     if(possible.labels[possible.labels$label %in% potential.conflicts,"label"]=="Ocelot"){
-      pred_df[pred_df$label.y %in% potential.conflicts,"label.y"] <- "Ocelot"
+      pred_df[pred_df$prediction %in% potential.conflicts,"prediction"] <- "Ocelot"
     }
   }
   
-  if(nrow(pred_df[pred_df$label.y %in% possible.labels$label,])==0){
-    pred_df[(pred_df$label.y %in% possible.labels$label)==FALSE,"label.y"] <- "Animal"
-    pred_df[pred_df$label.y %in% "Animal","label"] <- max(label_encoder$encoder)+1
+  if(nrow(pred_df[pred_df$prediction %in% possible.labels$label,])==0){
+    pred_df[(pred_df$prediction %in% possible.labels$label)==FALSE,"prediction"] <- "Animal"
+    pred_df[pred_df$prediction %in% "Animal","label"] <- max(label_encoder$encoder)+1
   }
   
   return(pred_df)
