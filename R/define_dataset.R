@@ -9,7 +9,7 @@
 #' @returns list of image paths for reading into model
 #' 
 #' @export
-dataset <- function(data_dir,
+define_dataset <- function(data_dir,
                     recursive = TRUE,
                     file_extensions = c(".jpg", ".JPG"))
   {

@@ -206,7 +206,7 @@ deploy_model <- function(
   model$eval()
   
   # load inputs
-  file_list <- dataset(data_dir, recursive, file_extensions)
+  file_list <- define_dataset(data_dir, recursive, file_extensions)
   
   # take random sample if sample50=TRUE  
   if(sample50 & length(file_list) >50){
