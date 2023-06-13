@@ -50,6 +50,14 @@ download_cache <- function(model_type = "species")
 
   }
   
+  # unzip the folder if it's in the cache
+  if(file.exists(path)){
+    # unzip the folder
+    utils::unzip(zipfile=path, exdir=cache_path)
+    
+    # remove zip folder once it's been extracted
+    file.remove(path)
+  }
   
   if (!dir.exists(folder)){
     
@@ -59,13 +67,19 @@ download_cache <- function(model_type = "species")
                running the function again.\n"))
     utils::download.file(url=agdata, destfile=path, quiet=TRUE)
     
+    if(file.exists(path)){
+      # unzip the folder
+      utils::unzip(zipfile=path, exdir=cache_path)
+      
+      # remove zip folder once it's been extracted
+      file.remove(path)
+    }
+    
   }
-  
-  # unzip the folder
-  utils::unzip(zipfile=path, exdir=cache_path)
+
   
   cat(paste0("Model files are downloaded and stored.\n"))
-
-
+  
+  
   return(folder)
 }
