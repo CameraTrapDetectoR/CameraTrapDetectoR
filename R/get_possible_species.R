@@ -12,7 +12,7 @@
 #' @export
 
 
-get_possible_species <- function(location, extent.data){
+get_possible_species <- function(location, extent.data, model_type){
   
   #--Test which species to consider
   location.test <- vector()
@@ -21,12 +21,32 @@ get_possible_species <- function(location, extent.data){
     location.test[i]<-location_contained_in_extent(location, extent.data[i,])
   }#END Loop
   
-  possible.species <- extent.data[location.test==TRUE,]
+  possible.labels <- extent.data[location.test==TRUE,]
+  
+  if("general" %in% model_type){
+    possible.labels <- possible.labels[possible.labels$model_type == "general",]
+  }
+  if("family" %in% model_type){
+    possible.labels <- possible.labels[possible.labels$model_type == "family",]
+  }
+  if("species" %in% model_type){
+    possible.labels <- possible.labels[possible.labels$model_type == "species",]
+  }
+  if("pig" %in% model_type){
+    possible.labels <- possible.labels[possible.labels$label == "Wild_Pig",]
+    possible.labels$model_type <- "pig_only"
+    # create a generic 'not_pig' row
+    possible.labels[2, ] <- data.frame(taxa = 'species',
+                                       label = 'Not_Pig',
+                                       model_type = 'pig_only',
+                                       xmin = -180, ymin = -90,
+                                       xmax = 180, ymax = 90)
+  }
   
   #--Generate unique set of species 
-  possible.species <- unique(possible.species[,c("taxa","label","model_type")])
+  possible.labels <- unique(possible.labels[,c("taxa","label","model_type")])
   
-  possible.species <- possible.species[order(possible.species$taxa, possible.species$label),]
+  possible.labels <- possible.labels[order(possible.labels$taxa, possible.labels$label),]
   
-  return(possible.species)
+  return(possible.labels)
 }#END Function

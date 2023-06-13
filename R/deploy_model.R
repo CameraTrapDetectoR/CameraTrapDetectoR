@@ -300,10 +300,9 @@ deploy_model <- function(
     #Load species extent data
     extent.data <- species.extent.data
     
-    #Get possible species
-    possible.labels <- get_possible_species(location, extent.data)
-    possible.labels <- possible.labels[possible.labels$model_type == model_type,]
-    
+    #Get possible labels based on model class
+    possible.labels <- get_possible_species(location, extent.data, model_type)
+
     cat(paste0("\nIdentified ", nrow(possible.labels), " taxa out of ", nrow(label_encoder), " possible taxa.\n"))
   }#END
   
