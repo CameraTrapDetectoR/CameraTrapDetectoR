@@ -13,16 +13,23 @@ write_output <- function(full_df) {
   #-- Make Predictions Dataframe
   
   # add certainty measures
-  full_df$certainty <- "single_prediction"
-  
-  # if number of predictions is > 1 indicate that there are multiple predictions
-  full_df[full_df$number_predictions>1,"certainty"] <-"multiple_predictions"
+  # full_df$certainty <- "single_prediction"
+  # 
+  # # if number of predictions is > 1 indicate that there are multiple predictions
+  # full_df[full_df$number_predictions>1,"certainty"] <-"multiple_predictions"
   
   # if model did not detect object
-  full_df[full_df$prediction=="empty","certainty"] <-"no_detection"
+  full_df <- dplyr::mutate(full_df, certainty = ifelse(prediction == "empty", "no_detection", 
+                                                       ifelse(prediction == "empty" & confidence_in_pred < 1, 
+                                                              "detections_below_score_threshold", 
+                                                              ifelse(number_predictions > 1, "multiple_predictions",
+                                                                     "single_prediction"))))
   
-  full_df[full_df$prediction=="empty" & full_df$confidence_in_pred<1,"certainty"] <-"detections_below_score_threshold"
+  # full_df[full_df$prediction=="empty","certainty"] <-"no_detection"
+  # 
+  # full_df[full_df$prediction=="empty" & full_df$confidence_in_pred<1,"certainty"] <-"detections_below_score_threshold"
   
+  # aggregate predictions by count
   min.vals<-stats::aggregate(confidence_in_pred~filename+prediction+certainty,
                              data=full_df[full_df$certainty!="detections_below_score_threshold",],
                              FUN=min)
@@ -49,7 +56,9 @@ write_output <- function(full_df) {
   colnames(full_df_cnt)[colnames(full_df_cnt) == "number_predictions"] = "count"
   
   # assign zero to counts if empty
-  full_df_cnt[full_df_cnt$prediction=="empty","count"]<-0
+  full_df_cnt <- dplyr::mutate(full_df_cnt,
+                               count = ifelse(prediction == "empty", 0, count))
+  # full_df_cnt[full_df_cnt$prediction=="empty","count"]<-0
   
   # reorder rows by image name, predicted class
   df_out <-full_df_cnt[order(full_df_cnt$filename,full_df_cnt$prediction),]
