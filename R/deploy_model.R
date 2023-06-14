@@ -148,13 +148,13 @@ deploy_model <- function(
   }
   
   # test overlap_threshold
-  if (overlap_threshold < 0 | overlap_threshold >= 1){
-    stop("overlap_threshold must be between 0 and 1")
+  if (overlap_threshold < 0 | overlap_threshold > 1){
+    stop("overlap_threshold must be between [0, 1]")
   }
   
   # test score_threshold
-  if (score_threshold < 0 | score_threshold >= 1){
-    stop("score_threshold must be between 0 and 1")
+  if (score_threshold < 0 | score_threshold > 1){
+    stop("score_threshold must be between [0, 1]")
   }
   
   # check location arguments
