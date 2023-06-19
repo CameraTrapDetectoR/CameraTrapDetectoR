@@ -201,6 +201,13 @@ deploy_model <- function(
   label_encoder <- utils::read.table(file.path(folder, "label_encoder.txt"), 
                                      sep = ":", col.names = c("label", "encoder"))
   
+  # standardize label format
+  label_encoder <- dplyr::mutate(label_encoder,
+                                 label = gsub("'", "", label),
+                                 label = gsub(" ", "_", label),
+                                 label = gsub("-", "_", label),
+                                 label = tools::toTitleCase(label))
+  
   # load model
   model <- weight_loader(folder)
   model$eval()
