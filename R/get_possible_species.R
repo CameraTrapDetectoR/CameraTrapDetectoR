@@ -9,6 +9,7 @@
 #' 
 #' @returns possible species list
 #' 
+#' @import dplyr
 #' @export
 
 
@@ -47,6 +48,13 @@ get_possible_species <- function(location, extent.data, model_type){
   possible.labels <- unique(possible.labels[,c("taxa","label","model_type")])
   
   possible.labels <- possible.labels[order(possible.labels$taxa, possible.labels$label),]
+  
+  # standardize label format
+  possible.labels <- dplyr::mutate(possible.labels,
+                                 label = gsub("'", "", label),
+                                 label = gsub(" ", "_", label),
+                                 label = gsub("-", "_", label),
+                                 label = tools::toTitleCase(label))
   
   return(possible.labels)
 }#END Function

@@ -148,13 +148,13 @@ deploy_model <- function(
   }
   
   # test overlap_threshold
-  if (overlap_threshold < 0 | overlap_threshold >= 1){
-    stop("overlap_threshold must be between 0 and 1")
+  if (overlap_threshold < 0 | overlap_threshold > 1){
+    stop("overlap_threshold must be between [0, 1]")
   }
   
   # test score_threshold
-  if (score_threshold < 0 | score_threshold >= 1){
-    stop("score_threshold must be between 0 and 1")
+  if (score_threshold < 0 | score_threshold > 1){
+    stop("score_threshold must be between [0, 1]")
   }
   
   # check location arguments
@@ -200,6 +200,13 @@ deploy_model <- function(
   # load label encoder
   label_encoder <- utils::read.table(file.path(folder, "label_encoder.txt"), 
                                      sep = ":", col.names = c("label", "encoder"))
+  
+  # standardize label format
+  label_encoder <- dplyr::mutate(label_encoder,
+                                 label = gsub("'", "", label),
+                                 label = gsub(" ", "_", label),
+                                 label = gsub("-", "_", label),
+                                 label = tools::toTitleCase(label))
   
   # load model
   model <- weight_loader(folder)
