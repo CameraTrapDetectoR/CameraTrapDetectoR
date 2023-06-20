@@ -25,9 +25,9 @@ Apply sequence id to results from the `deploy_model` function to
 aggregate predictions to the sequence level.
 }
 \details{
-If all predictions for a given sequence are "empty", the first image
+If all predictions for a given sequence are "Empty", the first image
 prediction in the sequence will be retained. If a sequence has non-"empty" 
-predictions, all "empty" predictions from that sequence will be removed. 
+predictions, all "Empty" predictions from that sequence will be removed. 
 The function requires model output from the `deploy_model` function and sequence
 information about the dataset. Sequences may be provided by the user or from the 
 `generate_sequences` or `extract_metadata` functions.

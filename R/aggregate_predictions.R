@@ -6,9 +6,9 @@
 #' @returns Returns a dataframe of predictions filtered down to the highest 
 #' confidence prediction per class per sequence. 
 #' 
-#' @details If all predictions for a given sequence are "empty", the first image
+#' @details If all predictions for a given sequence are "Empty", the first image
 #' prediction in the sequence will be retained. If a sequence has non-"empty" 
-#' predictions, all "empty" predictions from that sequence will be removed. 
+#' predictions, all "Empty" predictions from that sequence will be removed. 
 #' The function requires model output from the `deploy_model` function and sequence
 #' information about the dataset. Sequences may be provided by the user or from the 
 #' `generate_sequences` or `extract_metadata` functions. 
@@ -111,11 +111,11 @@ aggregate_predictions <- function(preds = NULL,
   filtrd_preds <- dplyr::filter(pred_agg, confidence_in_pred == max(confidence_in_pred))
   
   # create df with sequences that have only empty predictions; keep just first prediction of each sequence
-  empt_preds <- dplyr::filter(filtrd_preds, all(prediction == "empty"))
+  empt_preds <- dplyr::filter(filtrd_preds, all(prediction == "Empty"))
   empt_seqs <- dplyr::slice(empt_preds, 1)
   
   # remove all empty predictions non-empty sequences
-  nonempt_seqs <- dplyr::filter(filtrd_preds, prediction != "empty")
+  nonempt_seqs <- dplyr::filter(filtrd_preds, prediction != "Empty")
   
   # merge the two dfs
   seq_df <- rbind(empt_seqs, nonempt_seqs)

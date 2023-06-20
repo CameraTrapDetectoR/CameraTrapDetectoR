@@ -19,8 +19,8 @@ write_output <- function(full_df) {
   # full_df[full_df$number_predictions>1,"certainty"] <-"multiple_predictions"
   
   # if model did not detect object
-  full_df <- dplyr::mutate(full_df, certainty = ifelse(prediction == "empty", "no_detection", 
-                                                       ifelse(prediction == "empty" & confidence_in_pred < 1, 
+  full_df <- dplyr::mutate(full_df, certainty = ifelse(prediction == "Empty", "no_detection", 
+                                                       ifelse(prediction == "Empty" & confidence_in_pred < 1, 
                                                               "detections_below_score_threshold", 
                                                               ifelse(number_predictions > 1, "multiple_predictions",
                                                                      "single_prediction"))))
@@ -57,8 +57,8 @@ write_output <- function(full_df) {
   
   # assign zero to counts if empty
   full_df_cnt <- dplyr::mutate(full_df_cnt,
-                               count = ifelse(prediction == "empty", 0, count))
-  # full_df_cnt[full_df_cnt$prediction=="empty","count"]<-0
+                               count = ifelse(prediction == "Empty", 0, count))
+  # full_df_cnt[full_df_cnt$prediction=="Empty","count"]<-0
   
   # reorder rows by image name, predicted class
   df_out <-full_df_cnt[order(full_df_cnt$filename,full_df_cnt$prediction),]
