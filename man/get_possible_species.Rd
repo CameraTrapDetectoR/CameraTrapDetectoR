@@ -4,7 +4,7 @@
 \alias{get_possible_species}
 \title{Get List of Possible Species}
 \usage{
-get_possible_species(location, extent.data)
+get_possible_species(location, extent.data, model_type)
 }
 \arguments{
 \item{location}{dataframe containing a single longitude and latitude value}
