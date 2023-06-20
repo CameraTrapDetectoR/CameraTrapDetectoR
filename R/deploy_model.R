@@ -396,7 +396,7 @@ deploy_model <- function(
           #                  rep(NA, (ncol(pred_df)-2)),
           #                  "empty")
           pred_df <- data.frame(label = 0, XMin = 0, YMin = 0, XMax = 0, YMax = 0,
-                                prediction = "empty", number_bboxes = 0, scores = 1)
+                                prediction = "Empty", number_bboxes = 0, scores = 1)
           
           # # add column for number of bboxes
           # pred_df$number_bboxes<-0

@@ -95,9 +95,9 @@ eval_model <- function(preds = NULL, data = NULL,
   
   # calculate overall eval metrics
   evals$TP <- ifelse(evals$prediction == evals$true_class, 1, 0)
-  evals$FP <- ifelse((evals$prediction != "empty" & evals$true_class == "empty"), 1, 0)
-  evals$FP <- ifelse((evals$prediction != evals$true_class & evals$prediction != "empty"), 1, evals$FP)
-  evals$FN <- ifelse((evals$prediction == "empty" & evals$true_class != "empty"), 1, 0)
+  evals$FP <- ifelse((evals$prediction != "Empty" & evals$true_class == "Empty"), 1, 0)
+  evals$FP <- ifelse((evals$prediction != evals$true_class & evals$prediction != "Empty"), 1, evals$FP)
+  evals$FN <- ifelse((evals$prediction == "Empty" & evals$true_class != "Empty"), 1, 0)
   
   mAP <- sum(evals$TP) / sum(sum(evals$TP) + sum(evals$FP))
   mAR <- sum(evals$TP) / sum(sum(evals$TP) + sum(evals$FN))
@@ -142,12 +142,12 @@ eval_model <- function(preds = NULL, data = NULL,
     # Keep highest confidence class-wise predictions for each sequence
     filtrd_evals <- dplyr::filter(seq_evals, confidence_in_pred == max(confidence_in_pred))
     
-    # create df with sequences that have only empty predictions; keep just first prediction of each sequence
-    empt_evals <- dplyr::filter(filtrd_evals, all(prediction == "empty"))
+    # create df with sequences that have only Empty predictions; keep just first prediction of each sequence
+    empt_evals <- dplyr::filter(filtrd_evals, all(prediction == "Empty"))
     empt_seqs <- dplyr::slice(empt_evals, 1)
     
     # remove all empty predictions non-empty sequences
-    nonempt_seqs <- dplyr::filter(filtrd_evals, prediction != "empty")
+    nonempt_seqs <- dplyr::filter(filtrd_evals, prediction != "Empty")
     
     # merge the two dfs
     seq_df <- rbind(empt_seqs, nonempt_seqs)
