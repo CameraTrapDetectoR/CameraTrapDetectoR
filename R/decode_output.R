@@ -10,20 +10,31 @@
 #' 
 #' @returns a dataframe of model output for an image that can be interpreted in R
 #' 
+#' @import torchvisionlib
+#' 
 #' @export
 decode_output <- function(
     output, # this is the list output from the neural net
     label_encoder,
     h, 
-    score_threshold = 0.7
+    score_threshold,
+    overlap_threshold
 ){
   # subset the output for the part we want
   preds <- output[[2]][[1]]
-  boxes <- as.matrix(preds$boxes)
-  img_labels <- as.matrix(preds$labels)
   
-  scores <- as.matrix(preds$scores)
+  # perform non-maximum suppression on overlapping predictions 
+  pred_ids <- torchvisionlib::ops_nms(boxes = preds$boxes, 
+                                      scores = preds$scores, 
+                                      iou_threshold = overlap_threshold)
+  pred_ids <- as.matrix(pred_ids)
   
+  # extract bboxes, scores, and labels for retained predictions
+  boxes <- as.matrix(preds$boxes[pred_ids, ])
+  scores <- as.matrix(preds$scores[pred_ids, ])
+  img_labels <- as.matrix(preds$labels[pred_ids, ])
+  
+  # collect outputs into a dataframe
   pred_df <- data.frame('boxes' = boxes,
                         'scores' = scores,
                         'label' = img_labels)
@@ -53,5 +64,6 @@ decode_output <- function(
   
   # rename prediction
   colnames(pred_df)[colnames(pred_df) == "label.y"] = "prediction"
+  
   return(pred_df)
 }

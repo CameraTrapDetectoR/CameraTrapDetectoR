@@ -110,7 +110,7 @@ deploy_model <- function(
     output_dir = NULL,
     sample50 = FALSE, 
     write_bbox_csv = FALSE, 
-    overlap_correction = TRUE,
+    #overlap_correction = TRUE,
     overlap_threshold = 0.9,
     score_threshold = 0.6,
     get_metadata = FALSE,
@@ -275,7 +275,7 @@ deploy_model <- function(
     output_dir = normalizePath(output_dir),
     sample50 = sample50, 
     write_bbox_csv = write_bbox_csv, 
-    overlap_correction = overlap_correction,
+    # overlap_correction = overlap_correction,
     overlap_threshold = overlap_threshold,
     score_threshold = score_threshold,
     get_metadata = get_metadata,
@@ -356,7 +356,7 @@ deploy_model <- function(
         output <- suppressMessages({model(input)})
         options(warn = defaultW)
         
-        pred_df <- decode_output(output, label_encoder, 307, score_threshold)
+        pred_df <- decode_output(output, label_encoder, 307, score_threshold, overlap_threshold)
         
         # evaluate predictions using possible species
         if(is.null(location)==FALSE){
@@ -370,21 +370,21 @@ deploy_model <- function(
         
         if(nrow(pred_df) > 1) {
           pred_df$number_bboxes<-0
-          
-          # address overlapping bboxes
-          if(overlap_correction){
-            pred_df <- reduce_overlapping_bboxes(pred_df, overlap_threshold)
+          # 
+          # # address overlapping bboxes
+          # if(overlap_correction){
+          #   pred_df <- reduce_overlapping_bboxes(pred_df, overlap_threshold)
           }
         }
         # add filename
         filename <- normalizePath(file_list[i], winslash = "/")
         
-        # subset by score threshold for plotting
-        pred_df_plot <- pred_df[pred_df$scores >= score_threshold, ]
+        # # subset by score threshold for plotting
+        # pred_df_plot <- pred_df[pred_df$scores >= score_threshold, ]
         
         # make plots
         if(make_plots){
-          plot_img_bbox(filename, pred_df_plot, output_dir, data_dir, plot_label, col,
+          plot_img_bbox(filename, pred_df, output_dir, data_dir, plot_label, col,
                         lty, lwd, FALSE, w, h)
         }
         
