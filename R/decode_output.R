@@ -7,6 +7,7 @@
 #' @param score_threshold threshold score for keeping bounding boxes
 #' @param label_encoder passed from deploy model function
 #' @param h image height after resizing. Recommend not changing this
+#' @param overlap_threshold 
 #' 
 #' @returns a dataframe of model output for an image that can be interpreted in R
 #' 

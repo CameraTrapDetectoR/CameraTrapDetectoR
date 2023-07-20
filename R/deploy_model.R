@@ -59,11 +59,10 @@
 #'  values from 0-1. A lower number will produce more bboxes (it will be less
 #'  stringent in deciding to make a bbox). A higher number will produce fewer
 #'  bboxes (it will be more stringent).
-#' @param overlap_correction boolean. Should overlapping detections be
-#' evaluated for overlap and highest confidence detection be returned
-#' @param overlap_threshold Overlap threshold used when determining if bounding box
-#' detections are to be considered a single detection. Accepts values from 0-1
-#' representing the proportion of bounding box overlap.
+#' @param overlap_threshold Threshold used when determining if multiple overlapping
+#' bounding boxes are considered a single detection. Accepts values from 0-1
+#' representing the intersection over union (IOU) of two bounding boxes. The box with the higher
+#' confidence score will be returned for IOU over the set threshold. 
 #' @param get_metadata boolean. Collect metadata for each image.
 #' @param latitude image location latitude. Use only if all images in the model run come from the same location.
 #' @param longitude image location longitude. Use only if all images in the model run come from the same location.
@@ -355,6 +354,7 @@ deploy_model <- function(
         output <- suppressMessages({model(input)})
         options(warn = defaultW)
         
+        # decode output
         pred_df <- decode_output(output, label_encoder, 307, score_threshold, overlap_threshold)
         
         # evaluate predictions using possible species
