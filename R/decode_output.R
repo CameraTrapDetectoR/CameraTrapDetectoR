@@ -44,7 +44,7 @@ decode_output <- function(
   colnames(pred_df)[1:4] <- c('XMin', 'YMin', 'XMax', 'YMax')
   
   # check to ensure YMax and YMin are returned as expected - if not then reorder columns
-  if(all((h-pred_df$YMax - h-pred_df$YMin)<0)){
+  if(all((h > pred_df$YMax) & (pred_df$YMax > pred_df$YMin) & (pred_df$YMin > 0))){
     # rename switching ymax and ymin
     colnames(pred_df)[1:4] <- c('XMin', 'YMax', 'XMax', 'YMin')
     # reorder columns
@@ -52,7 +52,7 @@ decode_output <- function(
   }
   
   # remove boxes below threshold
-  pred_df <- pred_df[pred_df$scores >= score_threshold, ]
+  #pred_df <- pred_df[pred_df$scores >= score_threshold, ]
   
   # the predicted y coordinates from the model assume that the y axis 
   # starts in the upper left hand corner of the image, but this is not how

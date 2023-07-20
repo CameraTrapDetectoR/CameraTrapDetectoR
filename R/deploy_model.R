@@ -374,18 +374,16 @@ deploy_model <- function(
           # if(overlap_correction){
           #   pred_df <- reduce_overlapping_bboxes(pred_df, overlap_threshold)
           # }
-
-          }
         }
         # add filename
         filename <- normalizePath(file_list[i], winslash = "/")
         
-        # # subset by score threshold for plotting
-        # pred_df_plot <- pred_df[pred_df$scores >= score_threshold, ]
+        # subset by score threshold for plotting
+        pred_df_plot <- pred_df[pred_df$scores >= score_threshold, ]
         
         # make plots
         if(make_plots){
-          plot_img_bbox(filename, pred_df, output_dir, data_dir, plot_label, col,
+          plot_img_bbox(filename, pred_df_plot, output_dir, data_dir, plot_label, col,
                         lty, lwd, FALSE, w, h)
         }
         
