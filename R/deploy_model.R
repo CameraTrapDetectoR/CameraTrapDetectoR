@@ -374,6 +374,8 @@ deploy_model <- function(
           # if(overlap_correction){
           #   pred_df <- reduce_overlapping_bboxes(pred_df, overlap_threshold)
           # }
+
+          }
         }
         # add filename
         filename <- normalizePath(file_list[i], winslash = "/")
