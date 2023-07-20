@@ -193,7 +193,6 @@ deploy_model <- function(
   
   #-- Load model
 
-  
   # download model files
   folder <- download_cache(model_type)
   

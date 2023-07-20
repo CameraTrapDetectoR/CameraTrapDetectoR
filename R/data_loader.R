@@ -26,6 +26,7 @@ data_loader <- function(file_list,
   img_tensor <- torchvision::transform_to_tensor(img)
   # img_tensor <- tryCatch(img_tensor <- torchvision::transform_to_tensor(img),
   #          error = function(e) 'error')
+  
   # create a dummy target, just so we can pass something to the net
   target <- torch::torch_rand(3, h, w)
   

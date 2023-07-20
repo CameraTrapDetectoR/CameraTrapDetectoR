@@ -30,9 +30,9 @@ decode_output <- function(
   pred_ids <- as.matrix(pred_ids)
   
   # extract bboxes, scores, and labels for retained predictions
-  boxes <- as.matrix(preds$boxes[pred_ids, ])
-  scores <- as.matrix(preds$scores[pred_ids, ])
-  img_labels <- as.matrix(preds$labels[pred_ids, ])
+  boxes <- matrix(as.matrix(preds$boxes[pred_ids, ]), nrow=length(pred_ids), ncol=4)
+  scores <- as.matrix(preds$scores[pred_ids])
+  img_labels <- as.matrix(preds$labels[pred_ids])
   
   # collect outputs into a dataframe
   pred_df <- data.frame('boxes' = boxes,
