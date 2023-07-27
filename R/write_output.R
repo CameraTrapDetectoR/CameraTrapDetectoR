@@ -40,7 +40,7 @@ write_output <- function(full_df) {
   
   det_df <- cbind.data.frame(min.vals,number_predictions=cnt.val[,"number_predictions"])
   det_df <- dplyr::left_join(det_df, full_df, 
-                             by = "filename", 
+                             by = c("filename", "prediciton"), 
                              suffix = c("", ".y"), 
                              multiple = "all")
   det_df <- det_df[,colnames(full_df)]
