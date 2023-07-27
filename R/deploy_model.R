@@ -129,7 +129,7 @@ deploy_model <- function(
   #-- Check arguments provided 
   
   # check model_type
-  models_available <- c('general', 'general_v1', 
+  models_available <- c('general', 'general_v1', 'general_v2',
                         'species', 'species_v1', 'species_v2',
                         'family', 'family_v1',
                         'pig_only', 'pig_only_v1')

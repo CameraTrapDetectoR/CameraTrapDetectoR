@@ -22,9 +22,16 @@ download_cache <- function(model_type = "species")
   
   # create a file path depending on model type
   if(grepl("general", model_type, ignore.case = TRUE)) {
-    path <- file.path(cache_path, fs::path_file("general_v1.zip"))
-    folder <- file.path(cache_path, fs::path_file("general_v1"))
-    agdata <- "https://data.nal.usda.gov/system/files/general_v1_1.zip"
+    if(grepl("general_v1", model_type, ignore.case = TRUE)){
+      path <- file.path(cache_path, fs::path_file("general_v1.zip"))
+      folder <- file.path(cache_path, fs::path_file("general_v1"))
+      agdata <- "https://data.nal.usda.gov/system/files/general_v1_1.zip"
+    } else {
+      path <- file.path(cache_path, fs::path_file("general_v2.zip"))
+      folder <- file.path(cache_path, fs::path_file("general_v2"))
+      agdata <- "https://data.nal.usda.gov/system/files/general_v2.zip"
+    }
+
   }
   if(grepl("family", model_type, ignore.case = TRUE)) {
     path <- file.path(cache_path, fs::path_file("family_v1.zip"))
