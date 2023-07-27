@@ -34,9 +34,16 @@ download_cache <- function(model_type = "species")
 
   }
   if(grepl("family", model_type, ignore.case = TRUE)) {
-    path <- file.path(cache_path, fs::path_file("family_v1.zip"))
-    folder <- file.path(cache_path, fs::path_file("family_v1"))
-    agdata <- "https://data.nal.usda.gov/system/files/family_v1_1.zip"
+    if(grepl("family_v1", model_type, ignore.case = TRUE)){
+      path <- file.path(cache_path, fs::path_file("family_v1.zip"))
+      folder <- file.path(cache_path, fs::path_file("family_v1"))
+      agdata <- "https://data.nal.usda.gov/system/files/family_v1_1.zip"
+    } else {
+      path <- file.path(cache_path, fs::path_file("family_v2.zip"))
+      folder <- file.path(cache_path, fs::path_file("family_v2"))
+      agdata <- "https://data.nal.usda.gov/system/files/family_v2.zip"
+    }
+
   }
   if(grepl("pig", model_type, ignore.case = TRUE)) {
     path <- file.path(cache_path, fs::path_file("pig_v1.zip"))

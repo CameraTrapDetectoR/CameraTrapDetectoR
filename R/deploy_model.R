@@ -131,7 +131,7 @@ deploy_model <- function(
   # check model_type
   models_available <- c('general', 'general_v1', 'general_v2',
                         'species', 'species_v1', 'species_v2',
-                        'family', 'family_v1',
+                        'family', 'family_v1', 'family_v2',
                         'pig_only', 'pig_only_v1')
   if(!model_type %in% models_available) {
     stop(paste0("model_type must be one of the available options: ",
