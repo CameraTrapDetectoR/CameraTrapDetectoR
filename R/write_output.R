@@ -12,22 +12,12 @@ write_output <- function(full_df) {
 
   #-- Make Predictions Dataframe
   
-  # add certainty measures
-  # full_df$certainty <- "single_prediction"
-  # 
-  # # if number of predictions is > 1 indicate that there are multiple predictions
-  # full_df[full_df$number_predictions>1,"certainty"] <-"multiple_predictions"
-  
-  # if model did not detect object
+  # add column for prediction certainty
   full_df <- dplyr::mutate(full_df, certainty = ifelse(prediction == "Empty", "no_detection", 
                                                        ifelse(prediction == "Empty" & confidence_in_pred < 1, 
                                                               "detections_below_score_threshold", 
                                                               ifelse(number_predictions > 1, "multiple_predictions",
                                                                      "single_prediction"))))
-  
-  # full_df[full_df$prediction=="empty","certainty"] <-"no_detection"
-  # 
-  # full_df[full_df$prediction=="empty" & full_df$confidence_in_pred<1,"certainty"] <-"detections_below_score_threshold"
   
   # aggregate predictions by count
   min.vals<-stats::aggregate(confidence_in_pred~filename+prediction+certainty,

@@ -39,9 +39,6 @@ decode_output <- function(
     pred_df <- pred_df[,c('XMin', 'YMin', 'XMax', 'YMax', 'scores', 'label')]
   }
   
-  # remove boxes below threshold
-  pred_df <- pred_df[pred_df$scores >= score_threshold, ]
-  
   # the predicted y coordinates from the model assume that the y axis 
   # starts in the upper left hand corner of the image, but this is not how
   # plots are made in R, so I need to inverse this value

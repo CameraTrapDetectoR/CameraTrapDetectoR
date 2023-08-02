@@ -25,15 +25,10 @@ apply_score_threshold <- function(predictions_list, score_threshold){
   df <- do.call(dplyr::bind_rows, predictions_list)
   
   # rename select columns
-  #colnames(df)[colnames(df) == "label.y"] = "prediction"
   colnames(df)[colnames(df) == "scores"] = "confidence_in_pred"
   colnames(df)[colnames(df) == "number_bboxes"] = "number_predictions"
-  
-  # df <- data.frame("filename" = predictions_df$filename
-  #                  , "prediction" = predictions_df$label.y
-  #                  , "confidence_in_pred" = predictions_df$scores
-  #                  , "number_predictions" = predictions_df$number_bboxes)
-  
+
+  # get list of file names
   file_list <- unique(df$filename)
   
   #--Save those that are >= score_threshold
