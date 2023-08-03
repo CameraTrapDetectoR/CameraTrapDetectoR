@@ -21,7 +21,6 @@ decode_output <- function(
   preds <- output[[2]][[1]]
   boxes <- as.matrix(preds$boxes)
   img_labels <- as.matrix(preds$labels)
-  
   scores <- as.matrix(preds$scores)
   
   pred_df <- data.frame('boxes' = boxes,
@@ -50,5 +49,8 @@ decode_output <- function(
   
   # rename prediction
   colnames(pred_df)[colnames(pred_df) == "label.y"] = "prediction"
+  
+  # filter columns
+  pred_df <- pred_df[,c('XMin', 'YMin', 'XMax', 'YMax', 'scores', 'prediction')]
   return(pred_df)
 }

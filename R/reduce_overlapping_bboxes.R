@@ -11,7 +11,7 @@
 #' 
 #' @export
 #' 
-reduce_overlapping_bboxes <- function(df, overlap_threshold=0.8){
+reduce_overlapping_bboxes <- function(df, overlap_threshold){
   
   #--Find unique polygon sets
   unique.sets <- find_unique_sets(df, overlap_threshold=overlap_threshold)
@@ -31,7 +31,7 @@ reduce_overlapping_bboxes <- function(df, overlap_threshold=0.8){
   
   #--When sets overlap and the same box is found in each set aggregate
   #(this is a short term solution but results in inflated number of bboxes)
-  out<-stats::aggregate(number_bboxes~label+XMin+YMin+XMax+YMax+scores+prediction, data=out, FUN=sum)
+  out<-stats::aggregate(number_bboxes~XMin+YMin+XMax+YMax+scores+prediction, data=out, FUN=sum)
   
   return(out)
 }
