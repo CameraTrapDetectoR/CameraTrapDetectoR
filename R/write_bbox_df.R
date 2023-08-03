@@ -2,30 +2,30 @@
 #' 
 #' @description helper function for `deploy_model` to create bbox df for saving in checkpoint, csv
 #' 
-#' @param predictions_list prediction output
+#' @param full_df prediction output from apply_score_threshold
 #' @param w image width
 #' @param h image height
 #' @param bboxes existing predicted boxes df
-#' @param score_threshold score threshold to filter bboxes
+#' @param score_threshold confidence score to filter bounding boxes
 #'
 #' @import dplyr
 #'
 #' @export
-write_bbox_df <- function(predictions_list, w, h, bboxes, score_threshold) {
+write_bbox_df <- function(full_df, w, h, bboxes, score_threshold) {
   
   # convert list into dataframe
-  predictions_df <- do.call(dplyr::bind_rows, predictions_list)
+  # predictions_df <- do.call(dplyr::bind_rows, predictions_list)
   
-  bbox_df <- data.frame("filename" = predictions_df$filename,
-                        "prediction" = predictions_df$prediction,
-                        "confidence" = predictions_df$scores,
-                        "XMin" = as.numeric(predictions_df$XMin)/w,
-                        "XMax" = as.numeric(predictions_df$XMax)/w,
-                        "YMin" = as.numeric(predictions_df$YMin)/h,
-                        "YMax" = as.numeric(predictions_df$YMax)/h)
+  bbox_df <- data.frame("filename" = full_df$filename,
+                        "prediction" = full_df$prediction,
+                        "confidence_score" = full_df$confidence_score,
+                        "XMin" = as.numeric(full_df$XMin)/w,
+                        "XMax" = as.numeric(full_df$XMax)/w,
+                        "YMin" = as.numeric(full_df$YMin)/h,
+                        "YMax" = as.numeric(full_df$YMax)/h)
  
-   # filter out predicted bboxes below score_threshold
-  bbox_df <- bbox_df[bbox_df$confidence >= score_threshold, ]
+  # filter out predicted bboxes below score_threshold
+  bbox_df <- bbox_df[bbox_df$confidence_score >= score_threshold, ]
   
   # combine new bboxes with any existing results
   bbox_df <- unique(rbind(bbox_df, bboxes))

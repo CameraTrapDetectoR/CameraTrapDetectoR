@@ -346,9 +346,8 @@ deploy_model <- function(
         # set up output so that I can put into the data frame
         # get file name
         filename <- normalizePath(file_list[i], winslash = "/")
-        pred_df <- data.frame(label = 0, XMin = NA, YMin = NA, XMax=NA, YMax=NA,
-                              scores = 1.0, prediction = 'image_error', number_bboxes = 0,
-                              'filename' = filename)
+        pred_df <- data.frame(XMin = NA, YMin = NA, XMax=NA, YMax=NA,
+                              confidence_score = 1.0, prediction = 'image_error', filename = filename)
         predictions_list[[i]] <- pred_df
       } else {
         # deploy the model. suppressing warnings here, because it is not important
@@ -389,21 +388,9 @@ deploy_model <- function(
         }
         
         # when there is no predicted bounding box, create a relevant pred_df
-        # first get the encoder value for the background class. This should always be zero
         if(nrow(pred_df) < 1) {
-          #background_encoder <- label_encoder[which("empty"%in%label_encoder$label),]$encoder
-          # pred_df[1,] <- c(0, # using 0 instead of background_encoder, because empty will always be 0
-          #                  rep(NA, (ncol(pred_df)-2)),
-          #                  "empty")
-          pred_df <- data.frame(label = 0, XMin = 0, YMin = 0, XMax = 0, YMax = 0,
-                                prediction = "Empty", number_bboxes = 0, scores = 1)
-          
-          # # add column for number of bboxes
-          # pred_df$number_bboxes<-0
-          # 
-          # # add value for scores to address NA logical issues later
-          # pred_df$scores<-1.0
-          
+          pred_df <- data.frame(XMin = 0, YMin = 0, XMax = 0, YMax = 0,
+                                scores = 1, prediction = "Empty")
         }
         
         # add full filepath to prediction
@@ -411,52 +398,53 @@ deploy_model <- function(
         
         # add prediction df to list
         predictions_list[[i]] <- pred_df
+      }
         
-        # save results every 10th image
-        if (i %% 10 == 0) {
-          # filter df by score_threshold
-          full_df <- apply_score_threshold(predictions_list, score_threshold)
-          
-          # convert to output format
-          df_out <- write_output(full_df)
-          
-          # cat previous results if they exists
+      # save results every 10th image
+      if (i %% 10 == 0) {
+        # filter df by score_threshold
+        full_df <- apply_score_threshold(predictions_list, score_threshold)
+        
+        # write bounding box file
+        if(write_bbox_csv){
+          bbox_df <- write_bbox_df(full_df, w, h, bboxes)
+          utils::write.csv(bbox_df, file.path(output_dir, paste(model_type, "predicted_bboxes.csv", sep="_")), 
+                           row.names=FALSE)
+        }
+        
+        # convert to output format
+        df_out <- write_output(full_df)
+        
+        # cat previous results if they exist
+        if(i == 10){
           if(exists("results")){
             df_out <- unique(dplyr::bind_rows(results, df_out))
           }
-          
-          # if saving all bboxes, make df and save to csv
-          # Write Bounding Box File
-          if(write_bbox_csv){
-            bbox_df <- write_bbox_df(predictions_list, w, h, bboxes, score_threshold)
-            utils::write.csv(bbox_df, file.path(output_dir, paste(model_type, "predicted_bboxes.csv", sep="_")), 
-                             row.names=FALSE)
-          }
-          
-          # extract metadata if requested
-          if(get_metadata){
-            meta_df <- extract_metadata(df_out$filename)
-            # remove all NA columns
-            meta_df <- remove_na(meta_df)
-            #utils::write.csv(meta_df, file.path(output_dir, "metadata.csv"), row.names = FALSE)
-            # join metadata to results
-            df_out <- dplyr::left_join(df_out, meta_df, 
-                                       dplyr::join_by(filename == FilePath), 
-                                       suffix = c("", ".y"), keep=FALSE)
-            # remove duplicates
-            df_out <- dplyr::select(df_out, -ends_with(".y"))
-          }
-          
-          # save predictions to csv
-          utils::write.csv(df_out, file.path(output_dir, paste(model_type, 'model_predictions.csv', sep="_")), row.names=FALSE)
-          
-          # print update
-          cat(paste0("\nResults saved for ", i, " images.\n"))
         }
+
+        # extract metadata if requested
+        if(get_metadata){
+          meta_df <- extract_metadata(df_out$filename)
+          # remove all NA columns
+          meta_df <- remove_na(meta_df)
+          #utils::write.csv(meta_df, file.path(output_dir, "metadata.csv"), row.names = FALSE)
+          # join metadata to results
+          df_out <- dplyr::left_join(df_out, meta_df, 
+                                     dplyr::join_by(filename == FilePath), 
+                                     suffix = c("", ".y"), keep=FALSE)
+          # remove duplicates
+          df_out <- dplyr::select(df_out, -ends_with(".y"))
+        }
+        
+        # save predictions to csv
+        utils::write.csv(df_out, file.path(output_dir, paste(model_type, 'model_predictions.csv', sep="_")), row.names=FALSE)
+        
+        # print update
+        cat(paste0("\nResults saved for ", i, " images.\n"))
       }
-      
-      # update progress bar
-      utils::setTxtProgressBar(pb,i) 
+    
+    # update progress bar
+    utils::setTxtProgressBar(pb,i) 
       
     }# end for loop
     
@@ -472,6 +460,13 @@ deploy_model <- function(
   
   # filter df by score_threshold
   full_df <- apply_score_threshold(predictions_list, score_threshold)
+  
+  # write bounding box file
+  if(write_bbox_csv){
+    bbox_df <- write_bbox_df(full_df, w, h, bboxes)
+    utils::write.csv(bbox_df, file.path(output_dir, paste(model_type, "predicted_bboxes.csv", sep="_")), 
+                     row.names=FALSE)
+  }
   
   # convert to output format
   df_out <- write_output(full_df)
@@ -502,15 +497,6 @@ deploy_model <- function(
   
   cat(paste0("\nOutput can be found at: \n", normalizePath(output_dir), "\n",
              "The number of animals predicted in each category in each image is in the file: ", model_type, "_model_predictions.csv\n"))
-  
-  
-  # if saving all bboxes, make df and save to csv
-  # Write Bounding Box File
-  if(write_bbox_csv){
-    bbox_df <- write_bbox_df(predictions_list, w, h, bboxes, score_threshold)
-    utils::write.csv(bbox_df, file.path(output_dir, paste(model_type, "predicted_bboxes.csv", sep="_")), row.names=FALSE)
-    cat(paste0("The coordinates of predicted bounding boxes are in the file: ", model_type,  "_predicted_bboxes.csv"))
-  }
   
   
   # return output dataframe
