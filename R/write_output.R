@@ -15,7 +15,7 @@ write_output <- function(full_df) {
   # add column for prediction certainty
   full_df <- dplyr::mutate(full_df, 
                            certainty = ifelse(prediction == "Empty", "no_detection", 
-                                                       ifelse(prediction == "Empty" & confidence_in_pred < 1, 
+                                                       ifelse(prediction == "Empty" & confidence_score < 1, 
                                                               "detections_below_score_threshold", 
                                                               ifelse(number_predictions > 1, "multiple_predictions",
                                                                      "single_prediction"))))
