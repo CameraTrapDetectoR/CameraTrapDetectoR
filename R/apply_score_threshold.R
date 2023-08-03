@@ -33,7 +33,7 @@ apply_score_threshold <- function(predictions_list, score_threshold){
   
   # get prediction counts for each image, join to df
   pred_counts <- dplyr::count(df, filename)
-  df <- dplyr::left_join(pred_counts, by = "filename")
+  df <- dplyr::left_join(df, pred_counts, by = "filename")
   
   # separate images with single predictions and images with multiple predictions
   single_preds <- dplyr::filter(df, n == 1)
