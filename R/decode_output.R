@@ -21,7 +21,6 @@ decode_output <- function(
   preds <- output[[2]][[1]]
   boxes <- as.matrix(preds$boxes)
   img_labels <- as.matrix(preds$labels)
-  
   scores <- as.matrix(preds$scores)
   
   pred_df <- data.frame('boxes' = boxes,

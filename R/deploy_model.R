@@ -347,7 +347,8 @@ deploy_model <- function(
         # get file name
         filename <- normalizePath(file_list[i], winslash = "/")
         pred_df <- data.frame(XMin = NA, YMin = NA, XMax=NA, YMax=NA,
-                              confidence_score = 1.0, prediction = 'image_error', filename = filename)
+                              scores = 1.0, prediction = 'image_error', 
+                              number_bboxes = 0, filename = filename)
         predictions_list[[i]] <- pred_df
       } else {
         # deploy the model. suppressing warnings here, because it is not important
@@ -390,7 +391,7 @@ deploy_model <- function(
         # when there is no predicted bounding box, create a relevant pred_df
         if(nrow(pred_df) < 1) {
           pred_df <- data.frame(XMin = 0, YMin = 0, XMax = 0, YMax = 0,
-                                scores = 1, prediction = "Empty")
+                                scores = 1, prediction = "Empty", number_bboxes = 0)
         }
         
         # add full filepath to prediction
@@ -407,7 +408,7 @@ deploy_model <- function(
         
         # write bounding box file
         if(write_bbox_csv){
-          bbox_df <- write_bbox_df(full_df, w, h, bboxes)
+          bbox_df <- write_bbox_df(full_df, w, h, bboxes, score_threshold)
           utils::write.csv(bbox_df, file.path(output_dir, paste(model_type, "predicted_bboxes.csv", sep="_")), 
                            row.names=FALSE)
         }

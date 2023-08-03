@@ -26,7 +26,7 @@ apply_score_threshold <- function(predictions_list, score_threshold){
   
   # rename select columns
   colnames(df)[colnames(df) == "scores"] = "confidence_score"
-  # colnames(df)[colnames(df) == "number_bboxes"] = "number_predictions"
+  colnames(df)[colnames(df) == "number_bboxes"] = "number_predictions"
 
   # get list of file names
   # file_list <- unique(df$filename)
@@ -42,20 +42,20 @@ apply_score_threshold <- function(predictions_list, score_threshold){
   # filter out images with multiple preds all below score threshold
   multiple_preds <- dplyr::group_by(multiple_preds, filename)
   low_scores <- dplyr::filter(multiple_preds, all(confidence_score < score_threshold))
-  low_scores <- dplyr::filter(low_scores, confidence_score == max(confidence_score))
+  if(nrow(low_scores > 0)){
+    low_scores <- dplyr::filter(low_scores, confidence_score == max(confidence_score))
+  }
+  
   
   # keep remaining preds above score threshold
   multiple_preds <- dplyr::ungroup(multiple_preds)
-  multiple_preds <- dplyr::filter(multiple_preds, confidence_score < score_threshold)
+  multiple_preds <- dplyr::filter(multiple_preds, confidence_score > score_threshold)
   
   # combine formatted dfs
   df_out <- dplyr::bind_rows(single_preds, low_scores, multiple_preds)
   
   # rename predictions for rows under score threshold
   df_out <- dplyr::mutate(df_out, prediction = ifelse(confidence_score < score_threshold, "Empty", prediction))
-  
-  # remove column for total predictions per image and replace with predictions per class per image
-  df_out <- dplyr::rename(df_out, number_predictions = n)
   
   # 
   # 
@@ -93,6 +93,9 @@ apply_score_threshold <- function(predictions_list, score_threshold){
   # if(length(empty.images)==0){
   #   df_out <- limted_df
   # }
+  
+  # remove n 
+  df_out <- dplyr::select(df_out, !n)
   
   return(df_out)
 }
