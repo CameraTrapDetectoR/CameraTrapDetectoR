@@ -15,7 +15,7 @@ write_output <- function(full_df) {
   # add column for prediction certainty
   full_df <- dplyr::mutate(full_df, 
                            certainty = ifelse(prediction == "Empty", "no_detection", 
-                                                       ifelse(prediction == "Empty" & confidence_in_pred < 1, 
+                                                       ifelse(prediction == "Empty" & confidence_score < 1, 
                                                               "detections_below_score_threshold", 
                                                               ifelse(number_predictions > 1, "multiple_predictions",
                                                                      "single_prediction"))))
@@ -35,7 +35,7 @@ write_output <- function(full_df) {
                                            ifelse(prediction == "image_error", 0, count)))
   
   # filter multiple class-wise preds, keeping lowest confidence score above threshold
-  count_df <- dplyr::group_by(count_df, c(filename, prediction))
+  count_df <- dplyr::group_by(count_df, filename, prediction)
   count_df <- dplyr::filter(count_df, confidence_score == min(confidence_score))
   
   # 
