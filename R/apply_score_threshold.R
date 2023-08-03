@@ -33,7 +33,7 @@ apply_score_threshold <- function(predictions_list, score_threshold){
   
   # get prediction counts for each image, join to df
   pred_counts <- dplyr::count(df, filename)
-  df <- dplyr::left_join(pred_counts, by = "filename")
+  df <- dplyr::left_join(df, pred_counts, by = "filename")
   
   # separate images with single predictions and images with multiple predictions
   single_preds <- dplyr::filter(df, n == 1)
@@ -42,7 +42,7 @@ apply_score_threshold <- function(predictions_list, score_threshold){
   # filter out images with multiple preds all below score threshold
   multiple_preds <- dplyr::group_by(multiple_preds, filename)
   low_scores <- dplyr::filter(multiple_preds, all(confidence_score < score_threshold))
-  low_scores <- dplyr::filter(low_scores, confidence_score = max(confidence_score))
+  low_scores <- dplyr::filter(low_scores, confidence_score == max(confidence_score))
   
   # keep remaining preds above score threshold
   multiple_preds <- dplyr::ungroup(multiple_preds)
