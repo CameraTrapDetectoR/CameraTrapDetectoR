@@ -26,7 +26,13 @@ extract_metadata <- function(files){
                          "SeqNumber", "TempF", "TempC",  "Tigger", "Notes")
   
   # load metadata
-  dat <- exifr::read_exif(meta_files)
+  # extract only tags used below to decrease overhead
+  dat <- exifr::read_exif(meta_files,
+                          tags = c("SourceFile", "FileName", "ImageHeight", "ImageWidth",
+                                   "DateTimeOriginal", "CreateDate", "ProfileDateTime", "ModifyDate", "FileModifyDate",
+                                   "SerialNumber", "Make", "Model", "EventNumber", 
+                                   "AmbientTemperatureFahrenheit", "AmbientTemperature",
+                                   "TiggerMode", "Comment", "UserLabel", "UserComment"))
   
   # bulk col values
   # add filepath
