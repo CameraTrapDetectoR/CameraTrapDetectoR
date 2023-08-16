@@ -4,7 +4,7 @@
 \alias{reduce_overlapping_bboxes}
 \title{Take overlapping bounding boxes and return classification with maximum confidence}
 \usage{
-reduce_overlapping_bboxes(df, overlap_threshold = 0.8)
+reduce_overlapping_bboxes(df, overlap_threshold)
 }
 \arguments{
 \item{df}{The data frame containing bounding box values and predictions}

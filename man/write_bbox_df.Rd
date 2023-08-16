@@ -4,10 +4,10 @@
 \alias{write_bbox_df}
 \title{separate function to write bboxes to df}
 \usage{
-write_bbox_df(predictions_list, w, h, bboxes, score_threshold)
+write_bbox_df(full_df, w, h, bboxes, score_threshold)
 }
 \arguments{
-\item{predictions_list}{prediction output}
+\item{full_df}{prediction output from apply_score_threshold}
 
 \item{w}{image width}
 
@@ -15,7 +15,7 @@ write_bbox_df(predictions_list, w, h, bboxes, score_threshold)
 
 \item{bboxes}{existing predicted boxes df}
 
-\item{score_threshold}{score threshold to filter bboxes}
+\item{score_threshold}{confidence score to filter bounding boxes}
 }
 \description{
 helper function for `deploy_model` to create bbox df for saving in checkpoint, csv
