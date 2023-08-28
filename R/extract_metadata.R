@@ -7,7 +7,7 @@
 #' 
 #' @param files character vector with absolute path to image file/files
 #'  
-#' @import exifr
+#' @import exiftoolr
 #' 
 #' @examples
 #' data(labels) # use annotations file to get filenames
@@ -27,7 +27,7 @@ extract_metadata <- function(files){
   
   # load metadata
   # extract only tags used below to decrease overhead
-  dat <- exifr::read_exif(meta_files,
+  dat <- exiftoolr::exif_read(meta_files,
                           tags = c("SourceFile", "FileName", "ImageHeight", "ImageWidth",
                                    "DateTimeOriginal", "CreateDate", "ProfileDateTime", "ModifyDate", "FileModifyDate",
                                    "SerialNumber", "Make", "Model", "EventNumber", 
