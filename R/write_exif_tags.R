@@ -7,6 +7,7 @@
 #' @param count prediction count
 #' @param review_threshold review threshold for accepting predictions
 #' 
+#' @import exiftoolr
 #' 
 #' @export
 write_exif_tags <- function(class, conf, count, review_threshold){
