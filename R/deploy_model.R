@@ -356,7 +356,7 @@ deploy_model <- function(
         # get file name
         filename <- normalizePath(file_list[i], winslash = "/")
         pred_df <- data.frame(XMin = NA, YMin = NA, XMax=NA, YMax=NA,
-                              scores = 1.0, prediction = 'image_error', 
+                              confidence_score = 1.0, prediction = 'image_error', 
                               number_bboxes = 0, filename = filename)
         predictions_list[[i]] <- pred_df
       } else {
@@ -400,7 +400,7 @@ deploy_model <- function(
         # when there is no predicted bounding box, create a relevant pred_df
         if(nrow(pred_df) < 1) {
           pred_df <- data.frame(XMin = 0, YMin = 0, XMax = 0, YMax = 0,
-                                scores = 1, prediction = "Empty", number_bboxes = 0)
+                                confidence_score = 1, prediction = "Empty", number_bboxes = 0)
         }
         
         # add full filepath to prediction

@@ -70,7 +70,7 @@ write_metadata_tags <- function(pred_df, model_version, review_threshold){
   
   # extract highest conf predictions with class count from pred_df
   preds <- dplyr::group_by(preds, filename)
-  filtr_preds <- dplyr::filter(preds, scores == max(scores))
+  filtr_preds <- dplyr::filter(preds, confidence_score == max(confidence_score))
   
   # set review status
   filtr_preds <- dplyr::mutate(filtr_preds, 
@@ -83,7 +83,7 @@ write_metadata_tags <- function(pred_df, model_version, review_threshold){
   if(length(filtr_preds==1)){
     exifcall <- c(paste0(pred_class, filtr_preds$prediction),
                   paste0(pred_count, as.character(filtr_preds$count)),
-                  paste0(pred_conf, as.character(round(filtr_preds$confidence, 3))),
+                  paste0(pred_conf, as.character(round(filtr_preds$confidence_score, 3))),
                   paste0(review_stat, filtr_preds$review_stat))
     
     # write metadata
