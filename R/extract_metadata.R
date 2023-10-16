@@ -28,7 +28,7 @@ extract_metadata <- function(files){
   # load metadata
   # extract only tags used below to decrease overhead
   dat <- exiftoolr::exif_read(meta_files,
-                          tags = c("SourceFile", "FileName", "ImageHeight", "ImageWidth",
+                          tags = c("SourceFile", "FileName", "ImageHeight", "ImageWidth", "ImageSize",
                                    "DateTimeOriginal", "CreateDate", "ProfileDateTime", "ModifyDate", "FileModifyDate",
                                    "SerialNumber", "Make", "Model", "EventNumber", 
                                    "AmbientTemperatureFahrenheit", "AmbientTemperature",
