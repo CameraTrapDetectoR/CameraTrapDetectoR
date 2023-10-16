@@ -65,6 +65,7 @@
 #' detections are to be considered a single detection. Accepts values from 0-1
 #' representing the proportion of bounding box overlap.
 #' @param get_metadata boolean. Collect metadata for each image.
+#' @param write_metadata boolean. Write prediction info to image metadata
 #' @param latitude image location latitude. Use only if all images in the model run come from the same location.
 #' @param longitude image location longitude. Use only if all images in the model run come from the same location.
 #' @param h The image height (in pixels) for the annotated plot. Only used if
@@ -113,7 +114,8 @@ deploy_model <- function(
     overlap_correction = TRUE,
     overlap_threshold = 0.9,
     score_threshold = 0.6,
-    get_metadata = FALSE,
+    get_metadata = TRUE,
+    write_metadata = TRUE,
     latitude = NA,
     longitude = NA,
     h=307,
@@ -136,6 +138,13 @@ deploy_model <- function(
   if(!model_type %in% models_available) {
     stop(paste0("model_type must be one of the available options: ",
                 list(models_available)))
+  }
+  
+  # define model version
+  model_version <- model_type
+  latest <- "v2"   # latest model generation
+  if(model_version %in% c('general', 'family', 'species', 'pig_only')){
+    model_version <- paste(model_version, latest, sep="_")
   }
   
   # check ext types
@@ -396,6 +405,14 @@ deploy_model <- function(
         
         # add full filepath to prediction
         pred_df$filename <- rep(filename, nrow(pred_df))
+        
+        # write metadata tags here one image at a time
+        if(write_metadata==TRUE){
+          write_metadata_tags(pred_df = pred_df, 
+                              model_version = model_version, 
+                              review_threshold = 1)
+        }
+
         
         # add prediction df to list
         predictions_list[[i]] <- pred_df
