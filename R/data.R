@@ -28,7 +28,7 @@
 #' \describe{
 #' \item{\code{filename}}{path to image file}
 #' \item{\code{true_class}}{ground truth in taxonomic class common name}
-#' \item{\code}{count}}{number of animals per \code{true_class} per image}
+#' \item{\code{count}}{number of animals per \code{true_class} per image}
 #' }
 "labels"
 #'

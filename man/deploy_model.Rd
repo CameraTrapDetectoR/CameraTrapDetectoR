@@ -17,7 +17,8 @@ deploy_model(
   overlap_correction = TRUE,
   overlap_threshold = 0.9,
   score_threshold = 0.6,
-  get_metadata = FALSE,
+  get_metadata = TRUE,
+  write_metadata = TRUE,
   latitude = NA,
   longitude = NA,
   h = 307,
@@ -75,6 +76,8 @@ stringent in deciding to make a bbox). A higher number will produce fewer
 bboxes (it will be more stringent).}
 
 \item{get_metadata}{boolean. Collect metadata for each image.}
+
+\item{write_metadata}{boolean. Write prediction info to image metadata}
 
 \item{latitude}{image location latitude. Use only if all images in the model run come from the same location.}
 

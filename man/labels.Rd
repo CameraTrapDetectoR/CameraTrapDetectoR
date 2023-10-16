@@ -5,7 +5,13 @@
 \alias{labels}
 \title{labels}
 \format{
-
+## `labels`
+A data frame with 31 rows and 3 columns
+\describe{
+\item{\code{filename}}{path to image file}
+\item{\code{true_class}}{ground truth in taxonomic class common name}
+\item{\code{count}}{number of animals per \code{true_class} per image}
+}
 }
 \usage{
 labels

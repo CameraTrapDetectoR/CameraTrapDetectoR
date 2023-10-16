@@ -14,7 +14,7 @@ extract metadata for a single image file or list of files.
 Helper function for `deploy_model`, `generate_sequences` functions.
 }
 \details{
-Depends on the `exifr` package to install and call exiftool
+Depends on the `exiftoolr` package to install and call exiftool
 }
 \examples{
 data(labels) # use annotations file to get filenames
