@@ -24,7 +24,7 @@ decode_output <- function(
   scores <- as.matrix(preds$scores)
   
   pred_df <- data.frame('boxes' = boxes,
-                        'scores' = scores,
+                        'confidence_score' = scores,
                         'label' = img_labels)
   
   # assign column names
@@ -35,7 +35,7 @@ decode_output <- function(
     # rename switching ymax and ymin
     colnames(pred_df)[1:4] <- c('XMin', 'YMax', 'XMax', 'YMin')
     # reorder columns
-    pred_df <- pred_df[,c('XMin', 'YMin', 'XMax', 'YMax', 'scores', 'label')]
+    pred_df <- pred_df[,c('XMin', 'YMin', 'XMax', 'YMax', 'confidence_score', 'label')]
   }
   
   # the predicted y coordinates from the model assume that the y axis 
@@ -51,6 +51,6 @@ decode_output <- function(
   colnames(pred_df)[colnames(pred_df) == "label.y"] = "prediction"
   
   # filter columns
-  pred_df <- pred_df[,c('XMin', 'YMin', 'XMax', 'YMax', 'scores', 'prediction')]
+  pred_df <- pred_df[,c('XMin', 'YMin', 'XMax', 'YMax', 'confidence_score', 'prediction')]
   return(pred_df)
 }

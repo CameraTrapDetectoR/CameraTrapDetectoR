@@ -22,7 +22,7 @@ reduce_overlapping_bboxes <- function(df, overlap_threshold){
   #--Find maximum confidence for each polygon set
   for(j in 1:length(unique.sets)){
     tmp<-df[unique.sets[[j]],]
-    out[j,]<-tmp[which.max(df[unique.sets[[j]],"scores"]),]
+    out[j,]<-tmp[which.max(df[unique.sets[[j]],"confidence_score"]),]
     out[j,"number_bboxes"] <- length(unique.sets[[j]])
   }
   
@@ -31,7 +31,7 @@ reduce_overlapping_bboxes <- function(df, overlap_threshold){
   
   #--When sets overlap and the same box is found in each set aggregate
   #(this is a short term solution but results in inflated number of bboxes)
-  out<-stats::aggregate(number_bboxes~XMin+YMin+XMax+YMax+scores+prediction, data=out, FUN=sum)
+  out<-stats::aggregate(number_bboxes~XMin+YMin+XMax+YMax+confidence_score+prediction, data=out, FUN=sum)
   
   return(out)
 }
