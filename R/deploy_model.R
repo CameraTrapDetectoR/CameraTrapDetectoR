@@ -396,11 +396,12 @@ deploy_model <- function(
         # add filename
         filename <- normalizePath(file_list[i], winslash = "/")
         
-        # subset by score threshold for plotting
-        pred_df_plot <- pred_df[pred_df$scores >= score_threshold, ]
-        
         # make plots
         if(make_plots){
+          # subset by score threshold for plotting
+          pred_df_plot <- pred_df[pred_df$confidence_score >= score_threshold, ]
+          
+          # plot predictions
           plot_img_bbox(filename, pred_df_plot, output_dir, data_dir, plot_label, col,
                         lty, lwd, FALSE, w, h)
         }
