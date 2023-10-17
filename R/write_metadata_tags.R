@@ -84,7 +84,7 @@ write_metadata_tags <- function(pred_df, model_version, review_threshold){
     exifcall <- c(paste0(pred_class, filtr_preds$prediction),
                   paste0(pred_count, as.character(filtr_preds$count)),
                   paste0(pred_conf, as.character(round(filtr_preds$confidence_score, 3))),
-                  paste0(review_stat, filtr_preds$review_stat))
+                  paste0(review_stat, filtr_preds$review_stat), " -q")
     
     # write metadata
     exiftoolr::exif_call(args = exifcall, config_file = config_file, path = filtr_preds$filename)

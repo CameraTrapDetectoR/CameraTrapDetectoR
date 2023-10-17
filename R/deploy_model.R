@@ -105,7 +105,7 @@
 #' @export
 deploy_model <- function(
     data_dir = NULL,
-    model_type = 'general',
+    model_type = 'species',
     recursive = TRUE,
     file_extensions = c(".jpg"),
     make_plots = TRUE,
@@ -489,7 +489,7 @@ deploy_model <- function(
   
   # write bounding box file
   if(write_bbox_csv){
-    bbox_df <- write_bbox_df(full_df, w, h, bboxes)
+    bbox_df <- write_bbox_df(full_df, w, h, bboxes, score_threshold)
     utils::write.csv(bbox_df, file.path(output_dir, paste(model_type, "predicted_bboxes.csv", sep="_")), 
                      row.names=FALSE)
   }
