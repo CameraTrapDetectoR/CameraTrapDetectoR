@@ -66,6 +66,8 @@
 #' representing the proportion of bounding box overlap.
 #' @param get_metadata boolean. Collect metadata for each image.
 #' @param write_metadata boolean. Write prediction info to image metadata
+#' @param checkpoint_frequency Number of images to run between saving a checkpoint. Default is 10;
+#' can be any positive integer; if it is larger than the size of your dataset, no checkpoints will be saved,
 #' @param latitude image location latitude. Use only if all images in the model run come from the same location.
 #' @param longitude image location longitude. Use only if all images in the model run come from the same location.
 #' @param h The image height (in pixels) for the annotated plot. Only used if
@@ -116,6 +118,7 @@ deploy_model <- function(
     score_threshold = 0.6,
     get_metadata = TRUE,
     write_metadata = TRUE,
+    checkpoint_frequency = 10,
     latitude = NA,
     longitude = NA,
     h=307,
@@ -164,6 +167,11 @@ deploy_model <- function(
   # test score_threshold
   if (score_threshold < 0 | score_threshold > 1){
     stop("score_threshold must be between [0, 1]")
+  }
+  
+  # test checkpoint frequency
+  if (checkpoint_frequency <= 0) {
+    stop("checkpoint frequency must be a positive integer.")
   }
   
   # check location arguments
@@ -419,7 +427,7 @@ deploy_model <- function(
       }
         
       # save results every 10th image
-      if (i %% 10 == 0) {
+      if (i %% checkpoint_frequency == 0) {
         # filter df by score_threshold
         full_df <- apply_score_threshold(predictions_list, score_threshold)
         
