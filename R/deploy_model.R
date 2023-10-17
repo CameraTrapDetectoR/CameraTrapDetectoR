@@ -212,7 +212,7 @@ deploy_model <- function(
 
   
   # download model files
-  folder <- download_cache(model_type)
+  folder <- download_cache(model_version)
   
   # load label encoder
   label_encoder <- utils::read.table(file.path(folder, "label_encoder.txt"), 
@@ -245,7 +245,7 @@ deploy_model <- function(
   # if output_dir was specified, search for existing results
   if(!is.null(output_dir)){
     results_path <- list.files(output_dir, 
-                          pattern = paste(model_type, "model_predictions", sep = "_"),
+                          pattern = paste(model_version, "model_predictions", sep = "_"),
                           full.names = TRUE, ignore.case = TRUE)
     if(length(results_path)>0){
       results <- do.call(rbind, lapply(results_path, utils::read.csv))
@@ -257,7 +257,7 @@ deploy_model <- function(
     }
     if(write_bbox_csv==TRUE){
       bbox_path <- list.files(output_dir,
-                              pattern = paste(model_type, "predicted_bboxes", sep = "_"),
+                              pattern = paste(model_version, "predicted_bboxes", sep = "_"),
                               full.names = TRUE, ignore.case = TRUE)
       # load saved predicted bboxes
       if(length(bbox_path)>0){
@@ -275,7 +275,7 @@ deploy_model <- function(
     current_time <- paste0("_", datenow, "_", sprintf("%02d", now$hour), 
                            sprintf("%02d", now$min), 
                            sprintf("%02d", round(now$sec)))
-    output_dir <- file.path(data_dir, paste0("predictions_", model_type, current_time))
+    output_dir <- file.path(data_dir, paste0("predictions_", model_version, current_time))
   } 
   if (!dir.exists(output_dir)){
     dir.create(output_dir)
@@ -284,7 +284,7 @@ deploy_model <- function(
   # Write Arguments to File
   arguments <- list (
     data_dir = normalizePath(data_dir),
-    model_type = model_type,
+    model_type = model_version,
     recursive = recursive,
     file_extensions = file_extensions,
     make_plots = make_plots,
@@ -434,7 +434,7 @@ deploy_model <- function(
         # write bounding box file
         if(write_bbox_csv){
           bbox_df <- write_bbox_df(full_df, w, h, bboxes, score_threshold)
-          utils::write.csv(bbox_df, file.path(output_dir, paste(model_type, "predicted_bboxes.csv", sep="_")), 
+          utils::write.csv(bbox_df, file.path(output_dir, paste(model_version, "predicted_bboxes.csv", sep="_")), 
                            row.names=FALSE)
         }
         
@@ -463,7 +463,7 @@ deploy_model <- function(
         }
         
         # save predictions to csv
-        utils::write.csv(df_out, file.path(output_dir, paste(model_type, 'model_predictions.csv', sep="_")), row.names=FALSE)
+        utils::write.csv(df_out, file.path(output_dir, paste(model_version, 'model_predictions.csv', sep="_")), row.names=FALSE)
         
         # print update
         cat(paste0("\nResults saved for ", i, " images.\n"))
@@ -490,7 +490,7 @@ deploy_model <- function(
   # write bounding box file
   if(write_bbox_csv){
     bbox_df <- write_bbox_df(full_df, w, h, bboxes, score_threshold)
-    utils::write.csv(bbox_df, file.path(output_dir, paste(model_type, "predicted_bboxes.csv", sep="_")), 
+    utils::write.csv(bbox_df, file.path(output_dir, paste(model_version, "predicted_bboxes.csv", sep="_")), 
                      row.names=FALSE)
   }
   
@@ -518,11 +518,11 @@ deploy_model <- function(
   }
   
   # save predictions to csv
-  utils::write.csv(df_out, file.path(output_dir, paste(model_type, 'model_predictions.csv', sep="_")), row.names=FALSE)
+  utils::write.csv(df_out, file.path(output_dir, paste(model_version, 'model_predictions.csv', sep="_")), row.names=FALSE)
 
   
   cat(paste0("\nOutput can be found at: \n", normalizePath(output_dir), "\n",
-             "The number of animals predicted in each category in each image is in the file: ", model_type, "_model_predictions.csv\n"))
+             "The number of animals predicted in each category in each image is in the file: ", model_version, "_model_predictions.csv\n"))
   
   
   # return output dataframe

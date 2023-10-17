@@ -6,7 +6,7 @@
 \usage{
 deploy_model(
   data_dir = NULL,
-  model_type = "general",
+  model_type = "species",
   recursive = TRUE,
   file_extensions = c(".jpg"),
   make_plots = TRUE,
@@ -19,6 +19,7 @@ deploy_model(
   score_threshold = 0.6,
   get_metadata = TRUE,
   write_metadata = TRUE,
+  checkpoint_frequency = 10,
   latitude = NA,
   longitude = NA,
   h = 307,
@@ -78,6 +79,9 @@ bboxes (it will be more stringent).}
 \item{get_metadata}{boolean. Collect metadata for each image.}
 
 \item{write_metadata}{boolean. Write prediction info to image metadata}
+
+\item{checkpoint_frequency}{Number of images to run between saving a checkpoint. Default is 10;
+can be any positive integer; if it is larger than the size of your dataset, no checkpoints will be saved,}
 
 \item{latitude}{image location latitude. Use only if all images in the model run come from the same location.}
 
