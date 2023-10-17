@@ -357,7 +357,7 @@ deploy_model <- function(
         filename <- normalizePath(file_list[i], winslash = "/")
         pred_df <- data.frame(XMin = NA, YMin = NA, XMax=NA, YMax=NA,
                               confidence_score = 1.0, prediction = 'image_error', 
-                              number_bboxes = 0, filename = filename)
+                              number_predictions = 0, filename = filename)
         predictions_list[[i]] <- pred_df
       } else {
         # deploy the model. suppressing warnings here, because it is not important
@@ -374,11 +374,11 @@ deploy_model <- function(
         }
         
         if(nrow(pred_df)==1){
-          pred_df$number_bboxes<-1
+          pred_df$number_predictions <- 1
         }
         
         if(nrow(pred_df) > 1) {
-          pred_df$number_bboxes<-0
+          pred_df$number_predictions <- 0
           
           # address overlapping bboxes
           if(overlap_correction){
@@ -400,7 +400,7 @@ deploy_model <- function(
         # when there is no predicted bounding box, create a relevant pred_df
         if(nrow(pred_df) < 1) {
           pred_df <- data.frame(XMin = 0, YMin = 0, XMax = 0, YMax = 0,
-                                confidence_score = 1, prediction = "Empty", number_bboxes = 0)
+                                confidence_score = 1, prediction = "Empty", number_predictions = 0)
         }
         
         # add full filepath to prediction
