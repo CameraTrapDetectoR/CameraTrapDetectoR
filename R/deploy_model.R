@@ -113,9 +113,9 @@ deploy_model <- function(
     output_dir = NULL,
     sample50 = FALSE, 
     write_bbox_csv = FALSE, 
+    score_threshold = 0.6,
     overlap_correction = TRUE,
     overlap_threshold = 0.9,
-    score_threshold = 0.6,
     get_metadata = TRUE,
     write_metadata = TRUE,
     checkpoint_frequency = 10,
@@ -171,6 +171,9 @@ deploy_model <- function(
   
   # test checkpoint frequency
   if (checkpoint_frequency <= 0) {
+    stop("checkpoint frequency must be a positive integer.")
+  }
+  if (checkpoint_frequency %% 1 != 0) {
     stop("checkpoint frequency must be a positive integer.")
   }
   

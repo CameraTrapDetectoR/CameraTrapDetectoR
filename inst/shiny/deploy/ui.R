@@ -18,8 +18,8 @@ shinyUI(fluidPage(
       
       ## model_type
       shiny::selectInput("model_type", "model_type", 
-                         choices = c("general_v1", "family_v1", "species_v1", "species_v2", "pig_only_v1")),
-      shinyBS::bsTooltip("model_type", "This defines how you want to ID animals, generally (to class), to species, to family, or to pig_only",
+                         choices = c("general_v1", "general_v2", "family_v1", "family_v2", "species_v1", "species_v2", "pig_only_v1")),
+      shinyBS::bsTooltip("model_type", "This defines your model type (taxonomic level) and version.",
                          placement = "top"),
 
       ## recursive
@@ -49,7 +49,7 @@ shinyUI(fluidPage(
       ## output_dir
       shinyFiles::shinyDirButton("output_dir", "output_dir", 
                                  title="Select the location to output. Just select the folder where it resides in the top half of the menu and press `Select`"),
-      shinyBS::bsTooltip("output_dir", "Location for output to be written on your computer. If folder is not selected, then a folder will be created within your data_dir.", 
+      shinyBS::bsTooltip("output_dir", "Location for output to be written on your computer. If folder is not selected, then a folder will be created within your data_dir. To resume from a previously-saved checkpoint, this field must be populated with the folder where the checkpoint file is stored.", 
                          placement = "top"),
       shiny::verbatimTextOutput("output_dir_Display", placeholder = TRUE),
       
@@ -83,7 +83,18 @@ shinyUI(fluidPage(
                          placement = "top"),
       ## get metadata
       shiny::selectInput("get_metadata", "get_metadata", choices = c(TRUE, FALSE)),
-      shinyBS::bsTooltip("get_metadata", "Do you want to include image metadata in your output?",
+      shinyBS::bsTooltip("get_metadata", "Do you want to include select image metadata fields in your output?",
+                         placement = "top"),
+      ## write metadata
+      shiny::selectInput("write_metadata", "write_metadata", choices = c(TRUE, FALSE)),
+      shinyBS::bsTooltip("write_metadata", "Do you want to write model predictions to your image metadata?",
+                         placement = "top"),
+      
+      ## checkpoint frequency
+      shiny::numericInput("checkpoint_frequency", "checkpoint_frequency", value = 10,
+                          min = 1, max = 1000, step = 1),
+      shinyBS::bsTooltip("checkpoint_frequency", 
+                         "Save your results after -xx- new images are run. Since backing up your work is crucial, we coerce this argument to checkpoint at least every 1000 images.", 
                          placement = "top"),
       
       ## location
@@ -145,16 +156,17 @@ shinyUI(fluidPage(
       shiny::h3("Below are some more details about each of the options on the left:"),
       shiny::p(strong("data_dir : "),"	Absolute path to the folder containing your images"),
       shiny::p(strong("model_type : "),"	Model types 'general', 'species', 'family', 'pig_only'.  
-               The `general` model predicts mammals, birds, humans, and vehicles; latest version is V1.  
+               The `general` model predicts mammals, birds, humans, and vehicles; latest version is V2.  
                The `species` model recognizes 75 species; latest version is V2. 
-               The `family` model recognizes 31 families; latest version is V1. 
+               The `family` model recognizes 31 families; latest version is V2. 
                The `pig_only` model recognizes only pigs; latest version is V1."),
       shiny::p(strong("recursive : "),"	 TRUE/FALSE. Do you have images in subfolders within your data_dir that you want to analyze?"),
       shiny::p(strong("file_extensions : " ),"	Types of images accepted by the model. Select all options represented in your data_dir."),
       shiny::p(strong("make_plots : "),"	TRUE/FALSE. Do you want to make copies of your images with bounding boxes plotted on them?"),
       shiny::p(strong("plot_label : "),"  TRUE/FALSE. Do you want plotted bounding boxes to be labeled? The make_plots argument must be set to TRUE."),
       shiny::p(strong("output_dir : "),"  Absolute path to output. Default is NULL; this creates a folder within your data_dir named after model type,
-               date and time model was initiated."),
+               date and time model was initiated. If resuming a previously saved checkpoint, you must populate this field to point to the folder with the checkpoint
+               in question AND select the same model type/version."),
       shiny::p(strong("sample50 : "),"  TRUE/FALSE. Do you want to run the model on a random sample of 50 images from your dataset? 
                This is a good idea if you are experimenting with settings. Note that a different random sample will generate for each model run."),
       shiny::p(strong("write_bbox_csv"),"  TRUE/FALSE. Do you want to create a csv with all the information on predicted bounding boxes? 
@@ -166,6 +178,8 @@ shinyUI(fluidPage(
                and the highest confidence detection returned?"),
       shiny::p(strong("overlap_threshold : "),"  Proportion of overlap for two detections to be considered a single detection. Accepts values from 0-0.99."),
       shiny::p(strong("get_metadata : "),"  TRUE/FALSE. Collect image metadata as it runs through the model."),
+      shiny::p(strong("write_metadata : "),"  TRUE/FALSE. Write model predictions to image metadata as it runs through the model."),
+      shiny::p(strong("checkpoint_frequency : "),"  Save results after running a given number of images. Accepts values from 1-1000."),
       shiny::p(strong("latitude and longitude : "),"  Optional image location to filter model predictions to species within range. Input takes one location per model run;
                      if images originate from multiple locations, separate them into different model runs based on location. Currently only applies to species model."),
       shiny::p(strong("h : "),"  Image height (in pixels) for the annotated plot. Only used if make_plots=TRUE."),
