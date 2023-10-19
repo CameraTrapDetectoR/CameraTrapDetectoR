@@ -14,9 +14,9 @@ deploy_model(
   output_dir = NULL,
   sample50 = FALSE,
   write_bbox_csv = FALSE,
+  score_threshold = 0.6,
   overlap_correction = TRUE,
   overlap_threshold = 0.9,
-  score_threshold = 0.6,
   get_metadata = TRUE,
   write_metadata = TRUE,
   checkpoint_frequency = 10,
@@ -64,17 +64,17 @@ with settings.}
 information on predicted bounding boxes? This csv will include all bounding boxes,
 even those with low probability.}
 
+\item{score_threshold}{Confidence threshold for using a bounding box, accepts 
+values from 0-1. A lower number will produce more bboxes (it will be less
+stringent in deciding to make a bbox). A higher number will produce fewer
+bboxes (it will be more stringent).}
+
 \item{overlap_correction}{boolean. Should overlapping detections be
 evaluated for overlap and highest confidence detection be returned}
 
 \item{overlap_threshold}{Overlap threshold used when determining if bounding box
 detections are to be considered a single detection. Accepts values from 0-1
 representing the proportion of bounding box overlap.}
-
-\item{score_threshold}{Confidence threshold for using a bounding box, accepts 
-values from 0-1. A lower number will produce more bboxes (it will be less
-stringent in deciding to make a bbox). A higher number will produce fewer
-bboxes (it will be more stringent).}
 
 \item{get_metadata}{boolean. Collect metadata for each image.}
 
