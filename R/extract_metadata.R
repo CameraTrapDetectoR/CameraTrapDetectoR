@@ -16,6 +16,7 @@
 #'  
 #' @export
 extract_metadata <- function(files){
+  
   # break list down to unique files
   meta_files <- unique(files)
   
@@ -25,7 +26,11 @@ extract_metadata <- function(files){
                          "TimeStamp", "MakeModel", "SerialNumber", "EventNumber",
                          "SeqNumber", "TempF", "TempC",  "Tigger", "Notes")
   
-  # load metadata
+  ## Load metadata
+  
+  # insert catch to install exiftool if needed
+  tryCatch( { exiftoolr::exif_version() }, error = function(e) {exiftoolr::install_exiftool()})
+  
   # extract only tags used below to decrease overhead
   dat <- exiftoolr::exif_read(meta_files,
                           tags = c("SourceFile", "FileName", "ImageHeight", "ImageWidth", "ImageSize",
