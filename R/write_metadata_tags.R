@@ -12,6 +12,9 @@
 #' @export
 write_metadata_tags <- function(pred_df, model_version, review_threshold){
   
+  # insert catch for installing exiftool if needed
+  tryCatch( { exiftoolr::exif_version() }, error = function(e) {exiftoolr::install_exiftool()})
+  
   # define path config file
   config_file = system.file("extdata", "cameratrapdetector_metadata.cfg", package = "CameraTrapDetectoR")
   
