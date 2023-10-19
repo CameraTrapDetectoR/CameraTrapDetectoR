@@ -215,7 +215,7 @@ deploy_model <- function(
 
   
   # download model files
-  folder <- download_cache(model_version)
+  folder <- download_models(model_version)
   
   # load label encoder
   label_encoder <- utils::read.table(file.path(folder, "label_encoder.txt"), 
