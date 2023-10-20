@@ -17,5 +17,5 @@ possible species list
 \description{
 Evaluate user-provided latitude / longitude values with range
 extent data for species included in the trained models. Helper function for
-`delpoy_model`
+`deploy_model`
 }
