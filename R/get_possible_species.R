@@ -2,7 +2,7 @@
 #' 
 #' @description Evaluate user-provided latitude / longitude values with range
 #' extent data for species included in the trained models. Helper function for
-#' `delpoy_model`
+#' `deploy_model`
 #' 
 #' @param location dataframe containing a single longitude and latitude value
 #' @param extent.data auxiliary location database
