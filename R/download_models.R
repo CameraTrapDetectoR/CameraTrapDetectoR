@@ -15,7 +15,7 @@
 #' 
 #' @export
 #' 
-download_cache <- function(models = "species_v2")
+download_models <- function(models = "species_v2")
   {
 
   # set cache destination

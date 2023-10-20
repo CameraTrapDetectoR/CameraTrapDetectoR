@@ -24,16 +24,16 @@ get_possible_species <- function(location, extent.data, model_type){
   
   possible.labels <- extent.data[location.test==TRUE,]
   
-  if("general" %in% model_type){
+  if(grepl("general", model_type, fixed=TRUE)){
     possible.labels <- possible.labels[possible.labels$model_type == "general",]
   }
-  if("family" %in% model_type){
+  if(grepl("family", model_type, fixed=TRUE)){
     possible.labels <- possible.labels[possible.labels$model_type == "family",]
   }
-  if("species" %in% model_type){
+  if(grepl("species", model_type, fixed=TRUE)){
     possible.labels <- possible.labels[possible.labels$model_type == "species",]
   }
-  if("pig" %in% model_type){
+  if(grepl("pig", model_type, fixed=TRUE)){
     possible.labels <- possible.labels[possible.labels$label == "Wild_Pig",]
     possible.labels$model_type <- "pig_only"
     # create a generic 'not_pig' row

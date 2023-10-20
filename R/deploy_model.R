@@ -378,18 +378,7 @@ deploy_model <- function(
         
         pred_df <- decode_output(output, label_encoder, 307, score_threshold)
         
-        # evaluate predictions using possible species
-        if(is.null(location)==FALSE){
-          if(nrow(pred_df) > 0){
-            pred_df<-smart_relabel(pred_df, possible.labels, label_encoder)
-            pred_df<-pred_df[pred_df$prediction %in% possible.labels$label,]
-          }
-        }
-        
-        if(nrow(pred_df)==1){
-          pred_df$number_predictions <- 1
-        }
-        
+        # address overlapping predictions
         if(nrow(pred_df) > 1) {
           pred_df$number_predictions <- 0
           
@@ -398,6 +387,13 @@ deploy_model <- function(
             pred_df <- reduce_overlapping_bboxes(pred_df, overlap_threshold)
           }
         }
+        
+        # evaluate predictions using possible species
+        if(is.null(location)==FALSE){
+          pred_df<-smart_relabel(pred_df, possible.labels, label_encoder)
+          pred_df<-pred_df[pred_df$prediction %in% possible.labels$label,]
+        }
+        
         # add filename
         filename <- normalizePath(file_list[i], winslash = "/")
         
@@ -421,7 +417,7 @@ deploy_model <- function(
         pred_df$filename <- rep(filename, nrow(pred_df))
         
         # write metadata tags here one image at a time
-        if(write_metadata==TRUE){
+        if(write_metadata){
           write_metadata_tags(pred_df = pred_df, 
                               model_version = model_version, 
                               review_threshold = 1)
