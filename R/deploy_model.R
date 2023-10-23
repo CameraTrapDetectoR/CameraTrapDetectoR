@@ -272,10 +272,9 @@ deploy_model <- function(
     
     # exit function if all images have already been run
     if(length(file_list) == 0){
-      stop(cat(paste0("All images in ", data_dir, " have already been run on the ",
+      stop(print(paste0("All images in ", data_dir, " have already been run on the ",
           model_version, " model. \nResults can be found at: ", output_dir, "/", model_version, "_model_predictions.csv",
-          "\nTo run the same model on the same images with different hyperparameters, 
-          please reset those parameters and leave the <output_dir> argument blank. 
+          "\nTo run the same model on the same images with different hyperparameters, please reset those parameters and leave the <output_dir> argument blank. 
           \nOtherwise, please choose another model or image directory.")))
     }
   }
