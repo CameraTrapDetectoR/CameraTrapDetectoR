@@ -269,7 +269,15 @@ deploy_model <- function(
         cat(paste0("\nLoading saved bbox results from ", output_dir, "\n"))
       }
     }
+    
+    # exit function if all images have already been run
+    if(length(file_list) == 0){
+      stop(cat(paste0("All images in ", data_dir, " have already been run on the ",
+          model_version, " model. \nResults can be found at: ", output_dir, "/", model_version, "_model_predictions.csv",
+          "\nPlease choose another model or image directory.")))
+    }
   }
+
   
   # make output directory
   if(is.null(output_dir)){
