@@ -7,7 +7,7 @@
 download_models(models = "species_v2")
 }
 \arguments{
-\item{model_version}{user-specified model type and version. Defaults to 
+\item{models}{user-specified model or list of models. Defaults to 
 latest version of model type if no version given}
 }
 \value{

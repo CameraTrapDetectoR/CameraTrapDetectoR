@@ -10,6 +10,8 @@ get_possible_species(location, extent.data, model_type)
 \item{location}{dataframe containing a single longitude and latitude value}
 
 \item{extent.data}{auxiliary location database}
+
+\item{model_type}{model type or version to pull class dict labels}
 }
 \value{
 possible species list
