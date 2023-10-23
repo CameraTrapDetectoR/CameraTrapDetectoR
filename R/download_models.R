@@ -5,7 +5,7 @@
 #' `deploy_model`. Accepts a character string or vector of character strings 
 #' associated with model types.
 #' 
-#' @param model_version user-specified model type and version. Defaults to 
+#' @param models user-specified model or list of models. Defaults to 
 #' latest version of model type if no version given
 #' 
 #' @returns path to folder containing model files

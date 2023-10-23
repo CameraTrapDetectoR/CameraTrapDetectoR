@@ -6,6 +6,7 @@
 #' 
 #' @param location dataframe containing a single longitude and latitude value
 #' @param extent.data auxiliary location database
+#' @param model_type model type or version to pull class dict labels
 #' 
 #' @returns possible species list
 #' 

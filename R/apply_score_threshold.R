@@ -23,10 +23,6 @@ apply_score_threshold <- function(predictions_list, score_threshold){
   
   # convert list into dataframe
   df <- do.call(dplyr::bind_rows, predictions_list)
-  
-  # rename select columns
-  #colnames(df)[colnames(df) == "scores"] = "confidence_score"
-  #colnames(df)[colnames(df) == "number_bboxes"] = "number_predictions"
 
   # get list of file names
   # file_list <- unique(df$filename)
@@ -56,43 +52,6 @@ apply_score_threshold <- function(predictions_list, score_threshold){
   
   # rename predictions for rows under score threshold
   df_out <- dplyr::mutate(df_out, prediction = ifelse(confidence_score < score_threshold, "Empty", prediction))
-  
-  # 
-  # 
-  # #--Save those that are >= score_threshold
-  # limted_df <- df[df$confidence_in_pred >= score_threshold,]
-  # 
-  # #--Generate list of images that have been removed
-  # empty.images<-file_list[!file_list %in% limted_df$filename]
-  # 
-  # #--If applying threshold results in empty images
-  # if(length(empty.images)>0){
-  #   
-  #   #--Set up storage
-  #   pr.empty <- vector()
-  #   cnt.detections <- vector()
-  #   
-  #   #--Make confidence of being empty
-  #   for(i in 1:length(empty.images)){
-  #     pr.empty[i] <- 1-max(df[df$filename %in% empty.images[i],"confidence_in_pred"])
-  #     cnt.detections[i] <- nrow(df[df$filename %in% empty.images[i],])
-  #   }
-  #   
-  #   #--Make Empty images data frame
-  #   empty_df <- cbind.data.frame(filename=empty.images,
-  #                                prediction=rep("empty",length(empty.images)),
-  #                                confidence_in_pred = pr.empty,
-  #                                number_predictions = cnt.detections
-  #   )
-  #   
-  #   #--Merge
-  #   df_out <- dplyr::bind_rows(limted_df, empty_df)
-  # }
-  # 
-  # #--If applying threshold does not results in empty images
-  # if(length(empty.images)==0){
-  #   df_out <- limted_df
-  # }
   
   # remove n 
   df_out <- dplyr::select(df_out, !n)
