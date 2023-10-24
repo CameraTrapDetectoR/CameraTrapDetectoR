@@ -82,9 +82,6 @@ download_models <- function(models = "species_v2")
     if(file.exists(path)){
       # unzip the folder
       utils::unzip(zipfile=path, exdir=cache_path)
-      
-      # remove zip folder once it's been extracted
-      file.remove(path)
     }
     
     if (!dir.exists(folder)){
@@ -99,9 +96,6 @@ download_models <- function(models = "species_v2")
       if(file.exists(path)){
         # unzip the folder
         utils::unzip(zipfile=path, exdir=cache_path)
-        
-        # remove zip folder once it's been extracted
-        file.remove(path)
       }
       
     }
