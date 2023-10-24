@@ -46,6 +46,7 @@ When you first download the package, you will also need to accept downloads from
 ```
 library(torch)
 library(torchvision)
+library(torchvisionlib)
 ```
 
 
