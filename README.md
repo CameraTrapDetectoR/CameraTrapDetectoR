@@ -28,7 +28,7 @@ New model versions are trained iteratively over time. All finalized and verified
 Install devtools if you don't have it, then install CameraTrapDetectoR:  
 
 ```
-if("devtools" %in% rownames(installed.packages()) == FALSE) {install.packages("devtools")}
+if (!require('devtools')) install.packages('devtools')  
 devtools::install_github("CameraTrapDetectoR/CameraTrapDetectoR")
 ```
 Agree to update all necessary packages. 
