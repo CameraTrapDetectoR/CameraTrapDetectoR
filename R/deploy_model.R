@@ -387,6 +387,9 @@ deploy_model <- function(
         
         pred_df <- decode_output(output, label_encoder, 307, score_threshold)
         
+        # add column for number of predictions
+        pred_df$number_predictions <- 1
+        
         # address overlapping predictions
         if(nrow(pred_df) > 1) {
           pred_df$number_predictions <- 0
