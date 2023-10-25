@@ -18,7 +18,8 @@ shinyUI(fluidPage(
       
       ## model_type
       shiny::selectInput("model_type", "model_type", 
-                         choices = c("general_v1", "general_v2", "family_v1", "family_v2", "species_v1", "species_v2", "pig_only_v1")),
+                         choices = c("general_v1", "general_v2", "family_v1", "family_v2", 
+                                     "species_v1", "species_v2", "pig_only_v1", "pig_only_v2")),
       shinyBS::bsTooltip("model_type", "This defines your model type (taxonomic level) and version.",
                          placement = "top"),
 
