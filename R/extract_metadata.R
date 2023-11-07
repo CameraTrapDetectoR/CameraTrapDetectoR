@@ -21,10 +21,11 @@ extract_metadata <- function(files){
   meta_files <- unique(files)
   
   # initialize df to hold metadata
-  meta_df <- data.frame(matrix(nrow = length(meta_files), ncol = 13))
+  meta_df <- data.frame(matrix(nrow = length(meta_files), ncol = 15))
   colnames(meta_df) <- c("FilePath", "ImageName", "ImageWidth", "ImageHeight", 
                          "TimeStamp", "MakeModel", "SerialNumber", "EventNumber",
-                         "SeqNumber", "TempF", "TempC",  "Tigger", "Notes")
+                         "SequenceID", "SequencePos", "SequenceLength", "TempF", "TempC",  
+                         "Tigger", "Notes")
   
   ## Load metadata
   
@@ -35,7 +36,7 @@ extract_metadata <- function(files){
   dat <- exiftoolr::exif_read(meta_files,
                           tags = c("SourceFile", "FileName", "ImageHeight", "ImageWidth", "ImageSize",
                                    "DateTimeOriginal", "CreateDate", "ProfileDateTime", "ModifyDate", "FileModifyDate",
-                                   "SerialNumber", "Make", "Model", "EventNumber", 
+                                   "SerialNumber", "Make", "Model", "EventNumber", "Sequence",
                                    "AmbientTemperatureFahrenheit", "AmbientTemperature",
                                    "TiggerMode", "Comment", "UserLabel", "UserComment"))
   
@@ -98,9 +99,15 @@ extract_metadata <- function(files){
       meta_df$EventNumber[i] <- dat$EventNumber[i]
     } 
     
+    # get image position within sequence and sequence length
+    if(!is.na(dat$Sequence[i])){
+      meta_df$SequencePos[i] <- as.numeric(stringr::str_split_1(dat$Sequence[i], " ")[1])
+      meta_df$SequenceLength[i] <- as.numeric(stringr::str_split_1(dat$Sequence[i], " ")[2])
+    }
+    
     # create sequence id if SerialNumber and EventNumber are not NA
     if(!is.na(meta_df$SerialNumber[i]) & !is.na(meta_df$EventNumber[i])) {
-      meta_df$SeqNumber[i] <- paste0(meta_df$SerialNumber[i], "_SEQ",
+      meta_df$SequenceID[i] <- paste0(meta_df$SerialNumber[i], "_SEQ",
                                      meta_df$EventNumber[i])
     } 
     
