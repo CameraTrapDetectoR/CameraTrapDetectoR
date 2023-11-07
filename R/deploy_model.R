@@ -66,6 +66,7 @@
 #' representing the proportion of bounding box overlap.
 #' @param get_metadata boolean. Collect metadata for each image.
 #' @param write_metadata boolean. Write prediction info to image metadata
+#' @param review_threshold Confidence threshold to accept predictions when writing image metadata 
 #' @param checkpoint_frequency Number of images to run between saving a checkpoint. Default is 10;
 #' can be any positive integer; if it is larger than the size of your dataset, no checkpoints will be saved,
 #' @param latitude image location latitude. Use only if all images in the model run come from the same location.
@@ -118,6 +119,7 @@ deploy_model <- function(
     overlap_threshold = 0.9,
     get_metadata = TRUE,
     write_metadata = TRUE,
+    review_threshold = 1,
     checkpoint_frequency = 10,
     latitude = NA,
     longitude = NA,
@@ -175,6 +177,11 @@ deploy_model <- function(
   }
   if (checkpoint_frequency %% 1 != 0) {
     stop("checkpoint frequency must be a positive integer.")
+  }
+  
+  # test review_threshold
+  if (review_threshold < 0 | review_threshold > 1){
+    stop("review_threshold must be between [0, 1]")
   }
   
   # check location arguments
@@ -432,7 +439,7 @@ deploy_model <- function(
         if(write_metadata){
           write_metadata_tags(pred_df = pred_df, 
                               model_version = model_version, 
-                              review_threshold = 1)
+                              review_threshold = review_threshold)
         }
 
         
