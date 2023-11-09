@@ -119,7 +119,7 @@ deploy_model <- function(
     overlap_threshold = 0.9,
     get_metadata = TRUE,
     write_metadata = TRUE,
-    review_threshold = 1,
+    review_threshold = 1.0,
     checkpoint_frequency = 10,
     latitude = NA,
     longitude = NA,
