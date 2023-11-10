@@ -100,16 +100,19 @@ extract_metadata <- function(files){
     } 
     
     # get image position within sequence and sequence length
-    if(!is.na(dat$Sequence[i])){
-      meta_df$SequencePos[i] <- as.numeric(stringr::str_split_1(dat$Sequence[i], " ")[1])
-      meta_df$SequenceLength[i] <- as.numeric(stringr::str_split_1(dat$Sequence[i], " ")[2])
+    if("Sequence" %in% colnames(dat)){
+      if(!is.na(dat$Sequence[i])){
+        meta_df$SequencePos[i] <- as.numeric(stringr::str_split_1(dat$Sequence[i], " ")[1])
+        meta_df$SequenceLength[i] <- as.numeric(stringr::str_split_1(dat$Sequence[i], " ")[2])
+      }
+      
+      # create sequence id if SerialNumber and EventNumber are not NA
+      if(!is.na(meta_df$SerialNumber[i]) & !is.na(meta_df$EventNumber[i])) {
+        meta_df$SequenceID[i] <- paste0(meta_df$SerialNumber[i], "_SEQ",
+                                        meta_df$EventNumber[i])
+      } 
     }
-    
-    # create sequence id if SerialNumber and EventNumber are not NA
-    if(!is.na(meta_df$SerialNumber[i]) & !is.na(meta_df$EventNumber[i])) {
-      meta_df$SequenceID[i] <- paste0(meta_df$SerialNumber[i], "_SEQ",
-                                     meta_df$EventNumber[i])
-    } 
+
     
     # add temp data
     if("AmbientTemperatureFahrenheit" %in% colnames(dat)) {
