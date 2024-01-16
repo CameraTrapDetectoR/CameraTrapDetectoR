@@ -4,18 +4,14 @@
 #' can be used in reporting results. Helper function for `deploy_model`
 #' 
 #' @param output this is a subset of the list output from the neural net
-#' @param score_threshold threshold score for keeping bounding boxes
 #' @param label_encoder passed from deploy model function
-#' @param h image height after resizing. Recommend not changing this
 #' 
 #' @returns a dataframe of model output for an image that can be interpreted in R
 #' 
 #' @export
 decode_output <- function(
     output, # this is the list output from the neural net
-    label_encoder,
-    h, 
-    score_threshold = 0.7
+    label_encoder
 ){
   # subset the output for the part we want
   preds <- output[[2]][[1]]
@@ -30,8 +26,12 @@ decode_output <- function(
   # assign column names
   colnames(pred_df)[1:4] <- c('XMin', 'YMin', 'XMax', 'YMax')
   
+  # normalize bboxes - will need to change this if image size changes in model training!
+  pred_df <- dplyr::mutate(pred_df, dplyr::across(c(XMin, XMax), ~ ./408))
+  pred_df <- dplyr::mutate(pred_df, dplyr::across(c(YMin, YMax), ~ ./307))
+  
   # check to ensure YMax and YMin are returned as expected - if not then reorder columns
-  if(all((h-pred_df$YMax - h-pred_df$YMin)<0)){
+  if(all((pred_df$YMax - pred_df$YMin)<0)){
     # rename switching ymax and ymin
     colnames(pred_df)[1:4] <- c('XMin', 'YMax', 'XMax', 'YMin')
     # reorder columns
@@ -41,8 +41,8 @@ decode_output <- function(
   # the predicted y coordinates from the model assume that the y axis 
   # starts in the upper left hand corner of the image, but this is not how
   # plots are made in R, so I need to inverse this value
-  pred_df$YMin <- h-pred_df$YMin
-  pred_df$YMax <- h-pred_df$YMax
+  pred_df$YMin <- 1-pred_df$YMin
+  pred_df$YMax <- 1-pred_df$YMax
   
   # get name of label
   pred_df <- merge(pred_df, label_encoder, by.x="label", by.y="encoder")
@@ -52,5 +52,6 @@ decode_output <- function(
   
   # filter columns
   pred_df <- pred_df[,c('XMin', 'YMin', 'XMax', 'YMax', 'confidence_score', 'prediction')]
+
   return(pred_df)
 }
