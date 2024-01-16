@@ -4,16 +4,12 @@
 \alias{decode_output}
 \title{Extract relevant model output}
 \usage{
-decode_output(output, label_encoder, h, score_threshold = 0.7)
+decode_output(output, label_encoder)
 }
 \arguments{
 \item{output}{this is a subset of the list output from the neural net}
 
 \item{label_encoder}{passed from deploy model function}
-
-\item{h}{image height after resizing. Recommend not changing this}
-
-\item{score_threshold}{threshold score for keeping bounding boxes}
 }
 \value{
 a dataframe of model output for an image that can be interpreted in R

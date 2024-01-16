@@ -6,22 +6,21 @@
 \usage{
 plot_img_bbox(
   filename,
-  pred_df,
+  plot_df,
   output_dir,
   data_dir,
   plot_label = TRUE,
   col = "red",
   lty = 1,
   lwd = 2,
-  prop_bbox = FALSE,
-  w = 408,
-  h = 307
+  w = w,
+  h = h
 )
 }
 \arguments{
 \item{filename}{The file containing the image}
 
-\item{pred_df}{Prediction dataframe that is output from deployment}
+\item{plot_df}{Prediction dataframe that is output from deployment}
 
 \item{output_dir}{Desired directory to make plots}
 
@@ -35,9 +34,6 @@ for an explanation of `col`, `lwd`, and `lty`}
 \item{lty}{line type of bbox}
 
 \item{lwd}{line width of bbox}
-
-\item{prop_bbox}{boolean. Are the bbox coordinates in proportion instead of 
-exact coordinates? Only `TRUE` if you are using a different image size}
 
 \item{w}{The image width (in pixels) for the annotated plot.}
 

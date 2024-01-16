@@ -9,10 +9,6 @@ write_bbox_df(full_df, w, h, bboxes, score_threshold)
 \arguments{
 \item{full_df}{prediction output from apply_score_threshold}
 
-\item{w}{image width}
-
-\item{h}{image height}
-
 \item{bboxes}{existing predicted boxes df}
 
 \item{score_threshold}{confidence score to filter bounding boxes}

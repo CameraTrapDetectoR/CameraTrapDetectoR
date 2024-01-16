@@ -19,6 +19,7 @@ deploy_model(
   overlap_threshold = 0.9,
   get_metadata = TRUE,
   write_metadata = TRUE,
+  review_threshold = 1,
   checkpoint_frequency = 10,
   latitude = NA,
   longitude = NA,
@@ -79,6 +80,8 @@ representing the proportion of bounding box overlap.}
 \item{get_metadata}{boolean. Collect metadata for each image.}
 
 \item{write_metadata}{boolean. Write prediction info to image metadata}
+
+\item{review_threshold}{Confidence threshold to accept predictions when writing image metadata}
 
 \item{checkpoint_frequency}{Number of images to run between saving a checkpoint. Default is 10;
 can be any positive integer; if it is larger than the size of your dataset, no checkpoints will be saved,}
