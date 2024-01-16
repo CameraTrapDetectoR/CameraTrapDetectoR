@@ -384,7 +384,7 @@ deploy_model <- function(
         output <- suppressMessages({model(input)})
         options(warn = defaultW)
         
-        pred_df <- decode_output(output, label_encoder, 307, score_threshold)
+        pred_df <- decode_output(output, label_encoder)
         
         # evaluate predictions using possible species
         if(is.null(location)==FALSE){
@@ -447,7 +447,7 @@ deploy_model <- function(
         
         # write bounding box file
         if(write_bbox_csv){
-          bbox_df <- write_bbox_df(full_df, w, h, bboxes, score_threshold)
+          bbox_df <- write_bbox_df(full_df, bboxes, score_threshold)
           utils::write.csv(bbox_df, file.path(output_dir, paste(model_version, "predicted_bboxes.csv", sep="_")), 
                            row.names=FALSE)
         }
@@ -503,7 +503,7 @@ deploy_model <- function(
   
   # write bounding box file
   if(write_bbox_csv){
-    bbox_df <- write_bbox_df(full_df, w, h, bboxes, score_threshold)
+    bbox_df <- write_bbox_df(full_df, bboxes, score_threshold)
     utils::write.csv(bbox_df, file.path(output_dir, paste(model_version, "predicted_bboxes.csv", sep="_")), 
                      row.names=FALSE)
   }
