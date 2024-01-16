@@ -306,6 +306,7 @@ deploy_model <- function(
     overlap_threshold = overlap_threshold,
     score_threshold = score_threshold,
     get_metadata = get_metadata,
+    write_metadata = write_metadata,
     latitude = latitude,
     longitude = longitude,
     h=h,
