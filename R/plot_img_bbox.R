@@ -9,8 +9,7 @@
 #' @param output_dir Desired directory to make plots
 #' @param data_dir absolute path to images
 #' @param plot_label boolean. Do you want the predicted category on the plot?
-#' @param h The image height (in pixels) for the annotated plot. Only used if
-#'  \code{make_plots=TRUE}. 
+#' @param h The image height (in pixels) for the annotated plot
 #' @param w The image width (in pixels) for the annotated plot.
 #' @param col color of the bbox (and label if `plot_label=TRUE`). See `?plot` 
 #'  for an explanation of `col`, `lwd`, and `lty`
