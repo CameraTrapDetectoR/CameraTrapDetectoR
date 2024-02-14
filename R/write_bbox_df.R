@@ -9,7 +9,7 @@
 #' @import dplyr
 #'
 #' @export
-write_bbox_df <- function(full_df, w, h, bboxes, score_threshold) {
+write_bbox_df <- function(full_df, bboxes, score_threshold) {
   
   # convert list into dataframe
   # predictions_df <- do.call(dplyr::bind_rows, predictions_list)
