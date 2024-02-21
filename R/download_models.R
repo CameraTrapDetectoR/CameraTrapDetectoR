@@ -39,11 +39,11 @@ download_models <- function(models = "species_v2")
       if(grepl("general_v1", model_i, ignore.case = TRUE)){
         path <- file.path(cache_path, fs::path_file("general_v1.zip"))
         folder <- file.path(cache_path, fs::path_file("general_v1"))
-        agdata <- "https://data.nal.usda.gov/system/files/general_v1_1.zip"
+        agdata <- "https://agdatacommons.nal.usda.gov/ndownloader/files/44576746"
       } else {
         path <- file.path(cache_path, fs::path_file("general_v2.zip"))
         folder <- file.path(cache_path, fs::path_file("general_v2"))
-        agdata <- "https://data.nal.usda.gov/system/files/general_v2.zip"
+        agdata <- "https://agdatacommons.nal.usda.gov/ndownloader/files/44576752"
       }
       
     }
@@ -51,29 +51,29 @@ download_models <- function(models = "species_v2")
       if(grepl("family_v1", model_i, ignore.case = TRUE)){
         path <- file.path(cache_path, fs::path_file("family_v1.zip"))
         folder <- file.path(cache_path, fs::path_file("family_v1"))
-        agdata <- "https://data.nal.usda.gov/system/files/family_v1_1.zip"
+        agdata <- "https://agdatacommons.nal.usda.gov/ndownloader/files/44576266"
       } else {
         path <- file.path(cache_path, fs::path_file("family_v2.zip"))
         folder <- file.path(cache_path, fs::path_file("family_v2"))
-        agdata <- "https://data.nal.usda.gov/system/files/family_v2.zip"
+        agdata <- "https://agdatacommons.nal.usda.gov/ndownloader/files/44576296"
       }
       
     }
     if(grepl("pig", model_i, ignore.case = TRUE)) {
       path <- file.path(cache_path, fs::path_file("pig_v1.zip"))
       folder <- file.path(cache_path, fs::path_file("pig_v1"))
-      agdata <- "https://data.nal.usda.gov/system/files/pig_v1_0.zip"
+      agdata <- "https://agdatacommons.nal.usda.gov/ndownloader/files/44576767"
     }
     if(grepl("species", model_i, ignore.case = TRUE)) {
       if(grepl("species_v1", model_i, ignore.case = TRUE)) {
         path <- file.path(cache_path, fs::path_file("species_v1.zip"))
         folder <- file.path(cache_path, fs::path_file("species_v1"))
-        agdata <- "https://data.nal.usda.gov/system/files/species_v1_1.zip"
+        agdata <- "https://agdatacommons.nal.usda.gov/ndownloader/files/44576215"
       }
       else {
         path <- file.path(cache_path, fs::path_file("species_v2.zip"))
         folder <- file.path(cache_path, fs::path_file("species_v2"))
-        agdata <- "https://data.nal.usda.gov/system/files/species_v2_3.zip"
+        agdata <- "https://agdatacommons.nal.usda.gov/ndownloader/files/44576230"
       }
       
     }
