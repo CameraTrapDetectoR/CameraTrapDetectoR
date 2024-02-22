@@ -38,8 +38,8 @@ rename_files <- function(img_dir,
   df <- dplyr::mutate(df, filepath_new = file.path(paste(img_dir, image_id_new, sep = "/")))
   
   # print starting message
-  print(paste0("Renaming all images in ", img_dir, 
-               ".  If your image directory is large, this may take a little time."))
+  cat(paste0("Renaming all images in ", img_dir, 
+               ".\n  If your image directory is large, this may take a little time.\n"))
   
   
   # initiate progress bar to track renaming
@@ -55,7 +55,7 @@ rename_files <- function(img_dir,
   close(pb)
   
   # print message
-  print("All done!")
+  cat("All done!\n")
 
 } #END
 
