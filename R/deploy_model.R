@@ -423,8 +423,12 @@ deploy_model <- function(
           pred_df_plot <- pred_df[pred_df$confidence_score >= score_threshold, ]
           
           # plot predictions
-          plot_img_bbox(filename, pred_df_plot, output_dir, data_dir, plot_label, col,
-                        lty, lwd, FALSE, w, h)
+          plot_img_bbox(filename, 
+                        pred_df_plot, 
+                        output_dir, 
+                        data_dir, 
+                        plot_label, col,
+                        lty, lwd, w, h)
         }
         
         # when there is no predicted bounding box, create a relevant pred_df
