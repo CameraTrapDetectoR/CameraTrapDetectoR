@@ -4,7 +4,7 @@
 \alias{write_bbox_df}
 \title{separate function to write bboxes to df}
 \usage{
-write_bbox_df(full_df, w, h, bboxes, score_threshold)
+write_bbox_df(full_df, bboxes, score_threshold)
 }
 \arguments{
 \item{full_df}{prediction output from apply_score_threshold}

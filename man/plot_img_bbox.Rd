@@ -37,8 +37,7 @@ for an explanation of `col`, `lwd`, and `lty`}
 
 \item{w}{The image width (in pixels) for the annotated plot.}
 
-\item{h}{The image height (in pixels) for the annotated plot. Only used if
-\code{make_plots=TRUE}.}
+\item{h}{The image height (in pixels) for the annotated plot}
 }
 \value{
 png image file in output_dir with bboxes and labels plotted
