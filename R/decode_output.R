@@ -8,6 +8,8 @@
 #' 
 #' @returns a dataframe of model output for an image that can be interpreted in R
 #' 
+#' @import dplyr
+#' 
 #' @export
 decode_output <- function(
     output, # this is the list output from the neural net
@@ -52,6 +54,14 @@ decode_output <- function(
   
   # filter columns
   pred_df <- pred_df[,c('XMin', 'YMin', 'XMax', 'YMax', 'confidence_score', 'prediction')]
+  
+  # account for no predictions
+  if(nrow(pred_df)==0){
+    pred_df <- dplyr::add_row(pred_df,
+                              XMin = 0, YMin = 0, 
+                              XMax = 1, YMax = 1, confidence_score = 1,
+                              prediction = "empty")
+  }
 
   return(pred_df)
 }
