@@ -33,6 +33,17 @@ camelot_bulk_import <- function(df, project_df, Camera_N){
   
   # confirm df is output from CTD - R or cl versions
       # it has a prediction column, file_path column, count col, confidence 
+  ctd_cols <- c("filename", "prediction", "confidence") 
+  if(!all(ctd_cols %in% colnames(df))) {
+    stop(paste0("Cannot find necessary columns in your dataframe pointing to CameraTrapDetectoR results.  
+             Please check that your dataframe has columns for the full filepath to your images, 
+             model predictions, and confidence scores.\n"))
+  }
+  
+  # confirm existence of date, timestamp columns
+  if(!(c({Start_Date}, {End_Date}) %in% colnames(project_df))) {
+    
+  }
   
   # check df for metadata; if it does not have any, extract it
   if(!("timestamp" %in% colnames(df))){
@@ -45,19 +56,28 @@ camelot_bulk_import <- function(df, project_df, Camera_N){
     
     # extract metadata
     tryCatch( { meta_df <- extract_metadata(img_files) }, error = function(e) {
-      stop(print("The file paths in your prediction data do not match image files on your machine.
-                 \nPlease edit this column and try again."))
+      stop(paste0("The file paths in your prediction data do not match image files on your machine.
+                  Please edit this column and try again."))
       })
     
     # join metadata to df
-    
-
     df <- dplyr::left_join(df, meta_df,
                            by = dplyr::join_by("filename" == "FilePath"))
   }
   
-  # confirm project_df contains cols for camera name, trap station name,
-  # lat, long 
+  # account for no lat, long user args entered
+  if(!(c({Latitude}, {Longitude}) %in% colnames(project_df))) {
+    
+    # check common names to see if they were included anyways
+    # use tryCatch + gsub ???
+    
+    # if no columns found  
+    cat("No variables for lat/long detected in your project df.\n Creating dummy variables; note that these coordinates are not usable in analysis.")
+    
+    # create dummy vars w
+    project_df <- dplyr::mutate(project_df, Latitude = 40.7826, Longitude = -73.9656)
+    
+    }
   
   # format min/max of date range to the start, end dates of session
   
