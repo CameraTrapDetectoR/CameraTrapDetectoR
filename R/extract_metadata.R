@@ -22,8 +22,8 @@ extract_metadata <- function(files){
   
   # initialize df to hold metadata
   meta_df <- data.frame(matrix(nrow = length(meta_files), ncol = 15))
-  colnames(meta_df) <- c("FilePath", "ImageName", "ImageWidth", "ImageHeight", 
-                         "TimeStamp", "MakeModel", "SerialNumber", "EventNumber",
+  colnames(meta_df) <- c("filename", "ImageName", "ImageWidth", "ImageHeight", 
+                         "timestamp", "MakeModel", "SerialNumber", "EventNumber",
                          "SequenceID", "SequencePos", "SequenceLength", "TempF", "TempC",  
                          "Tigger", "Notes")
   
@@ -42,7 +42,7 @@ extract_metadata <- function(files){
   
   # bulk col values
   # add filepath
-  meta_df$FilePath <- normalizePath(dat$SourceFile, winslash = "/")
+  meta_df$filename <- normalizePath(dat$SourceFile, winslash = "/")
   
   # add image name
   meta_df$ImageName <- dat$FileName
@@ -58,27 +58,27 @@ extract_metadata <- function(files){
     # add timestamp
     if("DateTimeOriginal" %in% colnames(dat)){
       if(!is.na(dat$DateTimeOriginal[i])){
-        meta_df$TimeStamp[i] <- dat$DateTimeOriginal[i]
+        meta_df$timestamp[i] <- dat$DateTimeOriginal[i]
       }
     }
     if("CreateDate" %in% colnames(dat)){
-      if(is.na(meta_df$TimeStamp[i])){
-        meta_df$TimeStamp[i] <- dat$CreateDate[i]
+      if(is.na(meta_df$timestamp[i])){
+        meta_df$timestamp[i] <- dat$CreateDate[i]
       }
     }
     if("ProfileDateTime" %in% colnames(dat)){
-      if(is.na(meta_df$TimeStamp[i])){
-        meta_df$TimeStamp[i] <- dat$ProfileDateTime[i]
+      if(is.na(meta_df$timestamp[i])){
+        meta_df$timestamp[i] <- dat$ProfileDateTime[i]
       }
     }
     if("ModifyDate" %in% colnames(dat)){
-      if(is.na(meta_df$TimeStamp[i])){
-        meta_df$TimeStamp[i] <- dat$ModifyDate[i]
+      if(is.na(meta_df$timestamp[i])){
+        meta_df$timestamp[i] <- dat$ModifyDate[i]
       }
     }
     if("FileModifyDate" %in% colnames(dat)){
-      if(is.na(meta_df$TimeStamp[i])){
-        meta_df$TimeStamp[i] <- dat$FileModifyDate[i]
+      if(is.na(meta_df$timestamp[i])){
+        meta_df$timestamp[i] <- dat$FileModifyDate[i]
       }
     }
     
