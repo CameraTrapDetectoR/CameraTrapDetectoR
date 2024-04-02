@@ -82,6 +82,7 @@ camelot_bulk_import <- function(df, project_df, Camera_Name = "Camera_Name",
   # search for lat/long columns in project_df
   lat_cols <- c("lat", "latitude")
   long_cols <- c("long", "longitude")
+
   
   # add dummy columns if none found
   if(!(any(long_cols %in% stringr::str_to_lower(colnames(project_df))) && 
@@ -89,9 +90,20 @@ camelot_bulk_import <- function(df, project_df, Camera_Name = "Camera_Name",
 
     cat("No variables for lat/long detected in your project df; creating dummy variables.\n Note: these coordinates are not usable in analysis.")
     
-    # create dummy vars w
+    # create dummy vars 
     project_df <- dplyr::mutate(project_df, Latitude = 40.7826, Longitude = -73.9656)
-    }
+  }
+  
+  
+  # make sure loc columns are numeric and all present
+  latcol <- colnames(project_df)[which(stringr::str_to_lower(colnames(project_df)) %in% lat_cols)]
+  project_df[, latcol] <- suppressWarnings(as.numeric(iconv(project_df[, latcol], from = 'UTF-8', to = 'ASCII//TRANSLIT')))
+  missing_lat <- project_df$Camera_Name[which(is.na(project_df[,latcol]))]
+  missing_long <- project_df$Camera_Name[which(is.na(project_df[,longcol]))]
+  if(length(missing_lat) + length(missing_long) > 0){
+    stop(paste0("Your project df is missing latitude coordinates for ", missing_lat, "
+                and longitude coordinates for ", missing_long, ". Please fix it."))
+  }
   
   # add start/end dates to project df
   startend_times <- df %>%
