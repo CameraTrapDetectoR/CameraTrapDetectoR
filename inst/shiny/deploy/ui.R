@@ -195,8 +195,9 @@ shinyUI(fluidPage(
                     )
     ),
     
-    shiny::tabPanel("Visualize Results"),
-    shiny::tabPanel("Organize Images"))
+    shiny::tabPanel("Visualize Results",
+                    ),
+    shiny::tabPanel("Verify Results"))
   )
 )
  

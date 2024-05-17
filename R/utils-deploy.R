@@ -1,15 +1,4 @@
-#' verify arg list
-#' 
-#' @description
-#' verify `deploy_model` arguments
-#' 
-#'
-#' @param arg_list 
-#'
-#' @return verified list
-#' @export
-#'
-#' @examples
+# Verify Args -------------------------------------------------
 verify_args <- function(arg_list) {
   
   #-- Check arguments provided 
@@ -97,5 +86,27 @@ verify_args <- function(arg_list) {
     stop("lwd value must be greater than 0")
   }
   
-  return(arg_list)
+}
+
+# Set output directory ------------------------------
+set_output_dir <- function(data_dir, recursive, make_plots, model_version){
+  
+  # make new output dir
+  datenow <- format(Sys.Date(), "%Y%m%d")
+  now <- unclass(as.POSIXlt(Sys.time()))
+  current_time <- paste0("_", datenow, "_", sprintf("%02d", now$hour), 
+                         sprintf("%02d", now$min), 
+                         sprintf("%02d", round(now$sec)))
+  output_dir <- file.path(data_dir, paste0("predictions_", model_version, current_time))
+  dir.create(output_dir)
+}
+
+# Preserve dir structure -----------------------------
+output_struct <- function(data_dir, output_dir) {
+  rec_dirs <- list.dirs(data_dir, full.names = FALSE)
+  for(i in 1:length(rec_dirs)){
+    suppressWarnings(
+      dir.create(paste(output_dir, rec_dirs[i], sep="/"))
+    )
+  }
 }

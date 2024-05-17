@@ -44,10 +44,15 @@ plot_img_bbox<- function(filename,
     # add a slash to the end of data dir, for when I pull it from file name
     data_dir <- paste0(data_dir, "/")
   }
-  # I want to replace slashes with _ for those recursive files. This will 
-  # keep them all in the same place
-  stripped_filename <- tools::file_path_sans_ext(gsub("/", "_", gsub(data_dir, "", filename)))
-  output_nm <- file.path(output_dir, paste0(stripped_filename, ".png"))
+  
+  # substitue output dir for data dir in new filename
+  output_nm <- file.path(stringr::str_replace(filename, data_dir, output_dir))
+  
+  # 
+  # # I want to replace slashes with _ for those recursive files. This will 
+  # # keep them all in the same place
+  # stripped_filename <- tools::file_path_sans_ext(gsub("/", "_", gsub(data_dir, "", filename)))
+  # output_nm <- file.path(output_dir, paste0(stripped_filename, ".png"))
   
   # rescale bounding box
   plot_df <- dplyr::mutate(plot_df, dplyr::across(c(XMin, XMax), ~.*w))

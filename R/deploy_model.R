@@ -137,7 +137,7 @@ deploy_model <- function(
   
   # compile args into list
   arg_list <- list(
-    data_dir = data_dir,
+    data_dir = normalizePath(data_dir),
     model_type = model_type,
     recursive = recursive,
     file_extensions = file_extensions,
@@ -255,15 +255,17 @@ deploy_model <- function(
   folder <- download_models(models=model_version)
   
   # load label encoder
-  label_encoder <- utils::read.table(file.path(folder, "label_encoder.txt"), 
-                                     sep = ":", col.names = c("label", "encoder"))
+  label_encoder <- encode_labels(folder)
   
-  # standardize label format
-  label_encoder <- dplyr::mutate(label_encoder,
-                                 label = gsub("'", "", label),
-                                 label = gsub(" ", "_", label),
-                                 label = gsub("-", "_", label),
-                                 label = tools::toTitleCase(label))
+  # label_encoder <- utils::read.table(file.path(folder, "label_encoder.txt"), 
+  #                                    sep = ":", col.names = c("label", "encoder"))
+  # 
+  # # standardize label format
+  # label_encoder <- dplyr::mutate(label_encoder,
+  #                                label = gsub("'", "", label),
+  #                                label = gsub(" ", "_", label),
+  #                                label = gsub("-", "_", label),
+  #                                label = tools::toTitleCase(label))
   
   # load model
   model <- weight_loader(folder)
@@ -315,49 +317,45 @@ deploy_model <- function(
           \nOtherwise, please choose another model or image directory.")))
     }
   }
+  
+  # set output directory
+  if(is.null(output_dir)){
+    set_output_dir(data_dir, recursive, make_plots)
+  }
 
   
-  # make output directory
-  if(is.null(output_dir)){
-    datenow <- format(Sys.Date(), "%Y%m%d")
-    now <- unclass(as.POSIXlt(Sys.time()))
-    current_time <- paste0("_", datenow, "_", sprintf("%02d", now$hour), 
-                           sprintf("%02d", now$min), 
-                           sprintf("%02d", round(now$sec)))
-    output_dir <- file.path(data_dir, paste0("predictions_", model_version, current_time))
-  } 
-  if (!dir.exists(output_dir)){
-    dir.create(output_dir)
-  }
   
   # Write Arguments to File
-  arguments <- list (
-    data_dir = normalizePath(data_dir),
-    model_type = model_version,
-    recursive = recursive,
-    file_extensions = file_extensions,
-    make_plots = make_plots,
-    plot_label = plot_label,
-    output_dir = normalizePath(output_dir),
-    sample50 = sample50, 
-    write_bbox_csv = write_bbox_csv, 
-    overlap_correction = overlap_correction,
-    overlap_threshold = overlap_threshold,
-    score_threshold = score_threshold,
-    get_metadata = get_metadata,
-    write_metadata = write_metadata,
-    latitude = latitude,
-    longitude = longitude,
-    h=h,
-    w=w,
-    lty=lty,
-    lwd=lwd, 
-    col=col
-  )
+  arg_list$output_dir <- normalizePath(output_dir)
+  
+  # arguments <- list (
+  #   data_dir = normalizePath(data_dir),
+  #   model_type = model_version,
+  #   recursive = recursive,
+  #   file_extensions = file_extensions,
+  #   make_plots = make_plots,
+  #   plot_label = plot_label,
+  #   output_dir = normalizePath(output_dir),
+  #   sample50 = sample50, 
+  #   write_bbox_csv = write_bbox_csv, 
+  #   overlap_correction = overlap_correction,
+  #   overlap_threshold = overlap_threshold,
+  #   score_threshold = score_threshold,
+  #   get_metadata = get_metadata,
+  #   write_metadata = write_metadata,
+  #   latitude = latitude,
+  #   longitude = longitude,
+  #   h=h,
+  #   w=w,
+  #   lty=lty,
+  #   lwd=lwd, 
+  #   col=col
+  # )
+  
   # write file
   #lapply(arguments, cat, "\n", file=file.path(output_dir, "arguments.txt"), append=TRUE)
   sink(file.path(output_dir, "arguments.txt"))
-  print(arguments)
+  print(arg_list)
   sink()
   
   
@@ -585,3 +583,24 @@ deploy_model <- function(
   return(df_out)
 
 }
+
+
+#### --- Helper functions -------------------------
+
+# load and format label encoder
+encode_labels <- function(folder) {
+  # load label encoder
+  label_encoder <- utils::read.table(file.path(folder, "label_encoder.txt"), 
+                                     sep = ":", col.names = c("label", "encoder"))
+  
+  # standardize label format
+  label_encoder <- dplyr::mutate(label_encoder,
+                                 label = gsub("'", "", label),
+                                 label = gsub(" ", "_", label),
+                                 label = gsub("-", "_", label),
+                                 label = tools::toTitleCase(label))
+  
+  return(label_encoder)
+}
+
+
