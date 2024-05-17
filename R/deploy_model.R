@@ -135,88 +135,118 @@ deploy_model <- function(
   
   #-- Check arguments provided 
   
-  # check model_type
-  models_available <- c('general', 'general_v1', 'general_v2',
-                        'species', 'species_v1', 'species_v2',
-                        'family', 'family_v1', 'family_v2',
-                        'pig_only', 'pig_only_v1')
-  if(!model_type %in% models_available) {
-    stop(paste0("model_type must be one of the available options: ",
-                list(models_available)))
-  }
+  # compile args into list
+  arg_list <- list(
+    data_dir = data_dir,
+    model_type = model_type,
+    recursive = recursive,
+    file_extensions = file_extensions,
+    make_plots = make_plots,
+    plot_label = plot_label,
+    output_dir = output_dir,
+    sample50 = sample50, 
+    write_bbox_csv = write_bbox_csv, 
+    score_threshold = score_threshold,
+    overlap_correction = overlap_correction,
+    overlap_threshold = overlap_threshold,
+    get_metadata = get_metadata,
+    write_metadata = write_metadata,
+    review_threshold = review_threshold,
+    checkpoint_frequency = checkpoint_frequency,
+    latitude = latitude,
+    longitude = longitude,
+    h=h,
+    w=w,
+    lty=lty,
+    lwd=lwd, 
+    col=col
+  )
   
-  # define model version
-  model_version <- model_type
-  latest <- "v2"   # latest model generation
-  if(model_version %in% c('general', 'family', 'species', 'pig_only')){
-    model_version <- paste(model_version, latest, sep="_")
-  }
+  # pass through checks
+  arg_list <- verify_args(arg_list)
   
-  # check ext types
-  acceptable_exts <- c(".jpg", ".png", ".tif", ".pdf",
-                       ".JPG", ".PNG", ".TIF", ".PDF")
-  extension_test <- file_extensions %in% acceptable_exts
-  if(!all(extension_test)){
-    stop(paste0(c("One or more of the `file_extensions` specified is not an accepted format. Please choose one of the accepted formats: \n",
-                  acceptable_exts), collapse = " "))
-  }
-  
-  # test overlap_threshold
-  if (overlap_threshold < 0 | overlap_threshold > 1){
-    stop("overlap_threshold must be between [0, 1]")
-  }
-  
-  # test score_threshold
-  if (score_threshold < 0 | score_threshold > 1){
-    stop("score_threshold must be between [0, 1]")
-  }
-  
-  # test checkpoint frequency
-  if (checkpoint_frequency <= 0) {
-    stop("checkpoint frequency must be a positive integer.")
-  }
-  if (checkpoint_frequency %% 1 != 0) {
-    stop("checkpoint frequency must be a positive integer.")
-  }
-  
-  # test review_threshold
-  if (review_threshold < 0 | review_threshold > 1){
-    stop("review_threshold must be between [0, 1]")
-  }
-  
-  # check location arguments
-  if (!is.na(latitude)) {
-    if (latitude < -90 | latitude > 90){
-      stop("latitude must be between -90 and 90")
-    } 
-  }
-  if (!is.na(longitude)) {
-    if (longitude < -180 | latitude > 180) {
-      stop("longitude must be between -180 and 180")
-    }
-  }
-  if (is.na(latitude) & !is.na(longitude)){
-    stop("invalid location; please include both latitude and longitude or leave both blank")
-  }
-  
-  if (!is.na(latitude) & is.na(longitude)){
-    stop("invalid location; please include both latitude and longitude or leave both blank")
-  }
-  
-  # test lty 
-  lty_options <- 1:6
-  if(!lty %in% lty_options){
-    stop("invalid lty option selected. Please select an integer from 1-6")
-  }
-  
-  # test color
-  tryCatch({grDevices::col2rgb(col)}, error=function(e) {
-    print('col value entered is not a valid value')})
-  
-  # test lwd
-  if (lwd <= 0){
-    stop("lwd value must be greater than 0")
-  }
+  # # check model_type
+  # models_available <- c('general', 'general_v1', 'general_v2',
+  #                       'species', 'species_v1', 'species_v2',
+  #                       'family', 'family_v1', 'family_v2',
+  #                       'pig_only', 'pig_only_v1')
+  # if(!model_type %in% models_available) {
+  #   stop(paste0("model_type must be one of the available options: ",
+  #               list(models_available)))
+  # }
+  # 
+  # # define model version
+  # model_version <- model_type
+  # latest <- "v2"   # latest model generation
+  # if(model_version %in% c('general', 'family', 'species', 'pig_only')){
+  #   model_version <- paste(model_version, latest, sep="_")
+  # }
+  # 
+  # # check ext types
+  # acceptable_exts <- c(".jpg", ".png", ".tif", ".pdf",
+  #                      ".JPG", ".PNG", ".TIF", ".PDF")
+  # extension_test <- file_extensions %in% acceptable_exts
+  # if(!all(extension_test)){
+  #   stop(paste0(c("One or more of the `file_extensions` specified is not an accepted format. Please choose one of the accepted formats: \n",
+  #                 acceptable_exts), collapse = " "))
+  # }
+  # 
+  # # test overlap_threshold
+  # if (overlap_threshold < 0 | overlap_threshold > 1){
+  #   stop("overlap_threshold must be between [0, 1]")
+  # }
+  # 
+  # # test score_threshold
+  # if (score_threshold < 0 | score_threshold > 1){
+  #   stop("score_threshold must be between [0, 1]")
+  # }
+  # 
+  # # test checkpoint frequency
+  # if (checkpoint_frequency <= 0) {
+  #   stop("checkpoint frequency must be a positive integer.")
+  # }
+  # if (checkpoint_frequency %% 1 != 0) {
+  #   stop("checkpoint frequency must be a positive integer.")
+  # }
+  # 
+  # # test review_threshold
+  # if (review_threshold < 0 | review_threshold > 1){
+  #   stop("review_threshold must be between [0, 1]")
+  # }
+  # 
+  # # check location arguments
+  # if (!is.na(latitude)) {
+  #   if (latitude < -90 | latitude > 90){
+  #     stop("latitude must be between -90 and 90")
+  #   } 
+  # }
+  # if (!is.na(longitude)) {
+  #   if (longitude < -180 | latitude > 180) {
+  #     stop("longitude must be between -180 and 180")
+  #   }
+  # }
+  # if (is.na(latitude) & !is.na(longitude)){
+  #   stop("invalid location; please include both latitude and longitude or leave both blank")
+  # }
+  # 
+  # if (!is.na(latitude) & is.na(longitude)){
+  #   stop("invalid location; please include both latitude and longitude or leave both blank")
+  # }
+  # 
+  # # test lty 
+  # lty_options <- 1:6
+  # if(!lty %in% lty_options){
+  #   stop("invalid lty option selected. Please select an integer from 1-6")
+  # }
+  # 
+  # # test color
+  # tryCatch({grDevices::col2rgb(col)}, error=function(e) {
+  #   print('col value entered is not a valid value')})
+  # 
+  # # test lwd
+  # if (lwd <= 0){
+  #   stop("lwd value must be greater than 0")
+  # }
   
   #-- Load model
 
