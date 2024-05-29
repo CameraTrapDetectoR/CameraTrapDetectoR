@@ -81,31 +81,31 @@ shinyServer(function(input, output) {
       output_dir <- paste0("'", dirname_output_dir(), "'")
     }
     
-    output$deploy_modelCode <- shiny::renderText({
-      paste0("predictions <- deploy_model(", 
-             "data_dir = ", data_dir, ", ",
-             "model_type = '", input$model_type, "', ", 
-             "recursive = ", as.logical(input$recursive), ", ",
-             "file_extensions = c('", paste(input$file_extensions, collapse = "', '"), "'), ",
-             "make_plots = ", as.logical(input$make_plots), ", ",
-             "plot_label = ", as.logical(input$plot_label), ", ",
-             "output_dir = ", output_dir, ", ",
-             "sample50 = ", as.logical(input$sample50), ", ",
-             "write_bbox_csv = ", as.logical(input$write_bbox_csv), ", ",
-             "score_threshold = ", input$score_threshold, ", ",
-             "overlap_correction = ", input$overlap_correction, ", ",
-             "overlap_threshold = ", input$overlap_threshold, ", ",
-             "get_metadata = ", as.logical(input$get_metadata), ", ",
-             "write_metadata = ", as.logical(input$write_metadata), ", ",
-             "checkpoint_frequency = ", input$checkpoint_frequency, ", ",
-             "latitude = ", input$latitude, ", ",
-             "longitude = ", input$longitude, ", ",
-             "h = ", input$h, ", ",
-             "w = ", input$w, ", ",
-             "lty = ", input$lty, ", ",
-             "lwd = ", input$lwd, ", ",
-             "col = '", input$color, "')")
-    })
+    # output$deploy_modelCode <- shiny::renderText({
+    #   paste0("predictions <- deploy_model(", 
+    #          "data_dir = ", data_dir, ", ",
+    #          "model_type = '", input$model_type, "', ", 
+    #          "recursive = ", as.logical(input$recursive), ", ",
+    #          "file_extensions = c('", paste(input$file_extensions, collapse = "', '"), "'), ",
+    #          "make_plots = ", as.logical(input$make_plots), ", ",
+    #          "plot_label = ", as.logical(input$plot_label), ", ",
+    #          "output_dir = ", output_dir, ", ",
+    #          "sample50 = ", as.logical(input$sample50), ", ",
+    #          "write_bbox_csv = ", as.logical(input$write_bbox_csv), ", ",
+    #          "score_threshold = ", input$score_threshold, ", ",
+    #          "overlap_correction = ", input$overlap_correction, ", ",
+    #          "overlap_threshold = ", input$overlap_threshold, ", ",
+    #          "get_metadata = ", as.logical(input$get_metadata), ", ",
+    #          "write_metadata = ", as.logical(input$write_metadata), ", ",
+    #          "checkpoint_frequency = ", input$checkpoint_frequency, ", ",
+    #          "latitude = ", input$latitude, ", ",
+    #          "longitude = ", input$longitude, ", ",
+    #          "h = ", input$h, ", ",
+    #          "w = ", input$w, ", ",
+    #          "lty = ", input$lty, ", ",
+    #          "lwd = ", input$lwd, ", ",
+    #          "col = '", input$color, "')")
+    # })
     
   })# end observe
   

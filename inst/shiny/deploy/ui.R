@@ -134,8 +134,13 @@ shinyUI(fluidPage(
                       # run model button / console output
                       shiny::mainPanel(
                         
-                        shiny::h4("Current deploy_model code: (You can copy this and paste it to the console if you prefer)"),
-                        shiny::fluidRow(column(12, textOutput("deploy_modelCode"))),
+                        # shiny::h4("Current deploy_model code: (You can copy this and paste it to the console if you prefer)"),
+                        # shiny::fluidRow(column(12, textOutput("deploy_modelCode"))),
+                        
+                        shiny::h2("Deploy CameraTrapDetectoR Models"),
+                        shiny::h3("Select your model arguments from the panel on the left."),
+                        shiny::h4("See below for detailed descriptions of each argument."),
+                        shiny::h4("When you're ready, hit the ", strong("Run model"), " button below:"),
                         
                         shiny::hr(),
                         
