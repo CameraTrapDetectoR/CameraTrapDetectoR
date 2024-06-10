@@ -127,8 +127,8 @@ deploy_model <- function(
     w=408,
     lty=1,
     lwd=2, 
-    col='red'
-){
+    col='red')
+{
   
   #-- Load operators
   load_operators()
@@ -275,7 +275,7 @@ deploy_model <- function(
   file_list <- define_dataset(data_dir, recursive, file_extensions)
   
   # take random sample if sample50=TRUE  
-  if(sample50 & length(file_list) >50){
+  if(sample50 & length(file_list) > 50){
     file_list <- sample(file_list, 50)
   }
   
@@ -286,44 +286,51 @@ deploy_model <- function(
   
   # if output_dir was specified, search for existing results
   if(!is.null(output_dir)){
-    results_path <- list.files(output_dir, 
-                          pattern = paste(model_version, "model_predictions", sep = "_"),
-                          full.names = TRUE, ignore.case = TRUE)
-    if(length(results_path)>0){
-      results <- do.call(rbind, lapply(results_path, utils::read.csv))
-      results_files <- unique(normalizePath(results$filename, winslash = "/"))
-      # filter file_list to images NOT in results_files
-      file_list <- file_list[!file_list %in% results_files]
-      cat(paste0("\nLoading saved model results from ", output_dir, 
-                 "\nModel will run only on images in ", data_dir, " not already in saved results. \n"))
-    }
-    if(write_bbox_csv==TRUE){
-      bbox_path <- list.files(output_dir,
-                              pattern = paste(model_version, "predicted_bboxes", sep = "_"),
-                              full.names = TRUE, ignore.case = TRUE)
-      # load saved predicted bboxes
-      if(length(bbox_path)>0){
-        bboxes <- do.call(rbind, lapply(bbox_path, utils::read.csv))
-        bboxes <- unique(bboxes)
-        cat(paste0("\nLoading saved bbox results from ", output_dir, "\n"))
-      }
-    }
     
-    # exit function if all images have already been run
-    if(length(file_list) == 0){
-      stop(print(paste0("All images in ", data_dir, " have already been run on the ",
-          model_version, " model. \nResults can be found at: ", output_dir, "/", model_version, "_model_predictions.csv",
-          "\nTo run the same model on the same images with different hyperparameters, please reset those parameters and leave the <output_dir> argument blank. 
-          \nOtherwise, please choose another model or image directory.")))
+    # load saved predictions
+    file_list <- load_checkpoint(output_dir, model_version, file_list, type=="preds")
+    
+    # results_path <- list.files(output_dir, 
+    #                       pattern = paste(model_version, "model_predictions", sep = "_"),
+    #                       full.names = TRUE, ignore.case = TRUE)
+    # if(length(results_path)>0){
+    #   results <- do.call(rbind, lapply(results_path, utils::read.csv))
+    #   results_files <- unique(normalizePath(results$filename, winslash = "/"))
+    #   # filter file_list to images NOT in results_files
+    #   file_list <- file_list[!file_list %in% results_files]
+    #   cat(paste0("\nLoading saved model results from ", output_dir, 
+    #              "\nModel will run only on images in ", data_dir, " not already in saved results. \n"))
+    # }
+    if(write_bbox_csv==TRUE){
+      
+      # load saved bboxes
+      bboxes <- load_checkpoint(output_dir, model_version, file_list, type == "boxes")
+      
+      # bbox_path <- list.files(output_dir,
+      #                         pattern = paste(model_version, "predicted_bboxes", sep = "_"),
+      #                         full.names = TRUE, ignore.case = TRUE)
+      # # load saved predicted bboxes
+      # if(length(bbox_path)>0){
+      #   bboxes <- do.call(rbind, lapply(bbox_path, utils::read.csv))
+      #   bboxes <- unique(bboxes)
+      #   cat(paste0("\nLoading saved bbox results from ", output_dir, "\n"))
+      # }
     }
   }
+    
+    # # exit function if all images have already been run
+    # if(length(file_list) == 0){
+    #   stop(print(paste0("All images in ", data_dir, " have already been run on the ",
+    #       model_version, " model. \nResults can be found at: ", output_dir, "/", model_version, "_model_predictions.csv",
+    #       "\nTo run the same model on the same images with different hyperparameters, please reset those parameters and leave the <output_dir> argument blank. 
+    #       \nOtherwise, please choose another model or image directory.")))
+    # }
   
   # set output directory
   if(is.null(output_dir)){
-    set_output_dir(data_dir, recursive, make_plots)
+    output_dir <- set_output_dir(data_dir, model_version, recursive, make_plots)
   }
 
-  
   
   # Write Arguments to File
   arg_list$output_dir <- normalizePath(output_dir)
@@ -367,15 +374,17 @@ deploy_model <- function(
   }
   
   if(is.null(location) == FALSE){
-    cat(paste0("\nDetermining possible taxa based on location using latitude ",latitude," longitude ",longitude))
     
-    #Load species extent data
-    extent.data <- species.extent.data
-    
-    #Get possible labels based on model class
-    possible.labels <- get_possible_species(location, extent.data, model_type)
-
-    cat(paste0("\nIdentified ", nrow(possible.labels), " taxa out of ", nrow(label_encoder), " possible taxa.\n"))
+    possible_labels <- encode_locations(location, model_type, label_encoder)
+    # cat(paste0("\nDetermining possible taxa based on location using latitude ",latitude," longitude ",longitude))
+    # 
+    # #Load species extent data
+    # extent.data <- species.extent.data
+    # 
+    # #Get possible labels based on model class
+    # possible.labels <- get_possible_species(location, extent.data, model_type)
+    # 
+    # cat(paste0("\nIdentified ", nrow(possible.labels), " taxa out of ", nrow(label_encoder), " possible taxa.\n"))
   }#END
   
   
@@ -403,47 +412,37 @@ deploy_model <- function(
   toc <- Sys.time()
   torch::with_no_grad({
     for(i in 1:length(file_list)){
-      #input <- dataLoader(file_list, index = i, w=408, h=307)
-      # if any problems loading the file, catch these errors
-      input <- tryCatch(data_loader(file_list, index = i, w=408, h=307),
-                        error = function(e) 'error')
-      if("error" %in% input){
-        # set up output so that I can put into the data frame
-        # get file name
-        filename <- normalizePath(file_list[i], winslash = "/")
-        pred_df <- data.frame(XMin = NA, YMin = NA, XMax=NA, YMax=NA,
-                              confidence_score = 1.0, prediction = 'image_error', 
-                              number_predictions = 0, filename = filename)
+      
+      # define filename
+      filename <- normalizePath(file_list[i], winslash = "/")
+
+      # # if any problems loading the file, catch these errors
+      # input <- tryCatch(data_loader(file_list, index = i, w=408, h=307),
+      #                   error = function(e) 'error')
+      # if("error" %in% input){
+      #   # set up output so that I can put into the data frame
+      # 
+      #   pred_df <- data.frame(XMin = NA, YMin = NA, XMax=NA, YMax=NA,
+      #                         confidence_score = NA, prediction = 'image_error', 
+      #                         number_predictions = 0, filename = filename)
+      #   predictions_list[[i]] <- pred_df
+      
+      # load image and convert to model input
+      input <- get_model_input(filename)
+      
+      # handle any errors
+      if(is.data.frame(input)) {
         predictions_list[[i]] <- pred_df
-      } else {
-        # deploy the model. suppressing warnings here, because it is not important
-        defaultW <- getOption("warn")
-        output <- suppressMessages({model(input)})
-        options(warn = defaultW)
+      } 
+      
+      # run the model
+      else {
         
-        pred_df <- decode_output(output, label_encoder)
+        # deploy the model on the image
+        pred_df <- eval_one_image(input)
         
-        # add column for number of predictions
-        pred_df$number_predictions <- 1
-        
-        # address overlapping predictions
-        if(nrow(pred_df) > 1) {
-          pred_df$number_predictions <- 0
-          
-          # address overlapping bboxes
-          if(overlap_correction){
-            pred_df <- reduce_overlapping_bboxes(pred_df, overlap_threshold)
-          }
-        }
-        
-        # evaluate predictions using possible species
-        if(is.null(location)==FALSE){
-          pred_df<-smart_relabel(pred_df, possible.labels, label_encoder)
-          pred_df<-pred_df[pred_df$prediction %in% possible.labels$label,]
-        }
-        
-        # add filename
-        filename <- normalizePath(file_list[i], winslash = "/")
+        # add prediction df to list
+        predictions_list[[i]] <- pred_df
         
         # make plots
         if(make_plots){
@@ -451,36 +450,82 @@ deploy_model <- function(
           pred_df_plot <- pred_df[pred_df$confidence_score >= score_threshold, ]
           
           # plot predictions
-          plot_img_bbox(filename, 
-                        pred_df_plot, 
-                        output_dir, 
-                        data_dir, 
-                        plot_label, col,
-                        lty, lwd, w, h)
+          plot_img_bbox(filename, pred_df_plot, output_dir, data_dir, 
+                        plot_label, col, lty, lwd, w, h)
         }
         
-        # when there is no predicted bounding box, create a relevant pred_df
-        if(nrow(pred_df) < 1) {
-          pred_df <- data.frame(XMin = 0, YMin = 0, XMax = 0, YMax = 0,
-                                confidence_score = 1, prediction = "Empty", number_predictions = 0)
-        }
-        
-        # add full filepath to prediction
-        pred_df$filename <- rep(filename, nrow(pred_df))
-        
-        # write metadata tags here one image at a time
+        # write metadata tags
         if(write_metadata){
-          write_metadata_tags(pred_df = pred_df, 
-                              model_version = model_version, 
+          write_metadata_tags(pred_df = pred_df, model_version = model_version, 
                               review_threshold = review_threshold)
         }
-
-        
-        # add prediction df to list
-        predictions_list[[i]] <- pred_df
       }
         
-      # save results every 10th image
+      #   # deploy the model. suppressing warnings here, because it is not important
+      #   defaultW <- getOption("warn")
+      #   output <- suppressMessages({model(input)})
+      #   options(warn = defaultW)
+      #   
+      #   pred_df <- decode_output(output, label_encoder)
+      #   
+      #   # add column for number of predictions
+      #   pred_df$number_predictions <- 1
+      #   
+      #   # address overlapping predictions
+      #   if(nrow(pred_df) > 1) {
+      #     pred_df$number_predictions <- 0
+      #     
+      #     # address overlapping bboxes
+      #     if(overlap_correction){
+      #       pred_df <- reduce_overlapping_bboxes(pred_df, overlap_threshold)
+      #     }
+      #   }
+      #   
+      #   # evaluate predictions using possible species
+      #   if(is.null(location)==FALSE){
+      #     pred_df<-smart_relabel(pred_df, possible.labels, label_encoder)
+      #     pred_df<-pred_df[pred_df$prediction %in% possible.labels$label,]
+      #   }
+      #   
+      #   # add filename
+      #   filename <- normalizePath(file_list[i], winslash = "/")
+      #   
+      #   # make plots
+      #   if(make_plots){
+      #     # subset by score threshold for plotting
+      #     pred_df_plot <- pred_df[pred_df$confidence_score >= score_threshold, ]
+      #     
+      #     # plot predictions
+      #     plot_img_bbox(filename, 
+      #                   pred_df_plot, 
+      #                   output_dir, 
+      #                   data_dir, 
+      #                   plot_label, col,
+      #                   lty, lwd, w, h)
+      #   }
+      #   
+      #   # when there is no predicted bounding box, create a relevant pred_df
+      #   if(nrow(pred_df) < 1) {
+      #     pred_df <- data.frame(XMin = 0, YMin = 0, XMax = 0, YMax = 0,
+      #                           confidence_score = 1, prediction = "Empty", number_predictions = 0)
+      #   }
+      #   
+      #   # add full filepath to prediction
+      #   pred_df$filename <- rep(filename, nrow(pred_df))
+      #   
+      #   # write metadata tags here one image at a time
+      #   if(write_metadata){
+      #     write_metadata_tags(pred_df = pred_df, 
+      #                         model_version = model_version, 
+      #                         review_threshold = review_threshold)
+      #   }
+      # 
+      #   
+      #   # add prediction df to list
+      #   predictions_list[[i]] <- pred_df
+      # }
+        
+      # save checkpoint
       if (i %% checkpoint_frequency == 0) {
         # filter df by score_threshold
         full_df <- apply_score_threshold(predictions_list, score_threshold)
@@ -585,22 +630,9 @@ deploy_model <- function(
 }
 
 
-#### --- Helper functions -------------------------
+#### --- END
 
-# load and format label encoder
-encode_labels <- function(folder) {
-  # load label encoder
-  label_encoder <- utils::read.table(file.path(folder, "label_encoder.txt"), 
-                                     sep = ":", col.names = c("label", "encoder"))
-  
-  # standardize label format
-  label_encoder <- dplyr::mutate(label_encoder,
-                                 label = gsub("'", "", label),
-                                 label = gsub(" ", "_", label),
-                                 label = gsub("-", "_", label),
-                                 label = tools::toTitleCase(label))
-  
-  return(label_encoder)
-}
+
+
 
 

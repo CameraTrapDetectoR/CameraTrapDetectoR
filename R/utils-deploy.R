@@ -88,8 +88,56 @@ verify_args <- function(arg_list) {
   
 }
 
+# Load checkpoint --------------------------
+load_checkpoint <- function(output_dir, model_version, file_list, type){
+  
+  # check for saved predictions/boxes
+  results_path <- list.files(output_dir, pattern = paste(model_version, "model_predictions", sep = "_"), 
+                             full.names = TRUE, ignore.case = TRUE)
+  bbox_path <- list.files(output_dir, pattern = paste(model_version, "predicted_boxes", sep = "_"), 
+                             full.names = TRUE, ignore.case = TRUE)
+  
+  # load saved predictions
+  if(type == "preds"){
+    if(length(results_path)>0){
+      # read in csv files
+      results <- do.call(rbind, lapply(results_path, utils::read.csv))
+      
+      # extract filenames 
+      results_files <- unique(normalizePath(results$filename, winslash = "/"))
+      
+      # filter predictions out of file list
+      chkpt <- file_list[!file_list %in% results_files]
+      
+      # exit function if all images have already been run
+      if(length(chkpt) == 0){
+        stop(print(paste0("All images in your chosen directory have already been run on the ",
+                          model_version, " model. \nResults can be found at: ", output_dir, "/", model_version, "_model_predictions.csv",
+                          "\nTo run the same model on the same images with different hyperparameters, please reset those parameters and leave the <output_dir> argument blank. 
+          \nOtherwise, please choose another model or image directory.")))
+      } else{
+        # print message
+        cat(paste0("\nLoading saved model results from ", output_dir, 
+                 "\nModel will run only on images in not already in saved results. \n"))
+      }
+    }
+  }
+  
+  # load saved bounding boxes
+  if(type == "boxes"){
+    if(length(bbox_path)>0){
+      bboxes <- do.call(rbind, lapply(bbox_path, utils::read.csv))
+      chkpt <- unique(bboxes)
+      cat(paste0("\nLoading saved bbox results from ", output_dir, "\n"))
+    }
+  }
+  
+  return(chkpt)
+}
+
+
 # Set output directory ------------------------------
-set_output_dir <- function(data_dir, recursive, make_plots, model_version){
+set_output_dir <- function(data_dir, model_version, recursive, make_plots){
   
   # make new output dir
   datenow <- format(Sys.Date(), "%Y%m%d")
@@ -99,14 +147,48 @@ set_output_dir <- function(data_dir, recursive, make_plots, model_version){
                          sprintf("%02d", round(now$sec)))
   output_dir <- file.path(data_dir, paste0("predictions_", model_version, current_time))
   dir.create(output_dir)
+  
+  # make recursive directories if needed
+  if(recursive && make_plots) {
+    rec_dirs <- list.dirs(data_dir, full.names = FALSE)
+    for(i in 1:length(rec_dirs)){
+      suppressWarnings(
+        dir.create(paste(output_dir, rec_dirs[i], sep="/"))
+      )
+    }
+  }
+  
+  return(output_dir)
 }
 
-# Preserve dir structure -----------------------------
-output_struct <- function(data_dir, output_dir) {
-  rec_dirs <- list.dirs(data_dir, full.names = FALSE)
-  for(i in 1:length(rec_dirs)){
-    suppressWarnings(
-      dir.create(paste(output_dir, rec_dirs[i], sep="/"))
-    )
-  }
+
+# Encode labels -----------------------------
+encode_labels <- function(folder) {
+  # load label encoder
+  label_encoder <- utils::read.table(file.path(folder, "label_encoder.txt"), 
+                                     sep = ":", col.names = c("label", "encoder"))
+  
+  # standardize label format
+  label_encoder <- dplyr::mutate(label_encoder,
+                                 label = gsub("'", "", label),
+                                 label = gsub(" ", "_", label),
+                                 label = gsub("-", "_", label),
+                                 label = tools::toTitleCase(label))
+  
+  return(label_encoder)
 }
+
+# Make possible labels ----------------------
+encode_locations <- function(location, model_type, label_encoder) {
+  #Load species extent data
+  extent.data <- species.extent.data
+  
+  #Get possible labels based on model class
+  possible.labels <- get_possible_species(location, extent.data, model_type)
+  
+  # print message
+  cat(paste0("\nIdentified ", nrow(possible.labels), " taxa out of ", nrow(label_encoder), " possible taxa.\n"))
+  
+  return(possible.labels)
+}
+

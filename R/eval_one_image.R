@@ -3,21 +3,26 @@
 #' @description Evaluate a single image in the model. Helper function for `deploy_model`
 #'
 #' @param input
+#' @param filename
 #' @param label_encoder 
 #' @param overlap_correction
 #' @param overlap_threshold
+#' @param location
 #'
 #' @return pred_df data frame of formatted predictions for the image
 #' @export
 #'
 #' @examples
-eval_one_image <- function(...) {
+eval_one_image <- function(input, filename, label_encoder, 
+                           overlap_correction, overlap_threshold,
+                           location) {
   
   # deploy the model. suppressing warnings here, because it is not important
   defaultW <- getOption("warn")
   output <- suppressMessages({model(input)})
   options(warn = defaultW)
   
+  # format output
   pred_df <- decode_output(output, label_encoder)
   
   # add column for number of predictions
@@ -38,24 +43,7 @@ eval_one_image <- function(...) {
     pred_df<-smart_relabel(pred_df, possible.labels, label_encoder)
     pred_df<-pred_df[pred_df$prediction %in% possible.labels$label,]
   }
-  
-  # add filename
-  filename <- normalizePath(file_list[i], winslash = "/")
-  
-  # make plots
-  if(make_plots){
-    # subset by score threshold for plotting
-    pred_df_plot <- pred_df[pred_df$confidence_score >= score_threshold, ]
-    
-    # plot predictions
-    plot_img_bbox(filename, 
-                  pred_df_plot, 
-                  output_dir, 
-                  data_dir, 
-                  plot_label, col,
-                  lty, lwd, w, h)
-  }
-  
+
   # when there is no predicted bounding box, create a relevant pred_df
   if(nrow(pred_df) < 1) {
     pred_df <- data.frame(XMin = 0, YMin = 0, XMax = 0, YMax = 0,
@@ -64,17 +52,6 @@ eval_one_image <- function(...) {
   
   # add full filepath to prediction
   pred_df$filename <- rep(filename, nrow(pred_df))
-  
-  # write metadata tags here one image at a time
-  if(write_metadata){
-    write_metadata_tags(pred_df = pred_df, 
-                        model_version = model_version, 
-                        review_threshold = review_threshold)
-  }
-  
-  
-  # add prediction df to list
-  predictions_list[[i]] <- pred_df
   
   return(pred_df)
 }
