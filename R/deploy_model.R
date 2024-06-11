@@ -430,16 +430,15 @@ deploy_model <- function(
       # load image and convert to model input
       input <- get_model_input(filename)
       
-      # handle any errors
+      # handle any errors, else run the model
       if(is.data.frame(input)) {
         predictions_list[[i]] <- pred_df
-      } 
-      
-      # run the model
-      else {
+      } else {
         
         # deploy the model on the image
-        pred_df <- eval_one_image(input)
+        pred_df <- eval_one_image(input, filename, label_encoder, 
+                                  overlap_correction, overlap_threshold,
+                                  location, possible_labels, model)
         
         # add prediction df to list
         predictions_list[[i]] <- pred_df

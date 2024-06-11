@@ -20,20 +20,24 @@ get_model_input <- function(filename, w=408, h=307) {
   
   # convert to tensor
   img_tensor <- tryCatch(img_tensor <- torchvision::transform_to_tensor(img), 
-                         error = function(e) 'error')
+                         error = function(e) 
+                        data.frame(XMin = NA, YMin = NA, XMax=NA, YMax=NA,
+                                   confidence_score = NA, prediction = 'image_error', 
+                                   number_predictions = 0, filename = filename))
   
-  # create a dummy target - Faster R-CNN only
-  target <- torch::torch_rand(3, h, w)
-  
-  # combine tensor and target into the object that will get passed to network 
-  nn_input <- list(img_tensor, target)
-  
-  if("error" %in% input){
-    # set up output so that I can put into the data frame
+  if(is.data.frame(img_tensor)){
+    # format error as dataframe compatible with model outputs
+    # nn_input <- data.frame(XMin = NA, YMin = NA, XMax=NA, YMax=NA,
+    #                        confidence_score = NA, prediction = 'image_error', 
+    #                        number_predictions = 0, filename = filename)
+    nn_input <- img_tensor
+  } else {
+    # create a dummy target - Faster R-CNN only
+    target <- torch::torch_rand(3, h, w)
     
-    nn_input <- data.frame(XMin = NA, YMin = NA, XMax=NA, YMax=NA,
-                           confidence_score = NA, prediction = 'image_error', 
-                           number_predictions = 0, filename = filename)
+    # combine tensor and target into the object that will get passed to network 
+    nn_input <- list(img_tensor, target)
+    
   }
   
   return(nn_input)

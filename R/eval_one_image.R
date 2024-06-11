@@ -8,6 +8,7 @@
 #' @param overlap_correction
 #' @param overlap_threshold
 #' @param location
+#' @param possible_labels
 #'
 #' @return pred_df data frame of formatted predictions for the image
 #' @export
@@ -15,7 +16,7 @@
 #' @examples
 eval_one_image <- function(input, filename, label_encoder, 
                            overlap_correction, overlap_threshold,
-                           location) {
+                           location, possible_labels, model) {
   
   # deploy the model. suppressing warnings here, because it is not important
   defaultW <- getOption("warn")
@@ -40,8 +41,8 @@ eval_one_image <- function(input, filename, label_encoder,
   
   # evaluate predictions using possible species
   if(is.null(location)==FALSE){
-    pred_df<-smart_relabel(pred_df, possible.labels, label_encoder)
-    pred_df<-pred_df[pred_df$prediction %in% possible.labels$label,]
+    pred_df<-smart_relabel(pred_df, possible_labels, label_encoder)
+    pred_df<-pred_df[pred_df$prediction %in% possible_labels$label,]
   }
 
   # when there is no predicted bounding box, create a relevant pred_df
