@@ -22,15 +22,9 @@
 #' 
 #' @export
 #' 
-plot_img_bbox<- function(filename,
-                         plot_df,
-                         output_dir,
-                         data_dir,
-                         plot_label=TRUE,
-                         col="red",
-                         lty=1,
-                         lwd=2,
-                         w=w, h=h){
+plot_img_bbox<- function(filename, plot_df, output_dir,
+                         data_dir, plot_label=TRUE, col="red",
+                         lty=1, lwd=2, w=w, h=h){
   
   # prop_bbox means that data are from megadetector, not from here, so 
   # things are a little different in the file_list. 
@@ -40,13 +34,16 @@ plot_img_bbox<- function(filename,
   
   
   # save file information
-  if(!endsWith(data_dir, "/")){
+  if(!endsWith(output_dir, "/")){
     # add a slash to the end of data dir, for when I pull it from file name
-    data_dir <- paste0(data_dir, "/")
+    output_dir <- paste0(output_dir, "/")
   }
   
   # substitue output dir for data dir in new filename
-  output_nm <- file.path(stringr::str_replace(filename, data_dir, output_dir))
+  output_nm <- file.path(stringr::str_replace(filename_full, data_dir, output_dir))
+  
+  # replace file extension with png 
+  output_nm <- stringr::str_replace(output_nm, stringr::str_split_i(output_nm, "\\.", -1), "png")
   
   # 
   # # I want to replace slashes with _ for those recursive files. This will 
