@@ -10,13 +10,15 @@ eval_one_image(
   label_encoder,
   overlap_correction,
   overlap_threshold,
-  location
+  location,
+  possible_labels,
+  model
 )
 }
 \arguments{
 \item{label_encoder}{}
 
-\item{location}{}
+\item{possible_labels}{}
 }
 \value{
 pred_df data frame of formatted predictions for the image
