@@ -179,12 +179,16 @@ encode_labels <- function(folder) {
 }
 
 # Make possible labels ----------------------
+#' @export
 encode_locations <- function(location, model_type, label_encoder) {
   #Load species extent data
   extent.data <- species.extent.data
   
   #Get possible labels based on model class
   possible.labels <- get_possible_species(location, extent.data, model_type)
+  
+  # filter out possible labels not in labels
+  possible.labels <- possible.labels[possible.labels$label %in% label_encoder$label,]
   
   # print message
   cat(paste0("\nIdentified ", nrow(possible.labels), " taxa out of ", nrow(label_encoder), " possible taxa.\n"))
