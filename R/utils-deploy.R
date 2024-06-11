@@ -1,4 +1,5 @@
 # Verify Args -------------------------------------------------
+#' @export
 verify_args <- function(arg_list) {
   
   #-- Check arguments provided 
@@ -86,9 +87,11 @@ verify_args <- function(arg_list) {
     stop("lwd value must be greater than 0")
   }
   
+  return(arg_list)
 }
 
 # Load checkpoint --------------------------
+#' @export
 load_checkpoint <- function(output_dir, model_version, file_list, type){
   
   # check for saved predictions/boxes
@@ -96,10 +99,12 @@ load_checkpoint <- function(output_dir, model_version, file_list, type){
                              full.names = TRUE, ignore.case = TRUE)
   bbox_path <- list.files(output_dir, pattern = paste(model_version, "predicted_boxes", sep = "_"), 
                              full.names = TRUE, ignore.case = TRUE)
-  
   # load saved predictions
   if(type == "preds"){
-    if(length(results_path)>0){
+
+    if(length(results_path)==0) {
+      return(file_list)
+    } else{
       # read in csv files
       results <- do.call(rbind, lapply(results_path, utils::read.csv))
       
@@ -107,7 +112,10 @@ load_checkpoint <- function(output_dir, model_version, file_list, type){
       results_files <- unique(normalizePath(results$filename, winslash = "/"))
       
       # filter predictions out of file list
-      chkpt <- file_list[!file_list %in% results_files]
+      files_to_run <- file_list[!file_list %in% results_files]
+      
+      # remove any prediction plots
+      chkpt <- files_to_run[!("predictions" %in% files_to_run)]
       
       # exit function if all images have already been run
       if(length(chkpt) == 0){
@@ -125,18 +133,21 @@ load_checkpoint <- function(output_dir, model_version, file_list, type){
   
   # load saved bounding boxes
   if(type == "boxes"){
-    if(length(bbox_path)>0){
+    if(length(bbox_path)==0) {
+      return(NULL)
+    } else {
       bboxes <- do.call(rbind, lapply(bbox_path, utils::read.csv))
       chkpt <- unique(bboxes)
       cat(paste0("\nLoading saved bbox results from ", output_dir, "\n"))
     }
   }
   
-  return(chkpt)
+    return(chkpt)
 }
 
 
 # Set output directory ------------------------------
+#' @export
 set_output_dir <- function(data_dir, model_version, recursive, make_plots){
   
   # make new output dir
@@ -151,6 +162,7 @@ set_output_dir <- function(data_dir, model_version, recursive, make_plots){
   # make recursive directories if needed
   if(recursive && make_plots) {
     rec_dirs <- list.dirs(data_dir, full.names = FALSE)
+    rec_dirs <- rec_dirs[stringr::str_detect(rec_dirs, "prediction", negate = T)]
     for(i in 1:length(rec_dirs)){
       suppressWarnings(
         dir.create(paste(output_dir, rec_dirs[i], sep="/"))
@@ -163,6 +175,7 @@ set_output_dir <- function(data_dir, model_version, recursive, make_plots){
 
 
 # Encode labels -----------------------------
+#' @export
 encode_labels <- function(folder) {
   # load label encoder
   label_encoder <- utils::read.table(file.path(folder, "label_encoder.txt"), 
