@@ -137,7 +137,7 @@ deploy_model <- function(
   
   # compile args into list
   arg_list <- list(
-    data_dir = normalizePath(data_dir),
+    data_dir = normalizePath(data_dir, winslash="/"),
     model_type = model_type,
     recursive = recursive,
     file_extensions = file_extensions,
@@ -252,6 +252,7 @@ deploy_model <- function(
 
   
   # download model files
+  model_version <- arg_list$model_version
   folder <- download_models(models=model_version)
   
   # load label encoder
@@ -288,7 +289,8 @@ deploy_model <- function(
   if(!is.null(output_dir)){
     
     # load saved predictions
-    file_list <- load_checkpoint(output_dir, model_version, file_list, type=="preds")
+    file_list <- load_checkpoint(output_dir, model_version, 
+                                 file_list, type = "preds")
     
     # results_path <- list.files(output_dir, 
     #                       pattern = paste(model_version, "model_predictions", sep = "_"),
@@ -304,7 +306,8 @@ deploy_model <- function(
     if(write_bbox_csv==TRUE){
       
       # load saved bboxes
-      bboxes <- load_checkpoint(output_dir, model_version, file_list, type == "boxes")
+      bboxes <- load_checkpoint(output_dir, model_version, 
+                                file_list, type = "boxes")
       
       # bbox_path <- list.files(output_dir,
       #                         pattern = paste(model_version, "predicted_bboxes", sep = "_"),
@@ -333,7 +336,7 @@ deploy_model <- function(
 
   
   # Write Arguments to File
-  arg_list$output_dir <- normalizePath(output_dir)
+  arg_list$output_dir <- normalizePath(output_dir, winslash="/")
   
   # arguments <- list (
   #   data_dir = normalizePath(data_dir),
@@ -385,6 +388,7 @@ deploy_model <- function(
     # possible.labels <- get_possible_species(location, extent.data, model_type)
     # 
     # cat(paste0("\nIdentified ", nrow(possible.labels), " taxa out of ", nrow(label_encoder), " possible taxa.\n"))
+  
   }#END
   
   
@@ -394,7 +398,8 @@ deploy_model <- function(
   predictions_list <- list()
   
   # add progress bar
-  cat(paste0("\nDeploying model on ", length(file_list), " images. Two warnings will appear; ignore these. \nResults files are saved every 10 images in: ", normalizePath(output_dir), "\n"))
+  cat(paste0("\nDeploying model on ", length(file_list), " images. Two warnings will appear; ignore these. 
+             \nResults files are saved every ", checkpoint_frequency, " images in: ", normalizePath(output_dir, winslash="/"), "\n"))
   if(make_plots){
     cat(paste0("During deployment, you can optionally view predicted bounding boxes as they are produced."))
   }
