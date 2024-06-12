@@ -24,6 +24,9 @@ define_dataset <- function(data_dir,
   file_list <- list.files(data_dir,full.names = TRUE,recursive = recursive,
                           pattern = paste0(file_extensions, collapse="|"), ignore.case = TRUE)
   
+  # remove any image files inside prediction folders
+  file_list <- file_list[!stringr::str_detect(file_list, "predictions")]
+  
   if(length(file_list) < 1){
     stop(paste0("There are no files in your data_dir with the specified file extensions."))
   }

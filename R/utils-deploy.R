@@ -91,60 +91,99 @@ verify_args <- function(arg_list) {
 }
 
 # Load checkpoint --------------------------
-#' @export
-load_checkpoint <- function(output_dir, model_version, file_list, type){
-  
-  # check for saved predictions/boxes
-  results_path <- list.files(output_dir, pattern = paste(model_version, "model_predictions", sep = "_"), 
-                             full.names = TRUE, ignore.case = TRUE)
-  bbox_path <- list.files(output_dir, pattern = paste(model_version, "predicted_boxes", sep = "_"), 
-                             full.names = TRUE, ignore.case = TRUE)
-  # load saved predictions
-  if(type == "preds"){
 
-    if(length(results_path)==0) {
-      return(file_list)
-    } else{
-      # read in csv files
-      results <- do.call(rbind, lapply(results_path, utils::read.csv))
-      
-      # extract filenames 
-      results_files <- unique(normalizePath(results$filename, winslash = "/"))
-      
-      # filter predictions out of file list
-      files_to_run <- file_list[!file_list %in% results_files]
-      
-      # remove any prediction plots
-      chkpt <- files_to_run[!("predictions" %in% files_to_run)]
-      
-      # exit function if all images have already been run
-      if(length(chkpt) == 0){
-        stop(print(paste0("All images in your chosen directory have already been run on the ",
-                          model_version, " model. \nResults can be found at: ", output_dir, "/", model_version, "_model_predictions.csv",
-                          "\nTo run the same model on the same images with different hyperparameters, please reset those parameters and leave the <output_dir> argument blank. 
-          \nOtherwise, please choose another model or image directory.")))
-      } else{
-        # print message
-        cat(paste0("\nLoading saved model results from ", output_dir, 
-                 "\nModel will run only on images in not already in saved results. \n"))
-      }
-    }
+#' @export
+chkpt_df <- function(output_dir, model_version, typo){
+  # check for saved results files
+  chkpt_path <- list.files(output_dir, pattern = paste(model_version, typo, sep = "_"), 
+                           full.names = TRUE, ignore.case = TRUE)
+  if(length(chkpt_path) == 0){
+    return(NULL)
+  } else {
+    df <- do.call(rbind, lapply(chkpt_path, utils::read.csv))
+    df <- unique(df)
+    return(df)
   }
-  
-  # load saved bounding boxes
-  if(type == "boxes"){
-    if(length(bbox_path)==0) {
-      return(NULL)
-    } else {
-      bboxes <- do.call(rbind, lapply(bbox_path, utils::read.csv))
-      chkpt <- unique(bboxes)
-      cat(paste0("\nLoading saved bbox results from ", output_dir, "\n"))
-    }
-  }
-  
-    return(chkpt)
 }
 
+#' @export
+update_img_list <- function(results, model_version, file_list){
+      
+    # extract filenames 
+    results_files <- unique(normalizePath(results$filename, winslash = "/"))
+    
+    # filter predictions out of file list
+    file_list <- file_list[!file_list %in% results_files]
+    
+    # remove any prediction plots
+    file_list <- file_list[stringr::str_detect(file_list, "predictions", negate = T)]
+    
+    # exit function if all images have already been run
+    if(length(file_list) == 0){
+      stop(print(paste0("All images in your chosen directory have already been run on the ", model_version, " model. 
+                        \nTo run the same model on the same images with different hyperparameters, please reset those parameters and leave the <output_dir> argument blank. 
+                        \nOtherwise, please choose another model or image directory.")))
+    } else{
+      # print message
+      cat(paste0("Saved model results are loaded. Model will run only on images in not already in saved results."))
+    }
+  return(file_list)
+  }
+
+# Save checkpoint ---------------------------------
+
+save_checkpoint <- function(predictions_list, score_threshold,
+                            bboxes, output_dir, model_version,
+                            get_metadata, write_bbox_csv, results, final) {
+ 
+   # filter df by score_threshold
+  full_df <- apply_score_threshold(predictions_list, score_threshold)
+  
+  # write bounding box file
+  if(write_bbox_csv){
+    bbox_df <- write_bbox_df(full_df, bboxes, score_threshold)
+    if(final){
+      utils::write.csv(bbox_df, file.path(output_dir, paste(model_version, "predicted_bboxes.csv", sep="_")), 
+                       row.names=FALSE)
+    } else{
+      utils::write.csv(bbox_df, file.path(output_dir, paste(model_version, "predicted_bboxes_checkpoint.csv", sep="_")), 
+                       row.names=FALSE)
+    }
+
+  }
+  
+  # convert to output format
+  df_out <- write_output(full_df)
+  
+  # extract metadata if requested
+  if(get_metadata){
+    meta_df <- extract_metadata(df_out$filename)
+    # remove all NA columns
+    meta_df <- remove_na(meta_df)
+    # join metadata to results
+    df_out <- dplyr::left_join(df_out, meta_df, 
+                               dplyr::join_by(filename == FilePath), 
+                               suffix = c("", ".y"), keep=FALSE)
+    # remove duplicates
+    df_out <- dplyr::select(df_out, -ends_with(".y"))
+  }
+  
+  # cat previous results if they exists
+  if(!is.null(results)){
+    df_out <- unique(dplyr::bind_rows(results, df_out))
+  }
+  
+  # save predictions to csv
+  if(final){
+    utils::write.csv(df_out, file.path(output_dir, paste(model_version, 'model_predictions.csv', sep="_")), row.names=FALSE)
+    file.remove(file.path(output_dir, paste(model_version, "model_predictions_checkpoint", sep="_")))
+  } else{
+    utils::write.csv(df_out, file.path(output_dir, paste(model_version, 'model_predictions_checkpoint.csv', sep="_")), row.names=FALSE)
+  }
+  
+  
+  return(df_out)
+}
 
 # Set output directory ------------------------------
 #' @export
@@ -208,4 +247,5 @@ encode_locations <- function(location, model_type, label_encoder) {
   
   return(possible.labels)
 }
+
 
