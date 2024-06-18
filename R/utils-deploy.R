@@ -90,7 +90,57 @@ verify_args <- function(arg_list) {
   return(arg_list)
 }
 
+# Write Args to File ----------------------
+#' @export
+write_args <- function(arg_list, output_dir) {
+  # add updated output dir to arg list1
+  arg_list$output_dir <- normalizePath(output_dir, winslash="/")
+  
+  # convert multiple file extensions to single string
+  arg_list$file_extensions <- paste(file_extensions, collapse = ", ")
+  
+  # convert to data frame
+  arg_df <- arg_df <- t(as.data.frame(arg_list))
+  
+  # write args to txt file
+  write.table(arg_df, file = file.path(output_dir, "/arguments.txt"), 
+              sep = ": ", col.names = F)
+}
+
+
+
+
 # Load checkpoint --------------------------
+
+#' @export
+load_args <- function(output_dir){
+  # read in arguments
+  arg_file <- read.table(file.path(output_dir, "/arguments.txt"), 
+                          sep = ":", col.names = c("arg", "value"))
+  
+  # convert args to data frame
+  arg_df <- tidyr::pivot_wider(arg_file, names_from = arg, values_from = value)
+  
+  # format whitespace
+  arg_df <- dplyr::mutate(arg_df, dplyr::across(everything(), ~stringr::str_trim(.)))
+  
+  # convert col types
+  arg_df <- dplyr::mutate(arg_df, dplyr::across(c(recursive, make_plots, sample50,
+                                                    write_bbox_csv, overlap_correction, get_metadata,
+                                                    write_metadata), ~as.logical(.)))
+  arg_df <- suppressWarnings(dplyr::mutate(arg_df, dplyr::across(c(score_threshold, overlap_threshold,
+                                                    review_threshold, checkpoint_frequency,
+                                                    latitude, longitude, h, w, lty, lwd), ~as.numeric(.))))
+  
+  # separate multiple values into a vector
+  arg_df$file_extensions <- stringr::str_split(arg_df$file_extensions, pattern = ", ")
+  
+  # convert to list
+  arg_list <- as.list(arg_df)
+  arg_list$file_extensions <- unlist(arg_list$file_extensions)
+  
+  return(arg_list)
+  }
 
 #' @export
 chkpt_df <- function(output_dir, model_version, typo){

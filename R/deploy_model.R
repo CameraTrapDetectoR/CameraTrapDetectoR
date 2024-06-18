@@ -158,13 +158,19 @@ deploy_model <- function(
   
   # pass through checks
   arg_list <- verify_args(arg_list)
+  
+  # look for model arguments in output dir
+  arg_list <- suppressWarnings(tryCatch(arg_list <- load_args(output_dir), 
+                                        error = function(e) arg_list))
+  
+  # from here on, call each argument from the list for consistency
 
   
   #########
   #-- Prep data
   
   # load inputs
-  file_list <- define_dataset(data_dir, recursive, file_extensions)
+  file_list <- define_dataset(arg_list$data_dir, arg_list$recursive, file_extensions)
   
   # take random sample if sample50=TRUE  
   if(sample50==TRUE && length(file_list) > 50){
@@ -182,6 +188,7 @@ deploy_model <- function(
   # set placeholder for saved results
   results <- NULL
   
+  # load checkpoint
   if(!is.null(output_dir)){
     
     # load saved results
@@ -220,12 +227,7 @@ deploy_model <- function(
 
   
   # Write Arguments to File
-  arg_list$output_dir <- normalizePath(output_dir, winslash="/")
-  
-  # write args to txt file
-  sink(file.path(output_dir, "arguments.txt"))
-  print(arg_list)
-  sink()
+  write_args(arg_list, output_dir)
   
   #define location-restricted labels
   if (is.na(latitude) & is.na(longitude)) {
