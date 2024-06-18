@@ -48,8 +48,6 @@
 #' Accepts the following file types: ".jpg", ".png", ".tif", ".pdf". Default is ".jpg"
 #' @param make_plots boolean. Do you want to make plots of the images with
 #'  their predicted bounding boxes?
-#' @param plot_label boolean. Do you want the plots to contain the predicted
-#'  class of object
 #' @param sample50 boolean. Do you want to run the model only on a subset of 
 #'  50 images from your dataset? This is a good idea if you are experimenting 
 #'  with settings. 
@@ -107,18 +105,17 @@
 #' @export
 deploy_model <- function(
     data_dir = NULL,
+    output_dir = NULL,
     model_type = 'species',
     recursive = TRUE,
     file_extensions = c(".jpg"),
     make_plots = TRUE,
-    plot_label = TRUE,
-    output_dir = NULL,
     sample50 = FALSE, 
     write_bbox_csv = FALSE, 
     score_threshold = 0.6,
     overlap_correction = TRUE,
-    overlap_threshold = 0.9,
-    get_metadata = FALSE,
+    overlap_threshold = 0.7,
+    get_metadata = TRUE,
     write_metadata = FALSE,
     review_threshold = 1.0,
     checkpoint_frequency = 10,
@@ -136,12 +133,11 @@ deploy_model <- function(
   # compile args into list
   arg_list <- list(
     data_dir = normalizePath(data_dir, winslash="/"),
+    output_dir = output_dir,
     model_type = model_type,
     recursive = recursive,
     file_extensions = file_extensions,
     make_plots = make_plots,
-    plot_label = plot_label,
-    output_dir = output_dir,
     sample50 = sample50, 
     write_bbox_csv = write_bbox_csv, 
     score_threshold = score_threshold,
@@ -296,7 +292,7 @@ deploy_model <- function(
           
           # plot predictions
           plot_img_bbox(filename, pred_df_plot, output_dir, data_dir, 
-                        plot_label, col, lty, lwd, w, h)
+                        col, lty, lwd, w, h)
         }
         
         # write metadata tags
