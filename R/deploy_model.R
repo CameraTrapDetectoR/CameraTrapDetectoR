@@ -31,6 +31,10 @@
 #' these plotted image copies will be saved as .png files in the output directory. 
 #' 
 #' @param data_dir Absolute path to the folder containing your images
+#' @param output_dir You can specify absolute path to output. Default is `NULL`,
+#'  and creates a folder within your data_dir. If you are resuming evaluation from a checkpoint,
+#'  put the  full path to the desired prediction directory here. 
+#'  All previous model arguments will also be loaded and do not need to be specified again.
 #' @param recursive boolean. Do you have images in subfolders within your
 #'  data_dir that you want to analyze, if so, set to TRUE. If you only want to 
 #'  analyze images within your data_dir and not within sub-folders, set to FALSE.
@@ -46,9 +50,6 @@
 #'  their predicted bounding boxes?
 #' @param plot_label boolean. Do you want the plots to contain the predicted
 #'  class of object
-#' @param output_dir You can specify absolute path to output. Default is `NULL`,
-#'  and creates a folder within your data_dir. Only specify a path if you want the
-#'  results stored somewhere else on your computer. 
 #' @param sample50 boolean. Do you want to run the model only on a subset of 
 #'  50 images from your dataset? This is a good idea if you are experimenting 
 #'  with settings. 
