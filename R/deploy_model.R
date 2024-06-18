@@ -130,7 +130,6 @@ deploy_model <- function(
     lwd=2, 
     col='red')
 {
-
   
   #-- Check arguments provided 
   
@@ -164,20 +163,6 @@ deploy_model <- function(
   # pass through checks
   arg_list <- verify_args(arg_list)
 
-  #############
-  #-- Load model
-
-  
-  # download model files
-  model_version <- arg_list$model_version
-  folder <- download_models(models=model_version)
-  
-  # load label encoder
-  label_encoder <- encode_labels(folder)
-
-  # load model
-  model <- weight_loader(folder)
-  model$eval()
   
   #########
   #-- Prep data
@@ -186,12 +171,12 @@ deploy_model <- function(
   file_list <- define_dataset(data_dir, recursive, file_extensions)
   
   # take random sample if sample50=TRUE  
-  if(sample50 & length(file_list) > 50){
+  if(sample50==TRUE && length(file_list) > 50){
     file_list <- sample(file_list, 50)
   }
   
   # set placeholder for predicted bboxes
-  if(write_bbox_csv){
+  if(write_bbox_csv==TRUE){
     bboxes <- NULL
   }
   
@@ -221,6 +206,21 @@ deploy_model <- function(
   if(is.null(output_dir)){
     output_dir <- set_output_dir(data_dir, model_version, recursive, make_plots)
   }
+  
+  #############
+  #-- Load model
+  
+  
+  # download model files
+  model_version <- arg_list$model_version
+  folder <- download_models(models=model_version)
+  
+  # load label encoder
+  label_encoder <- encode_labels(folder)
+  
+  # load model
+  model <- weight_loader(folder)
+  model$eval()
 
   
   # Write Arguments to File
@@ -334,42 +334,6 @@ deploy_model <- function(
   df_out <- save_checkpoint(predictions_list, score_threshold,
                             bboxes, output_dir, model_version,
                             get_metadata, write_bbox_csv, results, final=T)
-  
-  # # filter df by score_threshold
-  # full_df <- apply_score_threshold(predictions_list, score_threshold)
-  # 
-  # # write bounding box file
-  # if(write_bbox_csv){
-  #   bbox_df <- write_bbox_df(full_df, bboxes, score_threshold)
-  #   utils::write.csv(bbox_df, file.path(output_dir, paste(model_version, "predicted_bboxes.csv", sep="_")), 
-  #                    row.names=FALSE)
-  # }
-  # 
-  # # convert to output format
-  # df_out <- write_output(full_df)
-  # 
-  # # extract and join metadata if requested
-  # if(get_metadata){
-  #   # extract metadata
-  #   meta_df <- extract_metadata(df_out$filename)
-  #   # remove all NA columns
-  #   meta_df <- remove_na(meta_df)
-  #   # join metadata to results
-  #   df_out <- dplyr::left_join(df_out, meta_df, 
-  #                              dplyr::join_by(filename == FilePath), 
-  #                              suffix = c("", ".y"), keep=FALSE)
-  #   # remove duplicate columns
-  #   df_out <- dplyr::select(df_out, -ends_with(".y"))
-  #   
-  # }
-  # 
-  # # cat previous results if they exists
-  # if(exists("results")){
-  #   df_out <- unique(dplyr::bind_rows(results, df_out))
-  # }
-  # 
-  # # save predictions to csv
-  # utils::write.csv(df_out, file.path(output_dir, paste(model_version, 'model_predictions.csv', sep="_")), row.names=FALSE)
 
   
   cat(paste0("\nOutput can be found at: \n", normalizePath(output_dir), "\n",
@@ -380,11 +344,4 @@ deploy_model <- function(
   return(df_out)
 
 }
-
-
 #### --- END
-
-
-
-
-
