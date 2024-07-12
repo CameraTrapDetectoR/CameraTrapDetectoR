@@ -482,7 +482,7 @@ deploy_model <- function(
           #utils::write.csv(meta_df, file.path(output_dir, "metadata.csv"), row.names = FALSE)
           # join metadata to results
           df_out <- dplyr::left_join(df_out, meta_df, 
-                                     dplyr::join_by(filename == FilePath), 
+                                     dplyr::join_by(filename), 
                                      suffix = c("", ".y"), keep=FALSE)
           # remove duplicates
           df_out <- dplyr::select(df_out, -ends_with(".y"))
@@ -531,7 +531,7 @@ deploy_model <- function(
     meta_df <- remove_na(meta_df)
     # join metadata to results
     df_out <- dplyr::left_join(df_out, meta_df, 
-                               dplyr::join_by(filename == FilePath), 
+                               dplyr::join_by(filename), 
                                suffix = c("", ".y"), keep=FALSE)
     # remove duplicate columns
     df_out <- dplyr::select(df_out, -ends_with(".y"))
