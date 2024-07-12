@@ -41,12 +41,7 @@ shinyUI(fluidPage(
                         shiny::selectInput("make_plots", "make_plots", choices = c(TRUE, FALSE)),
                         shinyBS::bsTooltip("make_plots", "Do you want to make plots of the images with their predicted bounding boxes?", 
                                            placement = "top"),
-                        
-                        ## plot_label
-                        shiny::selectInput("plot_label", "plot_label", choices = c(TRUE, FALSE)),
-                        shinyBS::bsTooltip("plot_label", "Do you want the plots to contain the predicted class of object?", 
-                                           placement = "top"),
-                        
+
                         ## output_dir
                         shinyFiles::shinyDirButton("output_dir", "output_dir", 
                                                    title="Select the location to output. Just select the folder where it resides in the top half of the menu and press `Select`"),
@@ -104,31 +99,6 @@ shinyUI(fluidPage(
                         shiny::numericInput("longitude", "longitude", value = NULL),
                         shinyBS::bsTooltip("longitude", "The image location longitude"),
                         
-                        ## h
-                        shiny::numericInput("h", "h", value = 307),
-                        shinyBS::bsTooltip("h", "The image height (in pixels) for the annotated plot"),
-                        
-                        ## w
-                        shiny::numericInput("w", "w", value = 408),
-                        shinyBS::bsTooltip("w", "The image width (in pixels) for the annotated plot"),
-                        
-                        ## lty
-                        shiny::numericInput("lty", "lty", value = 1, step = 1),
-                        #shiny::selectInput("lty", "lty", choices = 1:6, 
-                        #                   selected = "solid"),
-                        shinyBS::bsTooltip("lty", "line type for bbox plot"),
-                        
-                        ## lwd
-                        shiny::numericInput("lwd", "lwd", value = 2, min = 0, step = 0.1),
-                        shinyBS::bsTooltip("lwd", "line width for bbox plot. NOTE: Values less than 1 or greater than 4 will be difficult to see."),
-                        
-                        ## col
-                        shiny::selectInput("color", "color", 
-                                           choices = c("white", "grey", "black", "red", "yellow", 
-                                                       "green", "blue", "orange", "purple"), 
-                                           selected = "red"),
-                        shinyBS::bsTooltip("col", "line color for bbox plot", placement = "top"),
-                        
                       ),
                       
                       # run model button / console output
@@ -169,7 +139,6 @@ shinyUI(fluidPage(
                         shiny::p(strong("recursive : "),"	 TRUE/FALSE. Do you have images in subfolders within your data_dir that you want to analyze?"),
                         shiny::p(strong("file_extensions : " ),"	Types of images accepted by the model. Select all options represented in your data_dir."),
                         shiny::p(strong("make_plots : "),"	TRUE/FALSE. Do you want to make copies of your images with bounding boxes plotted on them?"),
-                        shiny::p(strong("plot_label : "),"  TRUE/FALSE. Do you want plotted bounding boxes to be labeled? The make_plots argument must be set to TRUE."),
                         shiny::p(strong("output_dir : "),"  Absolute path to output. Default is NULL; this creates a folder within your data_dir named after model type,
                date and time model was initiated. If resuming a previously saved checkpoint, you must populate this field to point to the folder with the checkpoint
                in question AND select the same model type/version."),
@@ -187,15 +156,7 @@ shinyUI(fluidPage(
                         shiny::p(strong("write_metadata : "),"  TRUE/FALSE. Write model predictions to image metadata as it runs through the model."),
                         shiny::p(strong("checkpoint_frequency : "),"  Save results after running a given number of images. Accepts values from 1-1000."),
                         shiny::p(strong("latitude and longitude : "),"  Optional image location to filter model predictions to species within range. Input takes one location per model run;
-                     if images originate from multiple locations, separate them into different model runs based on location. Currently only applies to species model."),
-                        shiny::p(strong("h : "),"  Image height (in pixels) for the annotated plot. Only used if make_plots=TRUE."),
-                        shiny::p(strong("w : "),"  Image width (in pixels) for the annotated plot. Only used if make_plots=TRUE."),
-                        shiny::p(strong("lty : "),"  Line type for bbox plot, applies only if make_plots=TRUE. 
-                     Accepts numeric values 1-6 corresponding to following line types: solid, dashed, dotted, dotdash, longdash, twodash."),
-                        shiny::p(strong("lwd : "),"  Line type for bbox plot, applies only if make_plots=TRUE.
-                     Accepts numeric values 1-6 corresponding to increasing line thickness."),
-                        shiny::p(strong("col : "),"  Line color for bbox plot. Accepts the following values: white, grey, black, red, yellow, 
-                                     green, blue, orange, purple")
+                     if images originate from multiple locations, separate them into different model runs based on location. Currently only applies to species model.")
                       )
                     )
     ),
