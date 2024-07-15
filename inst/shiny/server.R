@@ -65,21 +65,21 @@ server <- function(input, output) {
   })# end observe
   
   # show code that can be copied for user to run deploy_model themselves
-  shiny::observe({
-    
-    # set data_dir to "NULL" if none selected
-    if(identical(dirname_data_dir(), character(0)) == TRUE){
-      data_dir <- "NULL"
-    } else {
-      data_dir <- paste0("'", dirname_data_dir(), "'")
-    }
-    
-    # set output_dir to "NULL if none has been selected
-    if(identical(dirname_output_dir(), character(0)) == TRUE){
-      output_dir <- "NULL"
-    } else {
-      output_dir <- paste0("'", dirname_output_dir(), "'")
-    }
+  # shiny::observe({
+  #   
+  #   # set data_dir to "NULL" if none selected
+  #   if(identical(dirname_data_dir(), character(0)) == TRUE){
+  #     data_dir <- "NULL"
+  #   } else {
+  #     data_dir <- paste0("'", dirname_data_dir(), "'")
+  #   }
+  #   
+  #   # set output_dir to "NULL if none has been selected
+  #   if(identical(dirname_output_dir(), character(0)) == TRUE){
+  #     output_dir <- "NULL"
+  #   } else {
+  #     output_dir <- paste0("'", dirname_output_dir(), "'")
+  #   }
     
     # output$deploy_modelCode <- shiny::renderText({
     #   paste0("predictions <- deploy_model(", 
@@ -107,10 +107,10 @@ server <- function(input, output) {
     #          "col = '", input$color, "')")
     # })
     
-  })# end observe
+  # })# end observe
   
   # run model
-  shiny::observeEvent(input$deploy_modelRun, { 
+  shiny::observeEvent(input$run_model, { 
     
     # only run model if data_dir has been selected
     if(identical(dirname_data_dir(), character(0)) == FALSE){
@@ -118,60 +118,241 @@ server <- function(input, output) {
       # set output_dir to data_dir if none has been selected
       if(identical(dirname_output_dir(), character(0)) == TRUE){
         output_dir <- NULL
-        output_dirText <- paste0("the most recent model_predictions folder in: ", 
-                                 dirname_data_dir(), ". When this window closes model deployment is done and you can close the Shiny App window.
-                                         
-                                         Also, if you want to work with model predictions directly in R. You can find them as the object `predictions`.
-                                         Try typing `head(predictions)` in the R console to see this object.")
+        # output_dirText <- paste0("the most recent model_predictions folder in: ", 
+        #                          dirname_data_dir(), ". When this window closes model deployment is done and you can close the Shiny App window.
+        #                                  
+        #                                  Also, if you want to work with model predictions directly in R. You can find them as the object `predictions`.
+        #                                  Try typing `head(predictions)` in the R console to see this object.")
       } else {
         output_dir <- dirname_output_dir()
-        output_dirText <- paste0(": ", dirname_output_dir())
+        # output_dirText <- paste0(": ", dirname_output_dir())
       }
       
       # let user know about predicted bounding boxes during deployment
-      if(input$make_plots == TRUE){
-        additionalText <- paste0("During deployment, you can optionally view predicted bounding boxes as they are produced in ", output_dirText)
-      } else {
-        additionalText <- paste0("")
-      }
+      # if(input$make_plots == TRUE){
+      #   additionalText <- paste0("During deployment, you can optionally view predicted bounding boxes as they are produced in ", output_dirText)
+      # } else {
+      #   additionalText <- paste0("")
+      # }
       
       # show loading modal
       # NOTE: it will only close after the model is finished running
-      shiny::showModal(
-        shiny::modalDialog(
-          shiny::h4("Running model. This will take a few minutes. If this is your first time using this package or you are using a different model, we must download some files first. You may need to disconnect from VPN to allow these files to download.", align = "center"),
+      # shiny::showModal(
+      #   shiny::modalDialog(
+      #     shiny::h4("Running model. This will take a few minutes. If this is your first time using this package or you are using a different model, we must download some files first. You may need to disconnect from VPN to allow these files to download.", align = "center"),
+      #     
+      #     # include loading spinner
+      #     shiny::HTML('<center><img src="spinner.gif"></center>'),
+      #     
+      #     shiny::hr(),
+      #     
+      #     shiny::h5(additionalText),
+      #     
+      #     easyClose = FALSE,
+      #     footer = NULL
+      #   )
+      # )
+      
+      ###### 
+      # START DEPLOY MODEL SCRIPT #
+      
+      #-- Check arguments
+      
+      # compile args into list
+      arg_list <- shiny::reactive(list(
+        data_dir = shiny::renderText(dirname_data_dir()),
+        output_dir = shiny::renderText(dirname_output_dir()),
+        model_type = input$model_type,
+        recursive = input$recursive,
+        file_extensions = input$file_extensions,
+        make_plots = input$make_plots,
+        sample50 = input$sample50, 
+        write_bbox_csv = input$write_bbox_csv, 
+        score_threshold = input$score_threshold,
+        overlap_correction = input$overlap_correction,
+        overlap_threshold = input$overlap_threshold,
+        get_metadata = input$get_metadata,
+        write_metadata = input$write_metadata,
+        review_threshold = 0.8,
+        checkpoint_frequency = input$checkpoint_frequency,
+        latitude = input$latitude,
+        longitude = input$longitude,
+        h=307,
+        w=408,
+        lty=1,
+        lwd=2, 
+        col='red'
+      ))
+      
+      # pass through checks
+      arg_list <- verify_args(arg_list)
+      
+      # look for model arguments in output dir
+      arg_list <- suppressWarnings(tryCatch(arg_list <- load_args(arg_list$output_dir), 
+                                            error = function(e) arg_list))
+      
+      #-- Prep data
+      
+      # load inputs
+      file_list <- define_dataset(arg_list$data_dir, arg_list$recursive, arg_list$file_extensions)
+      
+      # take random sample if sample50=TRUE  
+      if(as.logical(input$sample50)==TRUE && length(file_list) > 50){
+        file_list <- sample(file_list, 50)
+      }
+      
+      # set placeholder for predicted bboxes
+      if(as.logical(input$write_bbox_csv)==TRUE){
+        bboxes <- NULL
+      }
+      
+      #-- Load checkpoint
+      
+      # set placeholder for saved results
+      results <- NULL
+      
+      # load checkpoint
+      if(!is.null(output_dir)){
+        
+        # load saved results
+        results <- chkpt_df(output_dir, arg_list$model_version, "model_predictions")
+        
+        # update file list
+        if(length(results) > 0) {
+          file_list <- update_img_list(results, arg_list$model_version, file_list)
+        }
+        
+        # load saved bboxes
+        if(write_bbox_csv==TRUE){
+          bboxes <- chkpt_df(output_dir, arg_list$model_version, "predicted_boxes")
+        }
+      }
+      
+      # set output directory
+      if(is.null(output_dir)){
+        output_dir <- set_output_dir(input$data_dir, arg_list$model_version, as.logical(arg_list$recursive), as.logical(arg_list$make_plots))
+      }
+      
+      #-- Load model
+      
+      # download model files
+      folder <- download_models(models=arg_list$model_version)
+      
+      # load label encoder
+      label_encoder <- encode_labels(folder)
+      
+      # load model
+      model <- weight_loader(folder)
+      model$eval()
+      
+      #-- Write Arguments to File
+      write_args(arg_list, output_dir)
+      
+      #-- Define location-restricted labels
+      if (is.na(input$latitude) & is.na(input$longitude)) {
+        location <- NULL
+      } else {
+        location <- shiny::reactive(data.frame(longitude=input$longitude, latitude=input$latitude))
+      }
+      
+      if(is.null(location) == FALSE){
+        possible_labels <- encode_locations(location, arg_list$model_type, label_encoder)
+      }
+      
+      #-- Make predictions for each image
+      
+      # empty list to hold predictions from loop
+      predictions_list <- list()
+      
+      toc <- Sys.time()
+      torch::with_no_grad({
+        for(i in 1:length(file_list)){
           
-          # include loading spinner
-          shiny::HTML('<center><img src="spinner.gif"></center>'),
+          # define filename
+          # filename <- normalizePath(file_list[i], winslash = "/")
+          filename <- file.path(file_list[i])
           
-          shiny::hr(),
+          # load image and convert to model input
+          input <- get_model_input(filename)
           
-          shiny::h5(additionalText),
+          # handle any errors, else run the model
+          if(is.data.frame(input)) {
+            predictions_list[[i]] <- pred_df
+          } else {
+            
+            # deploy the model on the image
+            pred_df <- eval_one_image(input, filename, label_encoder, 
+                                      overlap_correction, overlap_threshold,
+                                      location, possible_labels, model)
+            
+            # add prediction df to list
+            predictions_list[[i]] <- pred_df
+            
+            # make plots
+            if(make_plots){
+              # subset by score threshold for plotting
+              pred_df_plot <- pred_df[pred_df$confidence_score >= score_threshold, ]
+              
+              # plot predictions
+              plot_img_bbox(filename, pred_df_plot, output_dir, data_dir, 
+                            col, lty, lwd, w, h)
+            }
+            
+            # write metadata tags
+            if(write_metadata){
+              write_metadata_tags(pred_df = pred_df, model_version = model_version, 
+                                  review_threshold = review_threshold)
+            }
+          }
           
-          easyClose = FALSE,
-          footer = NULL
-        )
-      )
+          # save checkpoint
+          if (i %% checkpoint_frequency == 0) {
+            
+            df_out <- save_checkpoint(predictions_list, score_threshold,
+                                      bboxes, output_dir, model_version,
+                                      get_metadata, write_bbox_csv, results, final=F)
+            
+            cat(paste0("\nResults saved for ", i, " images.\n"))
+          }
+          
+          # update progress bar
+          shinyWidgets::updateProgressBar(
+            id = "pb", value = i, total = length(file_list),
+            title = paste0(length(file_list)-i, " images left to run.")
+          ) 
+          
+        }# end for loop
+        
+      })
+      
+      # add progress bar
+      cat(paste0("\nDeploying model on ", length(file_list), " images. Two warnings will appear; ignore these. 
+             \nResults files are saved every ", checkpoint_frequency, " images in: ", normalizePath(output_dir, winslash="/"), "\n"))
+      if(make_plots){
+        cat(paste0("During deployment, you can optionally view predicted bounding boxes as they are produced."))
+      }
+      
+      ###### 
       
       # show cats / warnings normally shown in console in app
-      withConsoleRedirect("console", {
-        predictions <<- deploy_model(data_dir = dirname_data_dir(), 
-                                     model_type = input$model_type, 
-                                     recursive = as.logical(input$recursive), 
-                                     file_extensions = input$file_extensions, 
-                                     make_plots = as.logical(input$make_plots), 
-                                     output_dir = output_dir, 
-                                     sample50 = as.logical(input$sample50), 
-                                     write_bbox_csv = as.logical(input$write_bbox_csv), 
-                                     score_threshold = input$score_threshold, 
-                                     overlap_correction = as.logical(input$overlap_correction),
-                                     overlap_threshold = input$overlap_threshold,
-                                     get_metadata = as.logical(input$get_metadata),
-                                     write_metadata = as.logical(input$write_metadata),
-                                     checkpoint_frequency = input$checkpoint_frequency,
-                                     latitude = input$latitude,
-                                     longitude = input$longitude)  
-      })
+      # withConsoleRedirect("console", {
+      #   predictions <<- deploy_model(data_dir = dirname_data_dir(), 
+      #                                model_type = input$model_type, 
+      #                                recursive = as.logical(input$recursive), 
+      #                                file_extensions = input$file_extensions, 
+      #                                make_plots = as.logical(input$make_plots), 
+      #                                output_dir = output_dir, 
+      #                                sample50 = as.logical(input$sample50), 
+      #                                write_bbox_csv = as.logical(input$write_bbox_csv), 
+      #                                score_threshold = input$score_threshold, 
+      #                                overlap_correction = as.logical(input$overlap_correction),
+      #                                overlap_threshold = input$overlap_threshold,
+      #                                get_metadata = as.logical(input$get_metadata),
+      #                                write_metadata = as.logical(input$write_metadata),
+      #                                checkpoint_frequency = input$checkpoint_frequency,
+      #                                latitude = input$latitude,
+      #                                longitude = input$longitude)  
+      # })
       
       # close the loading modal after model has finished running
       shiny::removeModal()

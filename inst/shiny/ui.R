@@ -1,4 +1,5 @@
 # CameraTrapDetectoR Shiny App - User Interface
+
 ui <- fluidPage(
   
   shiny::tabsetPanel(
@@ -111,11 +112,11 @@ ui <- fluidPage(
               shiny::h2("Deploy CameraTrapDetectoR Models"),
               shiny::h3("Select your model arguments from the panel on the left."),
               shiny::h4("See below for detailed descriptions of each argument."),
-              shiny::h4("When you're ready, hit the ", strong("Run model"), " button below:"),
+              shiny::h4("When you're ready, hit the ", strong("Run Model"), " button below:"),
               
               shiny::hr(),
               
-              shiny::actionButton("deploy_modelRun", "Run model"),
+              shiny::actionButton("run_model", "Run Model"),
               
               shiny::fluidRow(shiny::column(12, shiny::span(style = "color:green;font-size:125%;", 
                                                             shiny::textOutput("allowedToDeployModel")))),
@@ -127,7 +128,11 @@ ui <- fluidPage(
                                                             shiny::textOutput("colorWarning")))),
               
               # console output
-              shiny::pre(id = "console"),
+              # shiny::pre(id = "console"),
+              br(),
+              shinyWidgets::progressBar(id = "pb", value=0, 
+                                        title = "Images to Run",
+                                        display_pct = "TRUE"),
               
               # Argument descriptions
               shiny::h3("Below are some more details about each of the options on the left:"),
@@ -157,7 +162,7 @@ ui <- fluidPage(
               shiny::p(strong("write_metadata : "),"  TRUE/FALSE. Write model predictions to image metadata as it runs through the model."),
               shiny::p(strong("checkpoint_frequency : "),"  Save results after running a given number of images. Accepts values from 1-1000."),
               shiny::p(strong("latitude and longitude : "),"  Optional image location to filter model predictions to species within range. Input takes one location per model run;
-           if images originate from multiple locations, separate them into different model runs based on location. Currently only applies to species model.")
+           if images originate from multiple locations, separate them into different model runs based on location.")
             )
           )
     ),
